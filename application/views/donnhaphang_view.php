@@ -46,7 +46,7 @@
         <!-- main area -->
         <div class="content-view">
           <div ng-controller="AppCtrl" layout="column" ng-cloak>
-            <div class="card m-b-1 m-l-3 m-r-3">
+            <!-- <div class="card m-b-1 m-l-3 m-r-3">
               <div class="card-header no-bg b-a-0">
                 Số lượng nguyên liệu muốn nhập
               </div>
@@ -58,9 +58,20 @@
                       Chọn
                     </button>
               </div>
-            </div>
+            </div> -->
             <div class="m-l-3 m-r-3">
               <md-content layout-padding style="background-color: #ffff">
+                <div layout="row" >
+                  <md-input-container flex="50" class="m-b-0">
+                    <label>Số lượng nguyên liệu</label>
+                    <input type="text" ng-model="soluong">
+                  </md-input-container>
+                  <md-input-container flex="50" class="m-b-0">
+                    <button type="button" class="btn btn-default m-r-xs m-b-xs form-control" ng-click="themnguyenlieu(soluong)">
+                      Chọn
+                    </button>
+                  </md-input-container>
+                </div>
                 <form name="projectForm" action="" method="POST">
                     <div layout="row" ng-init="dataset='false'">
                       <md-input-container class="flex-100" ng-init='ddh=parJson(<?php echo $mangdulieu['dondathang']?>)'>
@@ -191,39 +202,7 @@
       };
     </script>
 
-    <!-- build:js({.tmp,app}) scripts/app.min.js -->
-    <script src="<?php echo base_url(); ?>/milestone/vendor/jquery/dist/jquery.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/pace/pace.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/tether/dist/js/tether.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/fastclick/lib/fastclick.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/scripts/constants.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/scripts/main.js"></script>
-    <!-- endbuild -->
-
-    <!-- page scripts -->
-    <script src="<?php echo base_url(); ?>/milestone/vendor/flot/jquery.flot.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/flot/jquery.flot.resize.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/flot/jquery.flot.stack.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/flot-spline/js/jquery.flot.spline.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/bower-jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/data/maps/jquery-jvectormap-us-aea.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/jquery.easy-pie-chart/dist/jquery.easypiechart.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/scripts/helpers/noty-defaults.js"></script>
-    <!-- end page scripts -->
-
-    <!-- initialize page scripts -->
-    <script src="<?php echo base_url(); ?>/milestone/scripts/dashboard/dashboard.js"></script>
-    <!-- end initialize page scripts -->
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/jquery-3.5.1.min.js"></script>  
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-1.5.min.js"></script>  
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-route.min.js"></script>  
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-animate.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-aria.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-messages.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-material.min.js"></script>  
-    <script type="text/javascript" src="<?php echo base_url() ?>1.js"></script>
+    <?php include('C:\xampp\htdocs\trasua\application\views\pages\scripts_view.php') ?>
 
     
     

@@ -196,32 +196,7 @@
       };
     </script>
 
-    <!-- build:js({.tmp,app}) scripts/app.min.js -->
-    <script src="<?php echo base_url(); ?>/milestone/vendor/jquery/dist/jquery.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/pace/pace.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/tether/dist/js/tether.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/fastclick/lib/fastclick.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/scripts/constants.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/scripts/main.js"></script>
-    <!-- endbuild -->
-
-    <!-- page scripts -->
-    <script src="<?php echo base_url(); ?>/milestone/vendor/sweetalert/dist/sweetalert.min.js"></script>
-    <!-- end page scripts -->
-
-    <!-- initialize page scripts -->
-    <script src="<?php echo base_url(); ?>/milestone/scripts/ui/alert.js"></script>
-    <!-- end initialize page scripts -->
-
-
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-1.5.min.js"></script>  
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-route.min.js"></script>  
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-animate.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-aria.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-messages.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-material.min.js"></script>  
-    <script type="text/javascript" src="<?php echo base_url() ?>1.js"></script>
+    <?php include('C:\xampp\htdocs\trasua\application\views\pages\scripts_view.php') ?>
     
   </body>
 </html>

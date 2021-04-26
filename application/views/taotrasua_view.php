@@ -48,7 +48,7 @@
           <div ng-controller="AppCtrl" layout="column" ng-cloak>
             <div class="m-l-3 m-r-3">
               <md-content layout-padding style="background-color: #ffff">
-                <form name="projectForm" action="" method="POST" enctype="multipart/form-data">
+                <form id="formTaoTrasua" name="projectForm" action="" method="POST" enctype="multipart/form-data">
                     <div layout="row" >
                       <md-input-container flex="100">
                         <label>Nhập tên sản phẩm</label>
@@ -85,8 +85,8 @@
                       <md-input-container flex="100">
                         <label>Trạng thái</label>
                         <md-select ng-model="trangthai" required name="trangthai">
-                          <md-option  value="public">Công khai</md-option>
-                          <md-option  value="private">Riêng tư</md-option>
+                          <md-option  value="1">Công khai</md-option>
+                          <md-option  value="0">Riêng tư</md-option>
                         </md-select>
                         <div ng-messages="projectForm.status.$error">
                           <div ng-message="required">Bắt buộc.</div>
@@ -94,7 +94,58 @@
                       </md-input-container>
                     </div>
 
-                    <div layout="row">
+                    
+                    <!-- <md-content class="md-padding" layout="column">
+                      <h2 class="md-title">Use the default chip template.</h2>
+                      <md-select ng-model="testFunction" required name="testFunction">
+                        <md-option ng-click="displayTest()" value="public">Công khai</md-option>
+                        <md-option ng-click="displayTest()" value="private">Riêng tư</md-option>
+                      </md-select>
+                      <md-chips ng-model="fruitNames" readonly="readonly" md-removable="removable">
+                      </md-chips>
+                      <br/>
+                    </md-content> -->
+
+                    <md-content class="md-padding autocomplete p-a-0 m-t-3" layout="column" style="background-color: #ffff">
+                        <label id="toLabel">Tạo size</label>
+                        <md-contact-chips
+                            ng-model="contacts"
+                            name="sizes"
+                            ng-change="onModelChange(contacts)"
+                            md-contacts="querySearch($query)"
+                            md-contact-name="name"
+                            md-contact-image="image"
+                            md-require-match="true"
+                            md-separator-keys="keys"
+                            md-highlight-flags="i"
+                            placeholder="Gõ tên size"
+                            secondary-placeholder="Thêm size mới"
+                            input-aria-label="Intended Recipients">
+                        </md-contact-chips>
+
+                        <md-list class="fixedRows" ng-show="false">
+                          <md-subheader class="md-no-sticky">Size gợi ý</md-subheader>
+                          <md-list-item class="md-2-line contact-item" ng-repeat="(index, contact) in allContacts"
+                              ng-if="contacts.indexOf(contact) < 0">
+                            <img ng-src="{{contact.tempImage()}}" class="md-avatar" alt="{{contact.name}}" />
+                            <div class="md-list-item-text compact">
+                              <h3>{{contact.name}}</h3>
+                              <!-- <p>{{contact.email}}</p> -->
+                            </div>
+                          </md-list-item>
+                          <md-list-item class="md-2-line contact-item selected"
+                                        ng-repeat="(index, contact) in contacts">
+                            <img ng-src="{{contact.tempImage()}}" class="md-avatar" alt="{{contact.name}}" />
+                            <div class="md-list-item-text compact">
+                              <h3>{{contact.name}}</h3>
+                              <!-- <p>{{contact.email}}</p> -->
+                            </div>
+                          </md-list-item>
+                        </md-list>
+                      </md-content>
+                    
+
+                    <div layout="row" class="m-t-2">
                       <md-input-container flex="50">
                         <label>Số lượng nguyên liệu </label>
                         <input type="number" min="0" step="any" ng-model="soluongnl" required >
@@ -171,9 +222,12 @@
                           <input type="file" id="avatar" aria-describedby="emailHelp" placeholder="Enter email" name="avatar">
                         </span> 
                       </fieldset>
-
-                      <button type="submit" class="btn btn-info m-r-xs m-b-xs form-control">
-                        Nhập đơn đặt
+                      <input class="size" type="hidden" name="sizes[]">
+                      <input class="size" type="hidden" name="sizes[]">
+                      <input class="size" type="hidden" name="sizes[]">
+                      <input class="size" type="hidden" name="sizes[]">
+                      <button type="button" onclick="getSize()" class="btn btn-info m-r-xs m-b-xs form-control">
+                        Thêm
                       </button>
                     </div>
                   </div>
@@ -192,6 +246,34 @@
     </div>
 
     <script type="text/javascript">
+      function getSize(text) {
+        elmnClass = document.getElementsByClassName("md-contact-name")
+        for (i = 0; i < elmnClass.length; i++) {
+          temp = elmnClass[i].innerText
+          
+
+          allSize = <?php echo $mangdulieu['sizecosan'] ?>
+
+          for (arr of allSize) {
+            if (arr.TENSIZE == temp) {
+              temp = elmnClass[i].innerText.split(" ")
+              values = temp[0] + temp[1]
+              document.getElementsByClassName("size")[i].value = values + "_" + arr.MASIZE
+            }
+          }
+          // masize = document.getElementsByClassName("masize")[i].value
+          // document.getElementsByClassName("size")[i].value = values + "_" + masize
+        }
+        document.getElementById("formTaoTrasua").submit()
+      }
+
+      function test(text) {
+        
+        // body...
+      }
+    </script>
+
+    <script type="text/javascript">
       window.paceOptions = {
         document: true,
         eventLag: true,
@@ -203,40 +285,8 @@
       };
     </script>
 
-    <!-- build:js({.tmp,app}) scripts/app.min.js -->
-    <script src="<?php echo base_url(); ?>/milestone/vendor/jquery/dist/jquery.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/pace/pace.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/tether/dist/js/tether.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/fastclick/lib/fastclick.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/scripts/constants.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/scripts/main.js"></script>
-    <!-- endbuild -->
-
-    <!-- page scripts -->
-    <script src="<?php echo base_url(); ?>/milestone/vendor/flot/jquery.flot.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/flot/jquery.flot.resize.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/flot/jquery.flot.stack.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/flot-spline/js/jquery.flot.spline.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/bower-jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/data/maps/jquery-jvectormap-us-aea.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/jquery.easy-pie-chart/dist/jquery.easypiechart.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/vendor/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-    <script src="<?php echo base_url(); ?>/milestone/scripts/helpers/noty-defaults.js"></script>
-    <!-- end page scripts -->
-
-    <!-- initialize page scripts -->
-    <script src="<?php echo base_url(); ?>/milestone/scripts/dashboard/dashboard.js"></script>
-    <!-- end initialize page scripts -->
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/jquery-3.5.1.min.js"></script>  
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-1.5.min.js"></script>  
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-route.min.js"></script>  
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-animate.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-aria.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-messages.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-material.min.js"></script>  
-    <script type="text/javascript" src="<?php echo base_url() ?>1.js"></script>
-
+    <?php include('C:\xampp\htdocs\trasua\application\views\pages\scripts_view.php') ?>
+    
     
     
   </body>

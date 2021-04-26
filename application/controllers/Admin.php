@@ -26,8 +26,60 @@ class Admin extends CI_Controller {
 			$this->requestLogin();
 		}
 
+		// // GET method
+		// if ($this->input->server('REQUEST_METHOD') === 'GET') {
+		// 	$cookie = get_cookie("SESSIONID");
+
+		// 	if ($this->checkCookie($cookie)) {
+		// 		return redirect(base_url()."admin");
+		// 	} else {
+		// 		$this->load->view('login_view');
+		// 	}
+		// } else {
+		// 	$this->requestLogin();
+		// }
+
 
 	}
+
+
+	public function logout()
+	{
+		$cookie = get_cookie("SESSIONID");
+
+		date_default_timezone_set("Asia/Ho_Chi_Minh");
+
+		$dl = $this->admin_model->getSession();
+		
+		foreach ($dl as $key => $value) {
+			$data = json_decode($value["SESSION"], true);
+			if (is_array($data) || is_object($data)) {
+				foreach ($data as $subData) {
+					if ($cookie == $subData['id']) {
+						// tim thay cookie
+
+						$rowEffect = $this->admin_model->deleteSession($subData['username']);
+
+						if ($rowEffect) {
+							delete_cookie('SESSIONID');
+							redirect(base_url() . 'admin/login','refresh');
+
+						}
+						return;
+
+					} 
+				}			
+
+			}
+
+		}
+		
+		// nếu không tìm thấy bất kì id nào thì xóa
+		echo 0;
+		delete_cookie("SESSIONID");
+
+	}
+
 
 
 	public function requestLogin()
@@ -103,6 +155,7 @@ class Admin extends CI_Controller {
 				echo "khong co thay doi row";
 				return;
 			} else {
+				// if (trangthai==1) {thhì mới setcookie}
 				$this->input->set_cookie('SESSIONID', $newData['id'], 3000);
 			}
 			
@@ -115,7 +168,7 @@ class Admin extends CI_Controller {
 			return;
 		}
 
-		$message["message"] = array('Sai thông tin đăng nhậpAA');
+		$message["message"] = array('Sai thông tin đăng nhập');
 		$this->load->view('success_view', $message);
 		return;
 		
@@ -139,11 +192,24 @@ class Admin extends CI_Controller {
 							redirect(base_url() . 'admin/login','refresh');
 							return false;
 						} else {
-							return array(
-								'role' => $subData['role'], 
-								'manv' => $subData['manv'] 
+							$nhanvien = $this->admin_model->findNhanvienByMa($subData["manv"]); 
+							if (!empty($nhanvien)){
+								// $user = array(
+								// 	'role' => $infoSession['role'], 
+								// 	'manv' => $infoSession['manv'],
+								// 	'tennv' => $nhanvien[0]["HO"] . " " . $nhanvien[0]["TEN"],
+								// 	'anhdaidien' => $nhanvien[0]["AVATAR"]
 
-							);
+								// );
+								// echo json_encode($user);
+								return array(
+									'role' => $subData['role'], 
+									'manv' => $subData['manv'],
+									'tennv' => $nhanvien[0]["HO"] . " " . $nhanvien[0]["TEN"],
+									'anhdaidien' => $nhanvien[0]["AVATAR"]
+								);
+							}
+
 
 						}
 					} 
@@ -162,21 +228,53 @@ class Admin extends CI_Controller {
 	} 
 
 
+	public function user()
+	{
+		// GET method
+		if ($this->input->server('REQUEST_METHOD') === 'GET') {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+				$nhanvien = $this->admin_model->findNhanvienByMa($infoSession["manv"]); 
+				if (!empty($nhanvien)){
+					$user = array(
+						'role' => $infoSession['role'], 
+						'manv' => $infoSession['manv'],
+						'tennv' => $nhanvien[0]["HO"] . " " . $nhanvien[0]["TEN"],
+						'anhdaidien' => $nhanvien[0]["AVATAR"]
+
+					);
+					echo json_encode($user);
+				}
+			}
+		} else {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if (!$infoSession) {
+				//redirect login
+			}
+		}
+	}
+
+
 
 	public function dondathang()
 	{	
 
 		if ($this->input->server('REQUEST_METHOD') === 'GET') {
 			$cookie = get_cookie("SESSIONID");
-
-			if ($this->checkCookie($cookie)) {
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
 
 				$nhacungcap = $this->admin_model->getNhacungcap();
 				$nguyenlieu = $this->admin_model->getNguyenlieu();
 				
 				$data['mangdulieu'] = array(
 					'nhacungcap' => $nhacungcap, 
-					'nguyenlieu' => $nguyenlieu 
+					'nguyenlieu' => $nguyenlieu,
+					'anhdaidien' => $infoSession["anhdaidien"],
+					'tennv' => $infoSession["tennv"],
+					'role' => $infoSession['role']
 				);
 
 				
@@ -313,13 +411,23 @@ class Admin extends CI_Controller {
 	}
 
 
+
+
+
+
+	public function demo($day, $month)
+	{
+		$this->admin_model->getDaytest($day, $month);
+	}
+
+
 	public function  donnhaphang() 
 	{
 		// GET method
 		if ($this->input->server('REQUEST_METHOD') === 'GET') {
 			$cookie = get_cookie("SESSIONID");
-
-			if ($this->checkCookie($cookie)) {
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
 
 				$nhacungcap = $this->admin_model->getNhacungcap();
 				$nguyenlieu = $this->admin_model->getNguyenlieu();
@@ -328,7 +436,10 @@ class Admin extends CI_Controller {
 				$data['mangdulieu'] = array(
 					'nhacungcap' => $nhacungcap, 
 					'nguyenlieu' => $nguyenlieu, 
-					'dondathang' => json_encode($dondathang)
+					'dondathang' => json_encode($dondathang),
+					'anhdaidien' => $infoSession["anhdaidien"],
+					'tennv' => $infoSession["tennv"],
+					'role' => $infoSession['role']
 				);
 
 
@@ -373,20 +484,38 @@ class Admin extends CI_Controller {
 		}
 	}
 
+	public function getSizeApi($cookie)
+	{
+		if ($this->checkCookie($cookie)) {
+
+			$sizecosan = $this->admin_model->getSize();
+
+			echo json_encode($sizecosan);
+
+		} else {
+			echo "you dont have permission";
+		}
+	}
+
+
 	public function taotrasua()
 	{
 		// GET method
 		if ($this->input->server('REQUEST_METHOD') === 'GET') {
 			$cookie = get_cookie("SESSIONID");
-
-			if ($this->checkCookie($cookie)) {
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
 
 				// $nhacungcap = $this->admin_model->getNhacungcap();
 				$nguyenlieu = $this->admin_model->getNguyenlieu();
-				// $dondathang = $this->admin_model->getDondathang();
+				$sizecosan = $this->admin_model->getSize();
 				
 				$data['mangdulieu'] = array(
 					'nguyenlieu' => $nguyenlieu, 
+					'sizecosan' => json_encode($sizecosan),
+					'anhdaidien' => $infoSession["anhdaidien"],
+					'tennv' => $infoSession["tennv"],
+					'role' => $infoSession['role']
 				);
 
 
@@ -408,7 +537,54 @@ class Admin extends CI_Controller {
 				$soluong = $this->input->post('soluong');
 				$donvi = $this->input->post('donvi');
 				$note = $this->input->post('note');
+				$size = $this->input->post('sizes');
 				$maloaitrasua = 'ts' . uniqid();
+				$thanhphan = array();
+				$tensize = array();
+				$masize = array();
+
+				echo '<pre>';
+				echo var_dump($size);
+				echo '</pre>';
+				
+
+				foreach ($size as $key => $value) {
+					if ($value) {
+						array_push($tensize, explode("_", $value)[0]);
+						array_push($masize, explode("_", $value)[1]); 
+
+					}
+				}
+
+				echo '<pre>';
+				echo var_dump($tensize);
+				echo '</pre>';
+
+				echo '<pre>';
+				echo var_dump($masize);
+				echo '</pre>';
+
+				echo '<pre>';
+				echo var_dump($nguyenlieucu);
+				echo '</pre>';
+
+				echo '<pre>';
+				echo var_dump($soluong);
+				echo '</pre>';
+
+				
+
+				for ($i=0; $i < count($nguyenlieucu); $i++) { 
+					$thanhphan[$i] = array(
+						'MANGUYENLIEU' => $nguyenlieucu[$i], 
+						'LIEULUONG' => $soluong[$i],
+						'DONVI' => $donvi[$i],
+						'GHICHU' => $note[$i]
+					);
+				}
+
+				
+				echo count($tensize);
 
 				$isUploaded = $this->uploadFile($_FILES);
 				if ($isUploaded) {
@@ -416,8 +592,55 @@ class Admin extends CI_Controller {
 						echo "Thêm trà sữa thành công";
 
 						// Insert ctloaitrasua
-						if ($this->admin_model->insertCtloaitrasua($maloaitrasua, $nguyenlieucu, $soluong, $note)) {
+						if ($this->admin_model->insertCtloaitrasua($maloaitrasua, $nguyenlieucu, $soluong, $donvi, $note)) {
 							echo "thêm ct loaitrasua thanh cong";
+							// insert size
+							for ($i=0; $i < count($tensize); $i++) { 
+								switch ($tensize[$i]) {
+									case 'SizeS':
+
+										$thanhphantheosize = $thanhphan;
+										for ($j=0; $j < count($thanhphantheosize); $j++) { 
+											$thanhphantheosize[$j]["LIEULUONG"] *= 0.7;
+										}
+										$giatheosize = $gia * 0.7;
+										if (!$this->admin_model->insertCtSize($maloaitrasua, $masize[$i], 0.7, $giatheosize, json_encode($thanhphantheosize))) 
+											{echo "insertCtsize error"; return;}
+
+										break;
+									case 'SizeM':
+										if (!$this->admin_model->insertCtSize($maloaitrasua, $masize[$i], 1, $gia, json_encode($thanhphantheosize)))
+											{echo "insertCtsize error"; return;}
+
+										break;
+									case 'SizeL':
+
+										$thanhphantheosize = $thanhphan;
+										for ($j=0; $j < count($thanhphantheosize); $j++) { 
+											$thanhphantheosize[$j]["LIEULUONG"] *= 1.2;
+										}
+										$giatheosize = $gia * 1.2;
+										if (!$this->admin_model->insertCtSize($maloaitrasua, $masize[$i], 1.2, $giatheosize, json_encode($thanhphantheosize))) 
+											{echo "insertCtsize error"; return;}
+
+										break;
+									case 'SizeXL':
+
+										$thanhphantheosize = $thanhphan;
+										for ($j=0; $j < count($thanhphantheosize); $j++) { 
+											$thanhphantheosize[$j]["LIEULUONG"] *= 1.5;
+										}
+										$giatheosize = $gia * 1.5;
+										if (!$this->admin_model->insertCtSize($maloaitrasua, $masize[$i], 1.5, $giatheosize, json_encode($thanhphantheosize))) 
+											{echo "insertCtsize error"; return;}
+
+										break;
+									default:
+										# code...
+										break;
+								}
+
+							}
 						} else {
 							echo "có lỗi xảy ra bảng ctloaitrasua";
 						}
@@ -430,29 +653,7 @@ class Admin extends CI_Controller {
 					echo "ko upload ddc";
 				}
 
-				// $maphieunhap = 'pn' . uniqid();
-				// $manv = $infoSession['manv'];
-
-
-				// insert loaitrasua
-
-
-
-
-
-				// // them vao ct cung cap
-
-				// if ($this->admin_model->insertCtcungcap($mactcungcap, $nhacungcapcu, $nguyenlieucu, $soluong, $dongia)) {
-				// 	echo "them ct cung cap thanh cong";
-				// }
-
-				// // TAO PHIEU NHAP 
-				// if ($this->admin_model->insertPhieunhap($maphieunhap, $dondathang, $manv)) {
-				// 	// insert ct phieunhap
-				// 	if ($this->admin_model->insertCtphieunhap($nguyenlieucu, $maphieunhap, $soluong, $donvi, $note)) {
-				// 		echo "tao phieu nhap, insert ct phieunhap thanh cong";
-				// 	}
-				// }
+				
 			}
 		}
 	}
@@ -464,20 +665,26 @@ class Admin extends CI_Controller {
 		// GET method
 		if ($this->input->server('REQUEST_METHOD') === 'GET') {
 			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
 
-			if ($this->checkCookie($cookie)) {
-
-				$loaitrasua = $this->admin_model->getLoaitrasua();
+				$loaitrasua = $this->admin_model->getLimitLoaitrasua();
 				$khachhang = $this->admin_model->getKhachhang();
 				$nguyenlieu = $this->admin_model->getNguyenlieu();
+				$hoadon = $this->admin_model->getLimitHoadon();
+				$ctsize = $this->admin_model->getCtSizeWithTensize();
 				
 				
 				$data['mangdulieu'] = array(
 					'loaitrasua' => $loaitrasua,
 					'khachhang' => json_encode($khachhang),
-					'nguyenlieu' => $nguyenlieu
+					'nguyenlieu' => $nguyenlieu,
+					'hoadon' => $hoadon,
+					'ctsize' => $ctsize,
+					'anhdaidien' => $infoSession["anhdaidien"],
+					'tennv' => $infoSession["tennv"],
+					'role' => $infoSession['role']
 				);
-
 
 				$this->load->view('admin/taohoadon_view', $data);
 				// // lapphieunhap, ct phieunhap, ctcungcap
@@ -502,19 +709,36 @@ class Admin extends CI_Controller {
 				$trasuamuonbosung = $this->input->post('matrasuathem');
 				$soluongthem = $this->input->post('soluong');
 				$donvi = $this->input->post('donvi');
+				$size = $this->input->post('size');
+				$tensize = array();
+				$makhmoi = 'kh' . uniqid();
 				$mahoadon = 'hd' . uniqid();
 				$manv = $infoSession["manv"];
 
+				// Lọc ten size
+				for ($i=0; $i < count($size); $i++) { 
+					$tensize[$i] = explode("_", $size[$i])[2];
+				}
 
+				// Lọc mã size
+				for ($i=0; $i < count($size); $i++) { 
+					$size[$i] = explode("_", $size[$i])[0];
+				}
+
+
+				
 				// kiểm tra nguyên liệu đủ hay không
 
-				// lấy dữ liệu từ bảng ctloaitrasua
-				$ctloaitrasua = $this->admin_model->getCtloaitrasuaByMaloai($matenloai);
-
+				// lấy dữ liệu từ bảng ctsize
+				$ctloaitrasua = $this->admin_model->getCtSize($matenloai, $size);
+				// $ctloaitrasua = $this->admin_model->getCtloaitrasuaByMaloai($matenloai);
+				
 				// lấy dữ liệu từ bảng nguyenlieu
 				$kho = $this->admin_model->getNguyenlieu();
 
-				$giatrasua = $this->admin_model->getGiaLoaitrasua($matenloai, $soluongmua);
+				// $giatrasua = $this->admin_model->getGiaLoaitrasua($matenloai, $soluongmua);
+				$giatrasua = $this->admin_model->getGiaCtSize($matenloai, $soluongmua, $size);
+
 
 				$gianguyenlieuthem = $this->admin_model->getGianguyenlieuthem($nguyenlieuthem, $soluongthem);
 
@@ -551,6 +775,7 @@ class Admin extends CI_Controller {
 							if ($kho[$i]["MANGUYENLIEU"] == $nguyenlieuthem[$j]) {
 								if ($kho[$i]["TONKHO"] < $soluongthem[$j]) {
 									echo "khong du so luong custom";
+									return;
 								} else {
 									$kho[$i]["TONKHO"] -= $soluongthem[$j];
 								}
@@ -580,16 +805,23 @@ class Admin extends CI_Controller {
 
 				 // gia cuoi cung
 				$finalPrices = array();
-				for ($i=0; $i < count($nguyenlieubosung) ; $i++) { 
-					if (!empty($nguyenlieubosung[$i])) {
-						$tong = $giatrasua[$i][0]["GIA"];
-						for ($j=0; $j < count($nguyenlieubosung[$i]); $j++) { 
-							$tong += $nguyenlieubosung[$i][$j]["gia"];
-						}
-						$finalPrices[$i] = $tong;
-					} else {
-						$finalPrices[$i] = $giatrasua[$i][0]["GIA"];
+				if (!empty($nguyenlieubosung)) {
+					for ($i=0; $i < count($nguyenlieubosung) ; $i++) { 
+						if (!empty($nguyenlieubosung[$i])) {
+							$tong = $giatrasua[$i][0]["GIA"];
+							for ($j=0; $j < count($nguyenlieubosung[$i]); $j++) { 
+								$tong += $nguyenlieubosung[$i][$j]["gia"];
+							}
+							$finalPrices[$i] = $tong;
+						} else {
+							$finalPrices[$i] = $giatrasua[$i][0]["GIA"];
 
+						}
+					}
+
+				} else {
+					for ($i=0; $i < count($giatrasua); $i++) { 
+						$finalPrices[$i] = $giatrasua[$i][0]["GIA"];
 					}
 				}
 
@@ -618,21 +850,43 @@ class Admin extends CI_Controller {
 				
 
 				// Tạo hóa đơn và CThoadon
-				if ($this->admin_model->insertHoadon($mahoadon, $manv, $makh)) {
-					echo "insert hoa don thanh cong";
-					if ($this->admin_model->insertCthoadon($mahoadon, $matenloai, $soluongmua, $nguyenlieubosung, $finalPrices)) {
-						echo "Them cthoadon thanhcong";
+				if ($hokh && $tenkh) {
+					// insert khachhang
+					if ($this->admin_model->insertKhachhang($makhmoi, $hokh, $tenkh, $sodienthoai)) {
+						if ($this->admin_model->insertHoadon($mahoadon, $manv, $makhmoi)) {
+							echo "insert hoa don thanh cong";
+							if ($this->admin_model->insertCthoadon($mahoadon, $tensize, $matenloai, $soluongmua, $nguyenlieubosung, $finalPrices)) {
+								echo "Them cthoadon thanhcong";
 
-						if ($this->admin_model->updateNguyenlieu($kho)) {
-							echo "cap nhat nguyen lieu thanh cong";
-						}
+								if ($this->admin_model->updateNguyenlieu($kho)) {
+									echo "cap nhat nguyen lieu thanh cong";
+								}
+							}
+
+						}	
+
 					}
 
-				}	
+					return;
+				} else {
+					if ($this->admin_model->insertHoadon($mahoadon, $manv, $makh)) {
+						echo "insert hoa don thanh cong";
+						if ($this->admin_model->insertCthoadon($mahoadon, $tensize, $matenloai, $soluongmua, $nguyenlieubosung, $finalPrices)) {
+							echo "Them cthoadon thanhcong";
+
+							if ($this->admin_model->updateNguyenlieu($kho)) {
+								echo "cap nhat nguyen lieu thanh cong";
+							}
+						}
+
+					}	
+				}
 
 
 
-				// echo $ctloaitrasua[0]["LIEULUONG"] * $soluongmua;
+				echo $ctloaitrasua[0]["LIEULUONG"] * $soluongmua;
+
+			
 
 
 				echo '<pre>';
@@ -716,18 +970,453 @@ class Admin extends CI_Controller {
 	}
 
 
+	public function danhsachsanpham()
+	{
+		// GET method
+		if ($this->input->server('REQUEST_METHOD') === 'GET') {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+				$loaitrasua = $this->admin_model->getLoaitrasua();
+
+
+				for ($i=0; $i < count($loaitrasua); $i++) { 
+					$loaitrasua[$i]["TRANGTHAI"] = (int)$loaitrasua[$i]["TRANGTHAI"];
+					if ($loaitrasua[$i]["TRANGTHAI"] == 0) {
+						$loaitrasua[$i]["TRANGTHAITEXT"] = "Ngừng kinh doanh";
+					}
+				}
+				
+
+				$data['mangdulieu'] = array(
+					'loaitrasua' => $loaitrasua,
+					'anhdaidien' => $infoSession["anhdaidien"],
+					'tennv' => $infoSession["tennv"],
+					'role' => $infoSession['role']
+				);
+
+
+
+				$this->load->view('admin/danhsachsanpham_view', $data);
+				// lapphieunhap, ct phieunhap, ctcungcap
+
+			}
+		} else {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+
+				$diachigiaohang = $this->input->post('diachi');
+				$mahoadon = $this->input->post('mahoadon');
+				$manhanviengiao = $this->input->post('manhanvien');
+				$maphieugiao = 'PG' . uniqid();
+
+
+				$hoadon = $this->admin_model->getHoadonByMa($mahoadon);
+
+				// echo '<pre>';
+				// echo var_dump($hoadon);
+				// echo '</pre>';
+
+				if ($this->admin_model->insertPhieugiao($maphieugiao, $mahoadon, $infoSession['manv'], $manhanviengiao, 1)) {
+
+					if ($this->admin_model->insertCtphieugiao($hoadon[0]["CTHOADON"], $maphieugiao, $diachigiaohang)) {
+						echo "insert hoadon va cthoadon thanh cong";
+					}
+				}
+
+
+
+			}
+		}
+	}
+
+
+
+	public function chitietsanpham($maloaitrasua)
+	{
+		// GET method
+		if ($this->input->server('REQUEST_METHOD') === 'GET') {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+				$loaitrasua = $this->admin_model->getLoaitrasuaByMaloai($maloaitrasua);
+				$nguyenlieu = $this->admin_model->getNguyenlieu();
+				$sizecosan = $this->admin_model->getSize();
+				
+
+				for ($i=0; $i < count($loaitrasua); $i++) { 
+					$loaitrasua[$i]["NGAYTAO"] = date("d/m/Y", $loaitrasua[$i]["NGAYTAO"]);
+					$loaitrasua[$i]["GIA"] = (int)$loaitrasua[$i]["GIA"];
+					$loaitrasua[$i]["SOLUONGNGUYENLIEU"] = count($loaitrasua[$i]["CTLOAITRASUA"]);
+
+					if ($loaitrasua[$i]["TRANGTHAI"] == "1") {
+						$loaitrasua[$i]["TRANGTHAI"] = (int)$loaitrasua[$i]["TRANGTHAI"];
+						$loaitrasua[$i]["TRANGTHAITEXT"] = "Mở bán";
+					} else {
+						$loaitrasua[$i]["TRANGTHAI"] = (int)$loaitrasua[$i]["TRANGTHAI"];
+						$loaitrasua[$i]["TRANGTHAITEXT"] = "Đã khóa";
+					}
+				}
+
+				
+				$data['mangdulieu'] = array(
+					'nguyenlieu' => $nguyenlieu, 
+					'sizecosan' => json_encode($sizecosan),
+					'loaitrasua' => $loaitrasua,
+					'anhdaidien' => $infoSession["anhdaidien"],
+					'tennv' => $infoSession["tennv"],
+					'role' => $infoSession['role']
+				);
+
+				// echo '<pre>';
+				// echo var_dump($loaitrasua);
+				// echo '</pre>';
+
+				$this->load->view('admin/chitietsanpham_view', $data);
+				// lapphieunhap, ct phieunhap, ctcungcap
+
+			}
+		} else {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+				$tenloai = $this->input->post('tenloai');
+				$tenloaicu = $this->input->post('tenloaicu');
+				$mota = $this->input->post('mota');
+				$motacu = $this->input->post('motacu');
+				$gia = $this->input->post('gia');
+				$giacu = $this->input->post('giacu');
+				$trangthai = $this->input->post('trangthai');
+				$trangthaicu = $this->input->post('trangthaicu');
+
+				$nguyenlieucu = $this->input->post('nguyenlieucu');
+				$soluong = $this->input->post('soluong');
+				$donvi = $this->input->post('donvi');
+				$note = $this->input->post('note');
+				$size = $this->input->post('sizes');
+				$maloaitrasua = $this->input->post('maloaitrasua');
+				$machinhsua = 'chinhsua' . uniqid();
+				$thanhphan = array();
+				$tensize = array();
+				$masize = array();
+				$tatcasize = array();
+
+				echo '<pre>';
+				echo var_dump($size);
+				echo '</pre>';
+				
+
+				foreach ($size as $key => $value) {
+					if ($value) {
+						array_push($tensize, explode("_", $value)[0]);
+						array_push($masize, explode("_", $value)[1]); 
+
+					}
+				}
+
+				echo '<pre>';
+				echo var_dump($tensize);
+				echo '</pre>';
+
+				echo '<pre>';
+				echo var_dump($masize);
+				echo '</pre>';
+
+				echo '<pre>';
+				echo var_dump($nguyenlieucu);
+				echo '</pre>';
+
+				echo '<pre>';
+				echo var_dump($soluong);
+				echo '</pre>';
+
+				// nếu có chỉnh sửa thành phần thì thêm vào không thì lấy thành phần cũ
+				if (!empty($nguyenlieucu)) {
+					for ($i=0; $i < count($nguyenlieucu); $i++) { 
+						$thanhphan[$i] = array(
+							'MANGUYENLIEU' => $nguyenlieucu[$i], 
+							'LIEULUONG' => $soluong[$i],
+							'DONVI' => $donvi[$i],
+							'GHICHU' => $note[$i]
+						);
+					}
+				} else {
+					$temp = $this->admin_model->getCtloaitrasuaByMaloai2($maloaitrasua);
+					for ($i=0; $i < count($temp); $i++) { 
+						$thanhphan[$i] = array(
+							'MANGUYENLIEU' => $temp[$i]["MANGUYENLIEU"], 
+							'LIEULUONG' => $temp[$i]["LIEULUONG"],
+							'DONVI' => $temp[$i]["DONVI"],
+							'GHICHU' => $temp[$i]["GHICHU"]	
+						);
+						
+					}
+				}				
+
+
+				for ($i=0; $i < count($masize); $i++) { 
+					$tatcasize[$i] = array(
+						'TENSIZE' => $tensize[$i], 
+						'MASIZE' => $masize[$i]
+					);
+				}
+
+
+
+				echo '<pre>';
+				echo var_dump($thanhphan);
+				echo '</pre>';
+				
+				$makhoiluong = $this->admin_model->getkhoiluongsizeByMasize($masize);
+
+				echo '<pre>';
+				echo var_dump($makhoiluong);
+				echo '</pre>';
+
+				date_default_timezone_set("Asia/Ho_Chi_Minh");
+				$newProduct = array(
+					'MALOAITRASUA' => $maloaitrasua, 
+					'TENLOAI' => $tenloai, 
+					'MOTA' => $mota, 
+					'GIA' => $gia, 
+					'HINHANH' => $_FILES["avatar"]["name"],
+					'TRANGTHAI' => $trangthai,
+					'NGAYCHINHSUA' => date("d/m/Y H:i:sa"),
+					'CTLOAITRASUA' => $thanhphan,
+					'CTSIZE' => $tatcasize
+
+
+				);
+
+				function callUpdateLoaitrasua($maloaitrasua, $data, $field, $thiss) {
+					if ($thiss->admin_model->updateLoaitrasua($maloaitrasua, $data, $field)) {
+						return true;
+					}
+				}
+
+				function updateLoaivaCtloai($tenloai, $tenloaicu, $mota, $motacu, $gia, $giacu, $trangthai, $trangthaicu, $file, $thiss, $masize, $tensize, $thanhphan, $maloaitrasua, $machinhsua, $tatcasize, $nguyenlieucu, $donvi, $soluong, $note)
+				{
+					if ($tenloai != $tenloaicu) {
+							$result = callUpdateLoaitrasua($maloaitrasua, $tenloai, "TENLOAI", $thiss);
+							if ($result) {
+								echo "Chỉnh sửa tên loại thành công";
+							}
+						}
+
+						if ($mota != $motacu) {
+							$result = callUpdateLoaitrasua($maloaitrasua, $mota, "MOTA", $thiss);
+							if ($result) {
+								echo "Chỉnh sửa mô tả thành công";
+							}
+						}
+
+
+						if ($gia != $giacu) {
+							$result = callUpdateLoaitrasua($maloaitrasua, $gia, "GIA", $thiss);
+							if ($result) {
+								echo "Chỉnh sửa giá  thành công";
+							}
+						}
+
+						if ($trangthai != $trangthaicu) {
+							$result = callUpdateLoaitrasua($maloaitrasua, $trangthai, "TRANGTHAI", $thiss);
+							if ($result) {
+								echo "Chỉnh sửa trạng thái thành công";
+							}
+						}
+
+						if ($file["avatar"]["name"]) {
+							$isUploaded = $thiss->uploadFile($file);
+							if ($isUploaded) {
+								$result = callUpdateLoaitrasua($maloaitrasua, $isUploaded, "HINHANH", $thiss);
+								if ($result) {
+									echo "Chỉnh sửa trạng thái thành công";
+								}
+							}
+						}
+
+						
+						if ($masize) {
+							// delete all size by masize
+							$thiss->admin_model->deleteSizeByMaloai($maloaitrasua);
+							for ($i=0; $i < count($tensize); $i++) { 
+								switch ($tensize[$i]) {
+									case 'SizeS':
+
+										$thanhphantheosize = $thanhphan;
+										for ($j=0; $j < count($thanhphantheosize); $j++) { 
+											$thanhphantheosize[$j]["LIEULUONG"] *= 0.7;
+										}
+										$giatheosize = $gia * 0.7;
+										if (!$thiss->admin_model->updateCtsize($maloaitrasua, $masize[$i], 0.7, $giatheosize, json_encode($thanhphantheosize))) 
+											{echo "updateCtsize error"; return;}
+
+										break;
+									case 'SizeM':
+										if (!$thiss->admin_model->updateCtsize($maloaitrasua, $masize[$i], 1, $gia, json_encode($thanhphan)))
+											{echo "updateCtsize error"; return;}
+
+										break;
+									case 'SizeL':
+
+										$thanhphantheosize = $thanhphan;
+										for ($j=0; $j < count($thanhphantheosize); $j++) { 
+											$thanhphantheosize[$j]["LIEULUONG"] *= 1.2;
+										}
+										$giatheosize = $gia * 1.2;
+										if (!$thiss->admin_model->updateCtsize($maloaitrasua, $masize[$i], 1.2, $giatheosize, json_encode($thanhphantheosize))) 
+											{echo "updateCtsize error"; return;}
+
+										break;
+									case 'SizeXL':
+
+										$thanhphantheosize = $thanhphan;
+										for ($j=0; $j < count($thanhphantheosize); $j++) { 
+											$thanhphantheosize[$j]["LIEULUONG"] *= 1.5;
+										}
+										$giatheosize = $gia * 1.5;
+										if (!$thiss->admin_model->updateCtsize($maloaitrasua, $masize[$i], 1.5, $giatheosize, json_encode($thanhphantheosize))) 
+											{echo "updateCtsize error"; return;}
+
+										break;
+									default:
+										# code...
+										break;
+								}
+
+							}
+						}
+
+						if (!empty($nguyenlieucu)) {
+							$thiss->admin_model->deleteCtloaitrasuaByMaloai($maloaitrasua);
+							if ($thiss->admin_model->updateCtloaitrasua($maloaitrasua, $nguyenlieucu, $soluong, $donvi, $note)) {
+										echo "update ctloaitrasua thanh cong";
+								}
+						}
+					
+				}
+
+
+
+
+
+
+
+				// kiểm tra trên trong lichsuchinh sửa đã có lần chỉnh sửa nào chưa
+				$checkMaloai = $this->admin_model->KiemtraMaloaiTrongLichsuchinhsua($maloaitrasua);
+
+				// insert lichsuchinhsua
+				if ($checkMaloai) {
+					if ($this->admin_model->insertLichsuChinhsua($machinhsua, $maloaitrasua, $newProduct)) {
+						updateLoaivaCtloai($tenloai, $tenloaicu, $mota, $motacu, $gia, $giacu, $trangthai, $trangthaicu, $_FILES, $this, $masize, $tensize, $thanhphan, $maloaitrasua, $machinhsua, $tatcasize, $nguyenlieucu, $donvi, $soluong, $note);
+					}
+				} else {
+					$oldProduct = $this->admin_model->getLoaitrasuaByMaloai($maloaitrasua);
+					if ($this->admin_model->insertLichsuChinhsua($machinhsua, $maloaitrasua, $oldProduct)) {
+						$machinhsua = 'chinhsua' . uniqid();
+						if ($this->admin_model->insertLichsuChinhsua($machinhsua, $maloaitrasua, $newProduct)) {
+							// cap nhat loaitrasua va ctloai
+							updateLoaivaCtloai($tenloai, $tenloaicu, $mota, $motacu, $gia, $giacu, $trangthai, $trangthaicu, $_FILES, $this, $masize, $tensize, $thanhphan, $maloaitrasua, $machinhsua, $tatcasize, $nguyenlieucu, $donvi, $soluong, $note);
+						}
+					}
+				}
+
+				// if ($_FILES["avatar"]["name"]) {
+				// 	$isUploaded = $this->uploadFile($_FILES);
+				// 	if ($isUploaded) {
+				// 		if ($this->admin_model->insertLoaitrasua($maloaitrasua, $tenloai, $mota, $gia, $isUploaded, $trangthai)) {
+				// 			echo "Thêm trà sữa thành công";
+
+				// 			// Insert ctloaitrasua
+				// 			if ($this->admin_model->insertCtloaitrasua($maloaitrasua, $nguyenlieucu, $soluong, $donvi, $note)) {
+				// 				echo "thêm ct loaitrasua thanh cong";
+				// 				// insert size
+				// 				for ($i=0; $i < count($tensize); $i++) { 
+				// 					switch ($tensize[$i]) {
+				// 						case 'SizeS':
+
+				// 							$thanhphantheosize = $thanhphan;
+				// 							for ($j=0; $j < count($thanhphantheosize); $j++) { 
+				// 								$thanhphantheosize[$j]["LIEULUONG"] *= 0.7;
+				// 							}
+				// 							$giatheosize = $gia * 0.7;
+				// 							if (!$this->admin_model->updateCtsize($maloaitrasua, $masize[$i], 0.7, $giatheosize, json_encode($thanhphantheosize))) 
+				// 								{echo "insertCtsize error"; return;}
+
+				// 							break;
+				// 						case 'SizeM':
+				// 							if (!$this->admin_model->insertCtSize($maloaitrasua, $masize[$i], 1, $gia, json_encode($thanhphantheosize)))
+				// 								{echo "insertCtsize error"; return;}
+
+				// 							break;
+				// 						case 'SizeL':
+
+				// 							$thanhphantheosize = $thanhphan;
+				// 							for ($j=0; $j < count($thanhphantheosize); $j++) { 
+				// 								$thanhphantheosize[$j]["LIEULUONG"] *= 1.2;
+				// 							}
+				// 							$giatheosize = $gia * 1.2;
+				// 							if (!$this->admin_model->insertCtSize($maloaitrasua, $masize[$i], 1.2, $giatheosize, json_encode($thanhphantheosize))) 
+				// 								{echo "insertCtsize error"; return;}
+
+				// 							break;
+				// 						case 'SizeXL':
+
+				// 							$thanhphantheosize = $thanhphan;
+				// 							for ($j=0; $j < count($thanhphantheosize); $j++) { 
+				// 								$thanhphantheosize[$j]["LIEULUONG"] *= 1.5;
+				// 							}
+				// 							$giatheosize = $gia * 1.5;
+				// 							if (!$this->admin_model->insertCtSize($maloaitrasua, $masize[$i], 1.5, $giatheosize, json_encode($thanhphantheosize))) 
+				// 								{echo "insertCtsize error"; return;}
+
+				// 							break;
+				// 						default:
+				// 							# code...
+				// 							break;
+				// 					}
+
+				// 				}
+				// 			} else {
+				// 				echo "có lỗi xảy ra bảng ctloaitrasua";
+				// 			}
+				// 		} else {
+				// 			echo "loại này đã tồn tại";
+				// 		}
+
+
+				// 	} else {
+				// 		echo "ko upload ddc";
+				// 	}
+
+				// }
+			}
+		}
+	}
+
+
+
+
 	public function themnhanvien()
 	{
 		// GET method
 		if ($this->input->server('REQUEST_METHOD') === 'GET') {
 			$cookie = get_cookie("SESSIONID");
-
-			if ($this->checkCookie($cookie)) {
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
 
 				$bophan = $this->admin_model->getBophan();
 				
 				$data['mangdulieu'] = array(
-					'bophan' => $bophan 
+					'bophan' => $bophan,
+					'anhdaidien' => $infoSession["anhdaidien"],
+					'tennv' => $infoSession["tennv"],
+					'role' => $infoSession['role']
 				);
 
 
@@ -799,8 +1488,8 @@ class Admin extends CI_Controller {
 		// GET method
 		if ($this->input->server('REQUEST_METHOD') === 'GET') {
 			$cookie = get_cookie("SESSIONID");
-
-			if ($this->checkCookie($cookie)) {
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
 				$taikhoan = $this->admin_model->getTaikhoan();
 				$nhanvien = $this->admin_model->getNhanvien();
 				$bophan = $this->admin_model->getBophan();
@@ -844,7 +1533,11 @@ class Admin extends CI_Controller {
 
 				$data['mangdulieu'] = array(
 					'taikhoan' => $newArrayTaikhoan,
-					'bophan' => $bophan
+					'bophan' => $bophan,
+					'anhdaidien' => $infoSession["anhdaidien"],
+					'tennv' => $infoSession["tennv"],
+					'role' => $infoSession['role']
+
 				);
 
 				// $this->load->view('admin/taikhoantongquat_view', $data);
@@ -968,6 +1661,62 @@ class Admin extends CI_Controller {
 	}
 
 
+	public function lockProduct()
+	{
+		// GET method
+		if ($this->input->server('REQUEST_METHOD') === 'GET') {
+			$cookie = get_cookie("SESSIONID");
+
+			if ($this->checkCookie($cookie)) {
+				
+			} else {
+				return redirect(base_url()."admin/login"); 
+			}
+		} else {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+				$maloaitrasua = $this->input->post('maloaitrasua');
+
+				if ($this->admin_model->lockProduct($maloaitrasua)) {
+					echo '1';
+				} else {
+					echo '0';
+				}
+			}
+		}
+	}
+
+
+	public function unlockProduct()
+	{
+		// GET method
+		if ($this->input->server('REQUEST_METHOD') === 'GET') {
+			$cookie = get_cookie("SESSIONID");
+
+			if ($this->checkCookie($cookie)) {
+				return redirect('/admin');
+			} else {
+				return redirect('/login'); 
+			}
+		} else {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+				$maloaitrasua = $this->input->post('maloaitrasua');
+
+				if ($this->admin_model->unlockProduct($maloaitrasua)) {
+					echo '1';
+				} else {
+					echo '0';
+				}
+			}
+		}
+	}
+
+
 	public function changePermission()
 	{
 		// GET method
@@ -997,13 +1746,17 @@ class Admin extends CI_Controller {
 					$this->admin_model->updateVaitroTaikhoan($mataikhoan, 1);
 					// check bộ phận có ai quản lí chưa
 					if ($this->admin_model->checkEmptyAdminBophan($mabophanmoi)) {
-						if ($this->admin_model->updateMabophanNhanvien($manv[0]["MANV"], $mabophanmoi)) {
-							if ($this->admin_model->updateManvqlBophan($mabophanmoi, $manv[0]["MANV"])) {
-								echo "1";
-								return;
-							}
-							
+
+						$this->admin_model->updateMabophanNhanvien($manv[0]["MANV"], $mabophanmoi);
+
+						if ($this->admin_model->updateManvqlBophan($mabophanmoi, $manv[0]["MANV"])) {
+							echo "1";
+							return;
+						} else {
+							echo "Không thể cập nhật manvql " . $manv[0]["MANV"];
 						}
+							
+						
 					} else {
 						echo "Bộ phận này đã có người quản lí";
 					}
@@ -1019,8 +1772,8 @@ class Admin extends CI_Controller {
 									return;
 								}
 							}
-						} else {
-							echo $mabophancu;
+							echo "1";
+							return;
 						}
 					} else if ($mavaitrocu == "Nhân viên"){
 						if ($this->admin_model->updateMabophanNhanvien($manv[0]["MANV"], $mabophanmoi)) {
@@ -1033,6 +1786,217 @@ class Admin extends CI_Controller {
 			}
 		}
 	}
+
+
+	public function thunhap()
+	{
+		// GET method
+		if ($this->input->server('REQUEST_METHOD') === 'GET') {
+			$cookie = get_cookie("SESSIONID");
+
+
+			$this->load->view('admin/thunhap_view');
+			
+		} else {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+				// $mataikhoan = $this->input->post('matk');
+				// $mabophanmoi = $this->input->post('bophanmoi');
+				// $mabophancu = $this->input->post('bophancu');
+				// $mavaitromoi = $this->input->post('vaitromoi');
+				// $mavaitrocu = $this->input->post('vaitrocu');
+				// $manv = $this->admin_model->findManhanvien($mataikhoan);
+
+				// if ($mavaitromoi == "Quản lí") {
+
+				// 	// cập nhật vai trò tài khoản
+				// 	$this->admin_model->updateVaitroTaikhoan($mataikhoan, 1);
+				// 	// check bộ phận có ai quản lí chưa
+				// 	if ($this->admin_model->checkEmptyAdminBophan($mabophanmoi)) {
+
+				// 		$this->admin_model->updateMabophanNhanvien($manv[0]["MANV"], $mabophanmoi);
+
+				// 		if ($this->admin_model->updateManvqlBophan($mabophanmoi, $manv[0]["MANV"])) {
+				// 			echo "1";
+				// 			return;
+				// 		} else {
+				// 			echo "Không thể cập nhật manvql " . $manv[0]["MANV"];
+				// 		}
+							
+						
+				// 	} else {
+				// 		echo "Bộ phận này đã có người quản lí";
+				// 	}
+					
+
+				// } else if ($mavaitromoi == "Nhân viên") {
+				// 	if ($mavaitrocu == "Quản lí") {
+				// 		// ngắt quyền
+				// 		if ($this->admin_model->updateManvqlBophan($mabophancu, NULL)) {
+				// 			if ($this->admin_model->updateVaitroTaikhoan($mataikhoan, 2)) {
+				// 				if ($this->admin_model->updateMabophanNhanvien($manv[0]["MANV"], $mabophanmoi)) {
+				// 					echo "1";
+				// 					return;
+				// 				}
+				// 			}
+				// 			echo "1";
+				// 			return;
+				// 		}
+				// 	} else if ($mavaitrocu == "Nhân viên"){
+				// 		if ($this->admin_model->updateMabophanNhanvien($manv[0]["MANV"], $mabophanmoi)) {
+				// 					echo "1";
+				// 					return;
+				// 				}					
+				// 	}
+				// }
+
+			}
+		}
+	}
+
+
+
+
+	public function biendonggia()
+	{
+		// GET method
+		if ($this->input->server('REQUEST_METHOD') === 'GET') {
+			$cookie = get_cookie("SESSIONID");
+
+
+			$this->load->view('admin/biendonggia_view');
+			
+		} else {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+				// $mataikhoan = $this->input->post('matk');
+				// $mabophanmoi = $this->input->post('bophanmoi');
+				// $mabophancu = $this->input->post('bophancu');
+				// $mavaitromoi = $this->input->post('vaitromoi');
+				// $mavaitrocu = $this->input->post('vaitrocu');
+				// $manv = $this->admin_model->findManhanvien($mataikhoan);
+
+				// if ($mavaitromoi == "Quản lí") {
+
+				// 	// cập nhật vai trò tài khoản
+				// 	$this->admin_model->updateVaitroTaikhoan($mataikhoan, 1);
+				// 	// check bộ phận có ai quản lí chưa
+				// 	if ($this->admin_model->checkEmptyAdminBophan($mabophanmoi)) {
+
+				// 		$this->admin_model->updateMabophanNhanvien($manv[0]["MANV"], $mabophanmoi);
+
+				// 		if ($this->admin_model->updateManvqlBophan($mabophanmoi, $manv[0]["MANV"])) {
+				// 			echo "1";
+				// 			return;
+				// 		} else {
+				// 			echo "Không thể cập nhật manvql " . $manv[0]["MANV"];
+				// 		}
+							
+						
+				// 	} else {
+				// 		echo "Bộ phận này đã có người quản lí";
+				// 	}
+					
+
+				// } else if ($mavaitromoi == "Nhân viên") {
+				// 	if ($mavaitrocu == "Quản lí") {
+				// 		// ngắt quyền
+				// 		if ($this->admin_model->updateManvqlBophan($mabophancu, NULL)) {
+				// 			if ($this->admin_model->updateVaitroTaikhoan($mataikhoan, 2)) {
+				// 				if ($this->admin_model->updateMabophanNhanvien($manv[0]["MANV"], $mabophanmoi)) {
+				// 					echo "1";
+				// 					return;
+				// 				}
+				// 			}
+				// 			echo "1";
+				// 			return;
+				// 		}
+				// 	} else if ($mavaitrocu == "Nhân viên"){
+				// 		if ($this->admin_model->updateMabophanNhanvien($manv[0]["MANV"], $mabophanmoi)) {
+				// 					echo "1";
+				// 					return;
+				// 				}					
+				// 	}
+				// }
+
+			}
+		}
+	}
+
+
+
+	public function tonkho()
+	{
+		// GET method
+		if ($this->input->server('REQUEST_METHOD') === 'GET') {
+			$cookie = get_cookie("SESSIONID");
+
+
+			$this->load->view('admin/tonkho_view');
+			
+		} else {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+				// $mataikhoan = $this->input->post('matk');
+				// $mabophanmoi = $this->input->post('bophanmoi');
+				// $mabophancu = $this->input->post('bophancu');
+				// $mavaitromoi = $this->input->post('vaitromoi');
+				// $mavaitrocu = $this->input->post('vaitrocu');
+				// $manv = $this->admin_model->findManhanvien($mataikhoan);
+
+				// if ($mavaitromoi == "Quản lí") {
+
+				// 	// cập nhật vai trò tài khoản
+				// 	$this->admin_model->updateVaitroTaikhoan($mataikhoan, 1);
+				// 	// check bộ phận có ai quản lí chưa
+				// 	if ($this->admin_model->checkEmptyAdminBophan($mabophanmoi)) {
+
+				// 		$this->admin_model->updateMabophanNhanvien($manv[0]["MANV"], $mabophanmoi);
+
+				// 		if ($this->admin_model->updateManvqlBophan($mabophanmoi, $manv[0]["MANV"])) {
+				// 			echo "1";
+				// 			return;
+				// 		} else {
+				// 			echo "Không thể cập nhật manvql " . $manv[0]["MANV"];
+				// 		}
+							
+						
+				// 	} else {
+				// 		echo "Bộ phận này đã có người quản lí";
+				// 	}
+					
+
+				// } else if ($mavaitromoi == "Nhân viên") {
+				// 	if ($mavaitrocu == "Quản lí") {
+				// 		// ngắt quyền
+				// 		if ($this->admin_model->updateManvqlBophan($mabophancu, NULL)) {
+				// 			if ($this->admin_model->updateVaitroTaikhoan($mataikhoan, 2)) {
+				// 				if ($this->admin_model->updateMabophanNhanvien($manv[0]["MANV"], $mabophanmoi)) {
+				// 					echo "1";
+				// 					return;
+				// 				}
+				// 			}
+				// 			echo "1";
+				// 			return;
+				// 		}
+				// 	} else if ($mavaitrocu == "Nhân viên"){
+				// 		if ($this->admin_model->updateMabophanNhanvien($manv[0]["MANV"], $mabophanmoi)) {
+				// 					echo "1";
+				// 					return;
+				// 				}					
+				// 	}
+				// }
+
+			}
+		}
+	}
+
 
 
 	public function uploadFile()

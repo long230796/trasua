@@ -41,6 +41,77 @@ class admin_model extends CI_Model {
 		return $this->db->affected_rows();
 	}
 
+
+	public function deleteNguyenlieu($manl)
+	{
+		// tim trong ctloaitrasua
+		$this->db->select('MANGUYENLIEU');
+		$this->db->where('MANGUYENLIEU', $manl);
+
+		$dl = $this->db->get('ctloaitrasua')->result_array();
+
+		if (!empty($dl)) {
+			return "ctloaitrasua";
+		} else {
+			// delete ctphieunhap
+			if (!empty($this->getCtPhieunhapByManl($manl))) {
+				$this->db->where('MANGUYENLIEU', $manl);
+				$this->db->delete('ctphieunhap');
+			}
+
+			// delete ctdondathang
+			if (!empty($this->getCtDondathangByManl($manl))) {
+				$this->db->where('MANGUYENLIEU', $manl);
+				$this->db->delete('ctdondathang');
+			}
+
+			// delete ctcungcap
+			if (!empty($this->getCtCungcapByManl($manl))) {
+				$this->db->where('MANGUYENLIEU', $manl);
+				$this->db->delete('ctcungcap');	
+			}
+
+			// delete nguyenlieu
+			$this->db->where('MANGUYENLIEU', $manl);
+			$this->db->delete('nguyenlieu');
+
+			return $this->db->affected_rows();
+
+		}
+	}
+
+
+	public function getCtCungcapByManl($manl)
+	{
+		$this->db->select('MANGUYENLIEU');
+		$this->db->where('MANGUYENLIEU', $manl);
+		$dl = $this->db->get('ctcungcap')->result_array();
+
+		return $dl;
+	}
+
+
+	public function getCtDondathangByManl($manl)
+	{
+		$this->db->select('MANGUYENLIEU');
+		$this->db->where('MANGUYENLIEU', $manl);
+		$dl = $this->db->get('ctdondathang')->result_array();
+
+		return $dl;
+	}
+
+
+	public function getCtPhieunhapByManl($manl)
+	{
+		$this->db->select('MANGUYENLIEU');
+		$this->db->where('MANGUYENLIEU', $manl);
+		$dl = $this->db->get('ctphieunhap')->result_array();
+
+		return $dl;
+	}
+
+
+
 	public function getDaytest($day, $month)
 	{
 		$this->db->select('*');
@@ -143,6 +214,42 @@ class admin_model extends CI_Model {
 
 	}
 
+	public function getLimitHoadonByMaloai($mahoadon)
+	{
+		$this->db->select('*');
+		$this->db->order_by('NGAYLAP', 'desc');
+		$this->db->where('MAHOADON', $mahoadon);
+		$dl = $this->db->get('hoadon')->result_array();
+
+		for ($i=0; $i < count($dl); $i++) { 
+			$dl[$i]["NGAYLAP"] = date("d/m/Y", $dl[$i]["NGAYLAP"]);
+		}
+
+
+		$dl = $this->getCthoadonByMahoadon($dl);
+		$dl = $this->getKhachhangBymahoadon($dl);
+		return $dl;
+
+	}
+
+
+	public function getAllHoadon()
+	{
+		$this->db->select('*');
+		$this->db->order_by('NGAYLAP', 'desc');
+		$dl = $this->db->get('hoadon')->result_array();
+
+		for ($i=0; $i < count($dl); $i++) { 
+			$dl[$i]["NGAYLAP"] = date("d/m/Y", $dl[$i]["NGAYLAP"]);
+		}
+
+
+		$dl = $this->getCthoadonByMahoadon($dl);
+		$dl = $this->getKhachhangBymahoadon($dl);
+		return $dl;
+
+	}
+
 
 	public function getHoadonByMa($mahoadon)
 	{
@@ -173,6 +280,16 @@ class admin_model extends CI_Model {
 	}
 
 
+	public function getCthoadonByMahoadon2($mahoadon)
+	{
+		$this->db->select('*');
+		$this->db->where('MAHOADON', $mahoadon);
+		$dl = $this->db->get('cthoadon');
+
+		return $dl->result_array();
+	}
+
+
 	public function getCthoadonByMahoadon($hoadon)
 	{	
 		for ($i=0; $i < count($hoadon); $i++) { 
@@ -184,7 +301,22 @@ class admin_model extends CI_Model {
 
 			$giahoadon = 0;
 			for ($j=0; $j < count($hoadon[$i]["CTHOADON"]); $j++) { 
-				$giahoadon += (int)$hoadon[$i]["CTHOADON"][$j]["GIA"] * $hoadon[$i]["CTHOADON"][$j]["SOLUONG"];					
+				// for ($k=0; $k < count($hoadon[$i]["CTHOADON"]) ; $k++) { 
+				// }
+				if ($hoadon[$i]["CTHOADON"][$j]["NGUYENLIEUBOSUNG"] !== "null" && $hoadon[$i]["CTHOADON"][$j]["NGUYENLIEUBOSUNG"] !== "[]" && $hoadon[$i]["CTHOADON"][$j]["NGUYENLIEUBOSUNG"] !== null) {
+
+					$nlbs = $hoadon[$i]["CTHOADON"][$j]["NGUYENLIEUBOSUNG"];
+					$gianlbs = 0;
+					foreach ($nlbs as $key => $value) {
+						$gianlbs += (int)$value["gia"];
+					}
+					$hoadon[$i]["CTHOADON"][$j]["DONGIAMOI"] = ((int)$hoadon[$i]["CTHOADON"][$j]["GIA"] - $gianlbs)/(int)$hoadon[$i]["CTHOADON"][$j]["SOLUONG"];
+
+				} else {
+					$hoadon[$i]["CTHOADON"][$j]["DONGIAMOI"] = ((int)$hoadon[$i]["CTHOADON"][$j]["GIA"])/(int)$hoadon[$i]["CTHOADON"][$j]["SOLUONG"];
+				}
+
+				$giahoadon += (int)$hoadon[$i]["CTHOADON"][$j]["GIA"];
 			}	
 
 			$hoadon[$i]["GIAHOADON"] = $giahoadon;
@@ -195,6 +327,16 @@ class admin_model extends CI_Model {
 		return $hoadon;
 
 
+	}
+
+
+	public function getMasizeByTensize($tensize)
+	{
+		$this->db->select('*');
+		$this->db->where('TENSIZE', $tensize);
+
+		$dl = $this->db->get('size')->result_array();
+		return $dl[0];
 	}
 
 
@@ -274,7 +416,27 @@ class admin_model extends CI_Model {
 	}
 
 
+	public function getCtsizeBymaloaimasize($maloai, $masize)
+	{
+		$temp = array();
+		for ($i=0; $i < count($maloai); $i++) { 
+			 
+			$condition = array(
+				'MALOAITRASUA' => $maloai[$i]["MALOAITRASUA"],
+				'MASIZE' => $masize[$i]["MASIZE"]
+			);
 
+			$this->db->select('THANHPHAN');
+			$this->db->where($condition);
+
+			$dl = $this->db->get('ctsize')->result_array();
+
+			array_push($temp, $dl[0]);
+		}
+
+		return $temp;
+
+	}
 
 
 
@@ -333,7 +495,7 @@ class admin_model extends CI_Model {
 		if ($nguyenlieuthem) {
 			$dl = array();
 			for ($i=0; $i < count($nguyenlieuthem); $i++) { 
-				$this->db->select('TENNL, DONGIA');
+				$this->db->select('TENNL, DONGIA, MANGUYENLIEU');
 				$this->db->where('MANGUYENLIEU', $nguyenlieuthem[$i]);
 				$temp = $this->db->get('nguyenlieu')->result_array();
 				$temp[0]["DONGIA"] *= $soluongthem[$i];
@@ -622,12 +784,13 @@ class admin_model extends CI_Model {
 		return $this->db->affected_rows();
 	}
 
-	public function insertHoadon($mahoadon, $manv, $makh)
+	public function insertHoadon($mahoadon, $manv, $makh, $matrangthai)
 	{
 		$data = array(
 			'MAHOADON' => $mahoadon, 
 			'MANV' => $manv, 
-			'MAKHACHHANG' => $makh 
+			'MAKHACHHANG' => $makh,
+			'MATRANGTHAI' => $matrangthai 
 		);
 
 		$this->db->insert('hoadon', $data);
@@ -814,8 +977,23 @@ class admin_model extends CI_Model {
 		return $this->db->affected_rows();
 	}
 
+
+	public function updateTrangthaiHoadon($mahoadon, $matrangthai)
+	{
+		$data = array(
+			'MATRANGTHAI' => $matrangthai 
+		);
+
+		$this->db->where('MAHOADON', $mahoadon);
+		$this->db->update('hoadon', $data);
+
+		return $this->db->affected_rows();
+	}
+
+
 	public function updateNguyenlieu($kho)
 	{
+		$affect_row;
 		for ($i=0; $i < count($kho); $i++) { 
 			$this->db->where('MANGUYENLIEU', $kho[$i]["MANGUYENLIEU"]);
 			$dl = array(
@@ -823,8 +1001,25 @@ class admin_model extends CI_Model {
 			);
 
 			$this->db->update('nguyenlieu', $dl);
+			if ($this->db->affected_rows()) {
+				$affect_row = $this->db->affected_rows();
+			}
 		}
+
+		return $affect_row;
+	}
+
+	public function updateNguyenlieuByManl($manl, $tennlmoi, $dongiamoi)
+	{
+		$dl = array(
+			'TENNL' => $tennlmoi, 
+			'DONGIA' => $dongiamoi, 
+		);
+		$this->db->where('MANGUYENLIEU', $manl);
+		$this->db->update('nguyenlieu', $dl);
+
 		return $this->db->affected_rows();
+
 	}
 
 

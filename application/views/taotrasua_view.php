@@ -52,7 +52,7 @@
                     <div layout="row" >
                       <md-input-container flex="100">
                         <label>Nhập tên sản phẩm</label>
-                        <input md-maxlength="50"  name="tenloai" ng-model="tenloai">
+                        <input md-maxlength="50" required  name="tenloai" ng-model="tenloai">
                         <div ng-messages="projectForm.tenloai.$error">
                           <div ng-message="required">Bắt buộc</div>
                           <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
@@ -63,7 +63,7 @@
                     <div layout="row" >
                       <md-input-container flex="100">
                         <label>Mô tả sản phẩm</label>
-                        <textarea name="mota" ng-model="mota"></textarea>
+                        <textarea required name="mota" ng-model="mota"></textarea>
                         <div ng-messages="projectForm.mota.$error">
                           <div ng-message="required">Bắt buộc</div>
                           <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
@@ -74,7 +74,7 @@
                     <div layout="row" >
                       <md-input-container flex="100">
                         <label>Giá sản phẩm</label>
-                        <input type="number" name="gia" min="0" step="any" ng-model="gia">
+                        <input type="number" required name="gia" min="0" step="any" ng-model="gia">
                         <div ng-messages="projectForm.gia.$error">
                           <div ng-message="required">Bắt buộc</div>
                           <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
@@ -148,7 +148,7 @@
                     <div layout="row" class="m-t-2">
                       <md-input-container flex="50">
                         <label>Số lượng nguyên liệu </label>
-                        <input type="number" min="0" step="any" ng-model="soluongnl" required >
+                        <input type="number"  min="1" max="10" ng-model="soluongnl" required >
                         <div ng-messages="projectForm.soluong.$error">
                           <div ng-message="required">Bắt buộc</div>
                         </div>
@@ -166,11 +166,12 @@
                       <div layout="row">
                           <md-input-container flex="20" >
                             <label>Tên nguyên liệu</label>
-                            <md-select name="nguyenlieucu[]" ng-model="nguyenlieucu" required ng-disabled="nguyenlieumoi" >
+                            <md-select name="nguyenlieucu[]" required ng-model="nguyenlieucu"  ng-disabled="nguyenlieumoi" >
                               <?php foreach ($mangdulieu["nguyenlieu"] as $key ): ?>
-                                <md-option value="<?php echo $key["MANGUYENLIEU"] ?>"><?php echo $key["TENNL"] ?></md-option>
+                                <md-option ng-click='setDonvi(<?php echo json_encode($mangdulieu['nguyenlieu'])?>, "<?php echo $key['MANGUYENLIEU'] ?>", data)' value="<?php echo $key["MANGUYENLIEU"] ?>"><?php echo $key["TENNL"] ?></md-option>
+
                               <?php endforeach ?>
-                              <md-option value=""></md-option>
+                              
                             </md-select>
                             <div ng-messages="projectForm.nguyenlieucu.$error">
                               <div ng-message="required">Bắt buộc</div>
@@ -178,28 +179,30 @@
                           </md-input-container>
 
                           <md-input-container flex="33">
-                            <label>Số lượng</label>
-                            <input type="number" min="0" step="any" required ng-model="soluong" name="soluong[]" >
-                            <div ng-messages="projectForm.soluong.$error">
-                              <div ng-message="required">Bắt buộc</div>
-                            </div>
-                          </md-input-container>
-                          <md-input-container flex="33">
                             <label>Đơn vị</label>
-                            <md-select name="donvi[]" ng-model="donvi" required >
-                              
-                              <md-option value="lit">Lít</md-option>
-                              <md-option value="kg">Kilogram</md-option>
-                             
-                            </md-select>
+                            <input readonly  class="donvi" type="text" required name="donvi[]" value=" ">
+                            <!-- <md-select class="donvi" ng-disabled="!nguyenlieucu" name="donvi[]" required >
+
+                              <md-option value="lit">lit</md-option>
+                              <md-option value="kilogram">kilogram</md-option>
+
+                            </md-select> -->
                             <div ng-messages="projectForm.donvi.$error">
                               <div ng-message="required">Bắt buộc</div>
                               <div ng-message="md-maxlength">Đơn vị phải nhỏ hơn 10 kí tự</div>
                             </div>
                           </md-input-container>
+
+                          <md-input-container  flex="33">
+                            <label>Số lượng</label>
+                            <input ng-disabled="!nguyenlieucu" type="number" step="any" min="0.1" max="0.5" required ng-model="soluong" name="soluong[]" >
+                            <div ng-messages="projectForm.soluong.$error">
+                              <div ng-message="required">Bắt buộc</div>
+                            </div>
+                          </md-input-container>
                           <md-input-container flex="33">
                             <label>Ghi chú</label>
-                            <input md-maxlength="50"  name="note[]" ng-model="note">
+                            <input ng-disabled="!nguyenlieucu" md-maxlength="50"  name="note[]" ng-model="note">
                             <div ng-messages="projectForm.note.$error">
                               <div ng-message="required">Bắt buộc</div>
                               <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
@@ -226,7 +229,7 @@
                       <input class="size" type="hidden" name="sizes[]">
                       <input class="size" type="hidden" name="sizes[]">
                       <input class="size" type="hidden" name="sizes[]">
-                      <button type="button" onclick="getSize()" class="btn btn-info m-r-xs m-b-xs form-control">
+                      <button ng-disabled="projectForm.$invalid" type="button" onclick="getSize()" class="btn btn-info m-r-xs m-b-xs form-control">
                         Thêm
                       </button>
                     </div>
@@ -248,23 +251,30 @@
     <script type="text/javascript">
       function getSize(text) {
         elmnClass = document.getElementsByClassName("md-contact-name")
-        for (i = 0; i < elmnClass.length; i++) {
-          temp = elmnClass[i].innerText
-          
+        if (elmnClass.length) {
+          for (i = 0; i < elmnClass.length; i++) {
+            temp = elmnClass[i].innerText
+            
 
-          allSize = <?php echo $mangdulieu['sizecosan'] ?>
 
-          for (arr of allSize) {
-            if (arr.TENSIZE == temp) {
-              temp = elmnClass[i].innerText.split(" ")
-              values = temp[0] + temp[1]
-              document.getElementsByClassName("size")[i].value = values + "_" + arr.MASIZE
+            allSize = <?php echo $mangdulieu['sizecosan'] ?>
+
+            for (arr of allSize) {
+              if (arr.TENSIZE == temp) {
+                temp = elmnClass[i].innerText.split(" ")
+                values = temp[0] + temp[1]
+                document.getElementsByClassName("size")[i].value = values + "_" + arr.MASIZE
+              }
             }
+            // masize = document.getElementsByClassName("masize")[i].value
+            // document.getElementsByClassName("size")[i].value = values + "_" + masize
           }
-          // masize = document.getElementsByClassName("masize")[i].value
-          // document.getElementsByClassName("size")[i].value = values + "_" + masize
+          document.getElementById("formTaoTrasua").submit()
+
+        } else {
+          alert("Vui lòng chọn size")
+          return
         }
-        document.getElementById("formTaoTrasua").submit()
       }
 
       function test(text) {

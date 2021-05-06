@@ -19,12 +19,25 @@ app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdC
   }
 
   $scope.themtrasua = function (soluong) {
+    console.log(soluong)
     datas = [];
     for(i = 0; i < soluong; i++) {
       datas[i] = i + 1
     }
 
     $scope.soluongtrasua = datas
+  }
+
+  $scope.xoatrasua = function (soluongtrasua, data) {
+
+    var index = soluongtrasua.indexOf(data);
+    if (index > -1) {
+      soluongtrasua.splice(index, 1);
+    }
+    $scope.soluongtrasua = soluongtrasua
+    console.log(soluongtrasua)
+
+   
   }
 
   $scope.themnguyenlieubosung = function (soluong) {
@@ -110,6 +123,11 @@ app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdC
 
    }
 
+   $scope.readmoreHoadon = function (soluonghoadon) {
+    soluonghoadon = parseInt(soluonghoadon) + 10;
+    $scope.soluonghoadon = soluonghoadon
+    console.log(soluonghoadon)
+   }
 
    $scope.arrayMaloaits = function (tenloaits, maloaits, arrayts) {
     if (!arrayts) {
@@ -145,7 +163,51 @@ app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdC
    $scope.findMasize = function (size) {
     console.log(size)
    }
-     
+
+
+
+
+
+   $scope.setDonvi = function (json, manl, index) {
+    for (obj of json) {
+      if (obj.MANGUYENLIEU == manl) {
+        // console.log(document.getElementsByClassName("donvi")[index-1].value)
+
+        document.getElementsByClassName("donvi")[index-1].value = obj.DONVI
+      }
+    }
+   }
+  
+  mahoadon = ''
+  $scope.getMahoadon = function (mahd) {
+    mahoadon = mahd;
+  }
+
+   // confirm delete 
+  $scope.confirmCancelHoadon = function () {
+    //  trả về promise để khi jquery gọi thì nó sẽ đợi kết quả trả về từ angular (alert.js )
+    return new Promise((resolve, reject) => {
+    
+      var urlApi = 'http://localhost:8080/trasua/admin/huyhoadon/' + mahoadon
+    
+      $http.get(urlApi)
+      .then(function(res) {
+        if (res.data == "1") {
+          resolve(res.data)
+        } else if (res.data == "Cập nhật trạng thái hóa đơn thất bại"){
+          reject("Không thể cập nhật trạng thái cho hóa đơn");
+
+        } else if (res.data == "Cập nhật kho thất bại") {
+          reject("Cập nhật kho thất bại");
+          
+        }
+      }, function (res, err) {
+        console.log(err)
+      })
+
+
+    })
+  }
      
 
    $http.get('http://localhost:8080/trasua/admin/getsizeapi/' + $cookies.get('SESSIONID'))
@@ -531,6 +593,177 @@ app.controller('tonkho',  function($scope, $rootScope, $q, $timeout, $log, $mdCo
 
 
 
+app.controller('managedStock',  function($scope, $rootScope, $http) {
+  $scope.getEmptyBophan = function (bophan) {
+    emptyNvql = [];
+    for (arr of bophan) {
+      if (!arr.MANVQL) {
+        emptyNvql.push(arr);
+      }
+    }
+    $scope.allBophan = emptyNvql;
+  }
+
+
+  $scope.getBophan = function (bophan) {
+    notEmptyNvql = [];
+    for (arr of bophan) {
+      if (arr.MANVQL) {
+        notEmptyNvql.push(arr);
+      }
+    }
+    $scope.allBophan = notEmptyNvql;
+  }
+
+  $scope.parJson = function (json) {
+     return angular.fromJson(json);
+     console.log(angular.fromJson(json))
+  }
+
+  $scope.display = function (acc, dongia, tennl) {
+    acc.DONGIAMOI = dongia
+    acc.TENNLMOI = tennl
+    acc.hienthi = !acc.hienthi
+    acc.DONE = false
+
+  }
+
+
+  manguyenlieu = ''
+  $scope.getManl = function (manl) {
+    manguyenlieu = manl;
+  }
+
+  // confirm delete 
+  $scope.confirmDelete = function () {
+    //  trả về promise để khi jquery gọi thì nó sẽ đợi kết quả trả về từ angular (alert.js )
+    return new Promise((resolve, reject) => {
+      var data = $.param({ 
+        manl: manguyenlieu
+      }) 
+    
+      var urlApi = 'http://localhost:8080/trasua/admin/deleteNguyenlieu'
+
+      var config = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        }
+      }
+    
+      $http.post(urlApi, data, config)
+      .then(function(res) {
+        if (res.data == "2") {
+          reject("Nguyên liệu này đã được sử dụng")
+        } else {
+          resolve(res.data)
+
+        } 
+      }, function (res, err) {
+        console.log(err)
+      })
+
+
+    })
+  }
+
+
+  $scope.confirmUnlock = function () {
+    //  trả về promise để khi jquery gọi thì nó sẽ đợi kết quả trả về từ angular (alert.js )
+    return new Promise((resolve, reject) => {
+      var data = $.param({ 
+        matk: mataikhoan
+      }) 
+    
+      var urlApi = 'http://localhost:8080/trasua/admin/unlockAccount'
+
+      var config = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        }
+      }
+    
+      $http.post(urlApi, data, config)
+      .then(function(res) {
+        if (res.data != "0") {
+          resolve(res.data)
+        } else {
+          reject(res.data)
+
+        } 
+      }, function (res, err) {
+        console.log(err)
+      })
+
+
+    })
+  }
+
+
+  $scope.displayDone = function (acc) {
+    acc.DONE = true
+  }
+
+  nl = ''
+  $scope.getNguyenlieu = function (acc) {
+    nl = acc;
+  }
+
+  $scope.confirmDone = function () {
+    //  trả về promise để khi jquery gọi thì nó sẽ đợi kết quả trả về từ angular (alert.js )
+    return new Promise((resolve, reject) => {
+      if (nl.TENNLMOI == null) {
+        reject("Vui lòng nhập tên nguyên liệu")
+        console.log("nlmoi rong")
+        return
+      } 
+      if (nl.DONGIAMOI == null) {
+        reject("Vui lòng nhập đơn giá")
+        return
+      } 
+
+      if (nl.DONGIAMOI < 5000 || nl.DONGIAMOI > 50000) {
+        reject("Đơn giá nhập trong khoảng 5000 và 50000")
+        return
+      } 
+
+      if ((nl.TENNL == nl.TENNLMOI) && (nl.DONGIA == nl.DONGIAMOI.toString())) {
+        reject("Không có thay đổi nào")
+        return
+      }
+
+
+      var data = $.param({ 
+        manl: nl.MANGUYENLIEU,
+        tennlmoi: nl.TENNLMOI,
+        dongiamoi: nl.DONGIAMOI
+      }) 
+    
+      var urlApi = 'http://localhost:8080/trasua/admin/danhsachnguyenlieu'
+
+      var config = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        }
+      }
+    
+      $http.post(urlApi, data, config)
+      .then(function(res) {
+        if (res.data == "1") {
+          resolve(res.data)
+        } else {
+          reject(res.data)
+
+        } 
+      }, function (res, err) {
+        console.log(err)
+      })
+
+
+    })
+  }
+
+})
+
 
 
 
@@ -644,6 +877,7 @@ app.controller('managedAccount',  function($scope, $rootScope, $http) {
 
   $scope.displayDone = function (acc) {
     acc.DONE = true
+
   }
 
   account = ''

@@ -52,7 +52,7 @@
             <div class="m-l-3 m-r-3">
               <md-content layout-padding style="background-color: #ffff">
                 <!-- so luong tra sua -->
-                <div layout="row" >
+                <!-- <div layout="row" >
                   <md-input-container flex="50" class="m-b-0">
                     <label>Số lượng trà sữa</label>
                     <input type="text" ng-model="soluong">
@@ -62,7 +62,7 @@
                       Chọn
                     </button>
                   </md-input-container>
-                </div>
+                </div> -->
 
                  
                 <div class="row" ng-init="displayCol12=1" id="editProduct">
@@ -104,7 +104,7 @@
                       <span class="plan-price-symbol">Nguyên liệu: </span>
                       <table class="table table-borderless">
                         <thead >
-                          <tr ng-repeat="ctloai in ts.CTLOAITRASUA">
+                          <tr ng-repeat="ctloai in ts.CTLOAITRASUA" >
                             <th class="pl-0" scope="col">{{ctloai.TENNL}}</th>
                             <td class="pl-0" scope="col">{{ctloai.LIEULUONG}}</td>
                           </tr>
@@ -227,55 +227,55 @@
                             </md-input-container>
                           </div>                
 
-                          <div ng-show="{{dataset}}"  ng-repeat="data in dataset">
-                            <p class="p-b-0 m-t-2"><b>Nguyên liệu {{data}}</b></p>
-                            
-                            <div layout="row">
-                                <md-input-container flex="20" >
-                                  <label>Tên nguyên liệu</label>
-                                  <md-select name="nguyenlieucu[]" ng-model="nguyenlieucu" required ng-disabled="nguyenlieumoi" >
-                                    <?php foreach ($mangdulieu["nguyenlieu"] as $key ): ?>
-                                      <md-option value="<?php echo $key["MANGUYENLIEU"] ?>"><?php echo $key["TENNL"] ?></md-option>
-                                    <?php endforeach ?>
-                                    <md-option value=""></md-option>
-                                  </md-select>
-                                  <div ng-messages="projectForm.nguyenlieucu.$error">
-                                    <div ng-message="required">Bắt buộc</div>
-                                  </div>
-                                </md-input-container>
-
-                                <md-input-container flex="33">
-                                  <label>Số lượng</label>
-                                  <input type="number" min="0" step="any" required ng-model="soluong" name="soluong[]" >
-                                  <div ng-messages="projectForm.soluong.$error">
-                                    <div ng-message="required">Bắt buộc</div>
-                                  </div>
-                                </md-input-container>
-                                <md-input-container flex="33">
-                                  <label>Đơn vị</label>
-                                  <md-select name="donvi[]" ng-model="donvi" required >
-                                    
-                                    <md-option value="lit">Lít</md-option>
-                                    <md-option value="kg">Kilogram</md-option>
-                                   
-                                  </md-select>
-                                  <div ng-messages="projectForm.donvi.$error">
-                                    <div ng-message="required">Bắt buộc</div>
-                                    <div ng-message="md-maxlength">Đơn vị phải nhỏ hơn 10 kí tự</div>
-                                  </div>
-                                </md-input-container>
-                                <md-input-container flex="33">
-                                  <label>Ghi chú</label>
-                                  <input md-maxlength="50"  name="note[]" ng-model="note">
-                                  <div ng-messages="projectForm.note.$error">
-                                    <div ng-message="required">Bắt buộc</div>
-                                    <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
-                                  </div>
-                                </md-input-container>
-
-                              </div>
+                          <div ng-repeat="ts in loaitrasua">
+                            <div ng-repeat="ctloai in ts.CTLOAITRASUA">
+                              <p class="p-b-0 m-t-2"><b>Nguyên liệu {{$index+1}}</b></p>
+                              <p class="p-b-0 m-t-2"><b>Nguyên liệu {{ctloai.TENNL}}</b></p>
                               
-                            </div>  
+                              <div layout="row">
+                                  <md-input-container flex="20" >
+                                    <label>Tên nguyên liệu</label>
+                                    <md-select  name="nguyenlieucu[]" ng-model="nguyenlieucu" required ng-disabled="nguyenlieumoi" >
+                                      <?php foreach ($mangdulieu["nguyenlieu"] as $key ): ?>
+                                        <md-option value="<?php echo $key["MANGUYENLIEU"] ?>" ng-selected="{{ ctloai.TENNL === '<?php echo $key["TENNL"] ?>' ? 'true' : 'false' }}"><?php echo $key["TENNL"] ?></md-option>
+                                      <?php endforeach ?>
+                                    </md-select>
+                                    <div ng-messages="projectForm.nguyenlieucu.$error">
+                                      <div ng-message="required">Bắt buộc</div>
+                                    </div>
+                                  </md-input-container>
+
+                                  <md-input-container flex="33">
+                                    <label>Số lượng</label>
+                                    <input type="number" min="0.1" max="0.5" step="any" required ng-value="ctloai.LIEULUONG" name="soluong[]" >
+                                    <div ng-messages="projectForm.soluong.$error">
+                                      <div ng-message="required">Bắt buộc</div>
+                                    </div>
+                                  </md-input-container>
+                                  <md-input-container flex="33">
+                                    <label>Đơn vị</label>
+                                    <md-select name="donvi[]" ng-model="donvi" required >
+                                      <md-option ng-selected="true" value="{{ctloai.DONVI}}">{{ctloai.DONVI}}</md-option>
+                                    </md-select>
+                                    <div ng-messages="projectForm.donvi.$error">
+                                      <div ng-message="required">Bắt buộc</div>
+                                      <div ng-message="md-maxlength">Đơn vị phải nhỏ hơn 10 kí tự</div>
+                                    </div>
+                                  </md-input-container>
+                                  <md-input-container flex="33">
+                                    <label>Ghi chú</label>
+                                    <input md-maxlength="50"  name="note[]" ng-model="ctloai.GHICHU" >
+                                    <div ng-messages="projectForm.note.$error">
+                                      <div ng-message="required">Bắt buộc</div>
+                                      <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 50 kí tự</div>
+                                    </div>
+                                  </md-input-container>
+
+                                </div>
+                            </div>
+                            
+                              
+                          </div>  
                             
                             <fieldset class="form-group">
                               <label for="username">

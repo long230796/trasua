@@ -33,6 +33,7 @@
       <a class="dropdown-item" href="<?php echo base_url() ?>admin/logout">Logout</a>
     </div>
   </div>
+
   <!-- main navigation -->
   <nav>
     <p class="nav-title">NAVIGATION</p>
@@ -71,6 +72,33 @@
           
         </ul>
       </li>
+
+      <li class="flex-grow-1">
+        <a href="javascript:;">
+          <span class="menu-caret">
+            <i class="material-icons">arrow_drop_down</i>
+          </span>
+          <i class="material-icons text-dark">store</i>
+          <span>Quản lí Kho</span>
+
+        </a>
+        <ul class="sub-menu">
+          <li>
+            <a href="<?php echo base_url() ?>admin/danhsachnguyenlieu">
+              <i class="material-icons text-dark">list</i>
+              <span>Danh sách nguyên liệu</span>
+            </a>
+          </li>
+          <li>
+            <a href="<?php echo base_url() ?>admin/donnhaphang">
+              <i class="material-icons text-dark">add_shopping_cart</i>
+              <span>Thêm nguyên liệu</span>
+            </a>
+          </li>
+          
+        </ul>
+      </li>
+
       <li class="flex-grow-1">
         <a href="javascript:;">
           <span class="menu-caret">
@@ -81,7 +109,7 @@
         </a>
         <ul class="sub-menu">
           <li>
-            <a href="<?php echo base_url() ?>admin/quanliTaikhoanTongquat">
+            <a href="<?php echo base_url() ?>admin/danhsachtaikhoan">
               <i class="material-icons text-success">list</i>
               <span>Danh sách tài khoản</span>
             </a>
@@ -117,22 +145,15 @@
             <i class="material-icons">arrow_drop_down</i>
           </span>
           <i class="material-icons text-danger">explore</i>
-          <span>Chức năng</span>
+          <span>Giao dịch</span>
         </a>
         <ul class="sub-menu">
           <li>
-            <a href="<?php echo base_url() ?>admin/dondathang">
-              <i class="material-icons text-danger">shopping_cart</i>
-              <span>Đặt hàng</span>
+            <a href="<?php echo base_url() ?>admin/danhsachhoadon">
+              <i class="material-icons text-danger">list</i>
+              <span>Danh sách hóa đơn</span>
             </a>
           </li>
-          <li>
-            <a href="<?php echo base_url() ?>admin/donnhaphang">
-              <i class="material-icons text-danger">file_download</i>
-              <span>Nhập hàng</span>
-            </a>
-          </li>
-          
           <li>
             <a href="<?php echo base_url() ?>admin/laphoadon">
               <i class="material-icons text-danger">payment</i>

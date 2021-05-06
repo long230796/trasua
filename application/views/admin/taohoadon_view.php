@@ -20,6 +20,7 @@
 
     <!-- page stylesheets -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>/milestone/vendor/bower-jvectormap/jquery-jvectormap-1.2.2.css"/>
+    <link rel="stylesheet" href="<?php echo base_url(); ?>/milestone/vendor/sweetalert/dist/sweetalert.css">
     <!-- end page stylesheets -->
 
     <!-- build:css({.tmp,app}) styles/app.min.css -->
@@ -60,19 +61,19 @@
               </div>
             </div> -->
             <div class="m-l-3 m-r-3">
-              <md-content layout-padding style="background-color: #ffff">
+              <md-content layout-padding style="background-color: #ffff" ng-init="themtrasua(1)">
                 <!-- so luong tra sua -->
-                <div layout="row" >
+                <!-- <div layout="row" >
                   <md-input-container flex="50" class="m-b-0">
                     <label>Số lượng trà sữa</label>
-                    <input type="text" ng-model="soluong">
+                    <input type="text" min="1" max="10" ng-model="soluong">
                   </md-input-container>
                   <md-input-container flex="50" class="m-b-0">
                     <button type="button" class="btn btn-default m-r-xs m-b-xs form-control" ng-click="themtrasua(soluong)">
                       Chọn
                     </button>
                   </md-input-container>
-                </div>
+                </div> -->
 
                 <form name="projectForm" action="" method="POST" ng-init='khachhang=parJson(<?php echo $mangdulieu['khachhang']?>)'>
 
@@ -221,7 +222,7 @@
                     </div>
                     
                     <div ng-show="{{soluongtrasua}}" ng-repeat="data in soluongtrasua">
-                      <p class="p-b-0 m-t-2"><b>Trà sữa {{data}}</b></p>
+                      <p class="p-b-0 m-t-2"><b>Trà sữa {{$index+1}}</b></p>
                       <div layout="row" >
                         <md-input-container flex="33">
                           <label ng-model="arrayloaits">Loại trà sữa</label>
@@ -260,8 +261,15 @@
                             <div ng-message="md-maxlength">Đơn giá phải nhỏ hơn 10 kí tự</div>
                           </div>
                         </md-input-container>
+                        <md-input-container >
+                          <i type="button" ng-click="themtrasua($index+2)" class="material-icons text-info">add</i>
+                        </md-input-container>
+                        <md-input-container ng-show="$index" >
+                          <i type="button" ng-click="xoatrasua(soluongtrasua, data)" class="material-icons text-info">close</i>
+                        </md-input-container>
                       </div>
                     </div>
+                    
                     
 
                     
@@ -336,12 +344,19 @@
                         Hóa đơn gần đây
                       </h6>
 
-                      <div class="row" ng-repeat="hoadon in bills" ng-init="hoadon.display=false">
+                      <div id="angularPart" class="row" ng-repeat="hoadon in bills" ng-init="hoadon.display=false">
                         <div class="col-md-12">
                           <div class="card ">
                             <div class="card-header " ng-click="displayHoadon(hoadon)">
                                Mã hóa đơn: {{hoadon.MAHOADON}}<br>
-                               Ngày lập: {{hoadon.NGAYLAP}}
+                               Ngày lập: {{hoadon.NGAYLAP}} <br>
+                               Trạng thái: 
+                               <a ng-show="{{hoadon.MATRANGTHAI === '1' ? 'true' : '' }}" href="#" class="text-success m-r-1 m-b-xs" data-toggle="tooltip" data-placement="top" title="" data-original-title="On the Top!">
+                                 Đã thanh toán
+                               </a>
+                               <a ng-show="{{hoadon.MATRANGTHAI === '2' ? 'true' : '' }}" href="#" class="text-pink m-r-1 m-b-xs" data-toggle="tooltip" data-placement="top" title="" data-original-title="On the Top!">
+                                 Đã hủy
+                               </a>
                               <div class="card-controls ">
                                 <a ng-click="displayHoadon(hoadon)" class="card-collapse" data-toggle="card-collapse"></a>
                               </div>
@@ -397,13 +412,13 @@
                                         {{CTHOADON.TENSIZE}}
                                       </td>
                                       <td>
-                                        {{CTHOADON.GIA/CTHOADON.SOLUONG}}
+                                        {{CTHOADON.DONGIAMOI}}
                                       </td>
                                       <td>
                                         {{CTHOADON.SOLUONG}}
                                       </td>
                                       <td>
-                                        {{CTHOADON.GIA}}
+                                        {{CTHOADON.DONGIAMOI * CTHOADON.SOLUONG}}
                                       </td>
                                     </tr>
 
@@ -411,6 +426,9 @@
                                     <tr ng-repeat="bosung in CTHOADON.NGUYENLIEUBOSUNG">
                                       <td class="float-right text-xs-center">
                                        {{bosung.nguyenlieu}}
+                                      </td>
+                                      <td>
+                                        
                                       </td>
                                       <td>
                                         {{bosung.gia/bosung.soluongthem}}
@@ -436,11 +454,16 @@
                                 </span>
                               </div>
                             </div>
-                            <button type="button" class="btn btn-danger btn-icon btn-sm" onclick='window.print()'>
-                              <i class="material-icons">print</i>
+                            <button ng-show="{{ hoadon.MATRANGTHAI === '1' ? 'true' : '' }}" type="button" class="btn btn-success btn-icon btn-sm" onclick='window.print()'>
                               Print
+                              <i class="material-icons">print</i>
+                            </button> 
+                            <button ng-show="{{ hoadon.MATRANGTHAI === '1' ? 'true' : '' }}" ng-click="getMahoadon(hoadon.MAHOADON)" type="button" class="btn btn-danger btn-icon btn-sm cancelHoadon">
+                              Hủy hóa đơn
+                              <i class="material-icons">cancel</i>
                             </button>
-                           <!--  <a href="<?php echo base_url() ?>admin/lapphieugiao/{{hoadon.MAHOADON}}" type="button" class="btn btn-info">Lập phiếu giao</a> -->
+                            ​<img ng-show="{{ hoadon.MATRANGTHAI === '2' ? 'true' : '' }}" src="<?php echo base_url() ?>/FileUpload/Cancelled.jpg" class="img-fluid" style="width: 30%" alt="Responsive image">
+                            <script src="<?php echo base_url(); ?>/milestone/scripts/ui/alert.js"></script>
                             </div>
                           </div>
                         </div>
@@ -465,6 +488,15 @@
       
 
     </div>
+
+    <script type="text/javascript">
+      $("[data-toggle=tooltip]").tooltip();
+      $("[data-toggle=popover]")
+        .popover()
+        .click(function (e) {
+          e.preventDefault();
+        });
+    </script>
 
     <script type="text/javascript">
       window.paceOptions = {

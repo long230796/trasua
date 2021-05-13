@@ -80,7 +80,7 @@
                     <div layout="row" ng-init="dataset='false'">
                       <md-input-container class="flex-100" >
                         <label>Số điện thoại khách hàng</label>
-                        <input type="number" name="sodienthoai" ng-model="sodienthoai" ng-click="showListkhachhang()">
+                        <input  type="number" name="sodienthoai" ng-model="sodienthoai" ng-click="showListkhachhang()">
                         <div ng-messages="projectForm.sodienthoai.$error">
                           <div ng-message="required">Bắt buộc</div>
                         </div>
@@ -157,17 +157,23 @@
                     <div layout="row" ng-show="hienthiFormKH">
                       <md-input-container flex="50">
                         <label>Họ</label>
-                        <input type="text"  name="hokh" ng-model="hokh">
+                        <input ng-pattern ="/^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s\W|_]+$/" minlength="5" md-maxlength="20" type="text"  name="hokh" ng-model="hokh">
                         <div ng-messages="projectForm.hokh.$error">
                           <div ng-message="required">Bắt buộc</div>
+                          <div ng-message="md-maxlength">Họ phải nhỏ hơn 15 kí tự</div>
+                          <div ng-message="minlength">Tối thiểu 5 chữ</div>
+                          <div ng-message="pattern" class="my-message">Sai định dạng
+                          </div>
                         </div>
                       </md-input-container>
                       <md-input-container flex="50">
                         <label>Tên</label>
-                        <input type="text" name="tenkh" ng-model="tenkh">
+                        <input ng-pattern="/^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s\W|_]+$/" type="text" name="tenkh" ng-model="tenkh">
                         <div ng-messages="projectForm.tenkh.$error">
                           <div ng-message="required">Bắt buộc</div>
-                          <div ng-message="md-maxlength">Đơn giá phải nhỏ hơn 10 kí tự</div>
+                          <div ng-message="md-maxlength">Tên phải nhỏ hơn 7 kí tự</div>
+                          <div ng-message="pattern" class="my-message">Sai định dạng
+                          </div>
                         </div>
                       </md-input-container>
                     </div>
@@ -307,7 +313,7 @@
                             <label>Tên nguyên liệu</label>
                             <md-select name="nguyenlieucu[]" ng-model="nguyenlieucu" required ng-disabled="nguyenlieumoi" >
                               <?php foreach ($mangdulieu["nguyenlieu"] as $key ): ?>
-                                <md-option value="<?php echo $key["MANGUYENLIEU"] ?>"><?php echo $key["TENNL"] ?></md-option>
+                                <md-option ng-click='setDonvi(<?php echo json_encode($mangdulieu['nguyenlieu'])?>, "<?php echo $key['MANGUYENLIEU'] ?>", data)' value="<?php echo $key["MANGUYENLIEU"] ?>"><?php echo $key["TENNL"] ?></md-option>
                               <?php endforeach ?>
                               <md-option value=""></md-option>
                             </md-select>
@@ -325,11 +331,12 @@
                           </md-input-container>
                           <md-input-container flex="25">
                             <label>Đơn vị</label>
-                            <input type="text" md-maxlength="10" required name="donvi[]" ng-model="donvi">
+                            <input readonly  class="donvi" type="text" required name="donvi[]" value=" ">
+                            <!-- <input type="text" md-maxlength="10" required name="donvi[]" ng-model="donvi">
                             <div ng-messages="projectForm.donvi.$error">
                               <div ng-message="required">Bắt buộc</div>
                               <div ng-message="md-maxlength">Đơn vị phải nhỏ hơn 10 kí tự</div>
-                            </div>
+                            </div> -->
                           </md-input-container>
                           
 
@@ -355,7 +362,7 @@
                                  Đã thanh toán
                                </a>
                                <a ng-show="{{hoadon.MATRANGTHAI === '2' ? 'true' : '' }}" href="#" class="text-pink m-r-1 m-b-xs" data-toggle="tooltip" data-placement="top" title="" data-original-title="On the Top!">
-                                 Đã hủy
+                                 Chưa thanh toán
                                </a>
                               <div class="card-controls ">
                                 <a ng-click="displayHoadon(hoadon)" class="card-collapse" data-toggle="card-collapse"></a>
@@ -454,15 +461,11 @@
                                 </span>
                               </div>
                             </div>
-                            <button ng-show="{{ hoadon.MATRANGTHAI === '1' ? 'true' : '' }}" type="button" class="btn btn-success btn-icon btn-sm" onclick='window.print()'>
-                              Print
-                              <i class="material-icons">print</i>
-                            </button> 
-                            <button ng-show="{{ hoadon.MATRANGTHAI === '1' ? 'true' : '' }}" ng-click="getMahoadon(hoadon.MAHOADON)" type="button" class="btn btn-danger btn-icon btn-sm cancelHoadon">
-                              Hủy hóa đơn
-                              <i class="material-icons">cancel</i>
-                            </button>
-                            ​<img ng-show="{{ hoadon.MATRANGTHAI === '2' ? 'true' : '' }}" src="<?php echo base_url() ?>/FileUpload/Cancelled.jpg" class="img-fluid" style="width: 30%" alt="Responsive image">
+                            ​<img ng-show="{{ hoadon.MATRANGTHAI === '2' ? 'true' : '' }}" src="<?php echo base_url() ?>/FileUpload/unpaid.jpg" class="img-fluid" style="width: 25%" alt="Responsive image">
+                            <a href="<?php echo base_url() ?>admin/chitiethoadon/{{hoadon.MAHOADON}}" type="button" class="btn btn-success btn-icon btn-sm">
+                              Chi tiết
+                              <i class="material-icons">remove_red_eye</i>
+                            </a> 
                             <script src="<?php echo base_url(); ?>/milestone/scripts/ui/alert.js"></script>
                             </div>
                           </div>

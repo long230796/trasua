@@ -90,10 +90,10 @@
                                Ngày lập: {{hoadon.NGAYLAP}} <br>
                                Trạng thái: 
                                <b><a ng-show="{{hoadon.MATRANGTHAI === '1' ? 'true' : '' }}" href="#" class="text-success m-r-1 m-b-xs" data-toggle="tooltip" data-placement="top" title="" data-original-title="On the Top!">
-                                 Đã thanh toán
+                                {{hoadon.TRANGTHAITEXT}}
                                </a></b>
                                <b><a ng-show="{{hoadon.MATRANGTHAI === '2' ? 'true' : '' }}" href="#" class="text-pink m-r-1 m-b-xs" data-toggle="tooltip" data-placement="top" title="" data-original-title="On the Top!">
-                                 Đã hủy
+                                 {{hoadon.TRANGTHAITEXT}}
                                </a></b>
 
                               <div class="card-controls ">
@@ -193,19 +193,11 @@
                                 </span>
                               </div>
                             </div>
-                            <img ng-show="{{ hoadon.MATRANGTHAI === '2' ? 'true' : '' }}" src="<?php echo base_url() ?>/FileUpload/Cancelled.jpg" class="img-fluid" style="width: 30%" alt="Responsive image">
-                            <a ng-show="{{ hoadon.MATRANGTHAI === '1' ? 'true' : '' }}" href="<?php echo base_url() ?>admin/chitiethoadon/{{hoadon.MAHOADON}}" type="button" class="btn btn-success btn-icon btn-sm" >
+                            <img ng-show="{{ hoadon.MATRANGTHAI === '2' ? 'true' : '' }}" src="<?php echo base_url() ?>/FileUpload/unpaid.jpg" class="img-fluid " style="width: 25%" alt="Responsive image">
+                            <a href="<?php echo base_url() ?>admin/chitiethoadon/{{hoadon.MAHOADON}}" type="button" class="btn btn-success btn-icon btn-sm" >
                               Chi tiết
                               <i class="material-icons">remove_red_eye</i>
                             </a>
-                            <a ng-show="{{ hoadon.MATRANGTHAI === '2' ? 'true' : '' }}" href="<?php echo base_url() ?>admin/chitiethoadon/{{hoadon.MAHOADON}}" type="button" class="btn btn-success btn-icon btn-sm pull-xs-right" >
-                              Chi tiết
-                              <i class="material-icons">remove_red_eye</i>
-                            </a> 
-                            <button ng-show="{{ hoadon.MATRANGTHAI === '1' ? 'true' : '' }}" ng-click="getMahoadon(hoadon.MAHOADON)" type="button" class="btn btn-danger btn-icon btn-sm cancelHoadon">
-                              Hủy hóa đơn
-                              <i class="material-icons">cancel</i>
-                            </button>
                             ​
                             <script src="<?php echo base_url(); ?>/milestone/scripts/ui/alert.js"></script>
                             </div>

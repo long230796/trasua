@@ -205,7 +205,7 @@
                               </div>
                             </div>
                             
-                            ​<img ng-show="{{ hoadon.MATRANGTHAI === '2' ? 'true' : '' }}" src="<?php echo base_url() ?>/FileUpload/Cancelled.jpg" class="img-fluid" style="width: 30%" alt="Responsive image">
+                            ​<img ng-show="{{ hoadon.MATRANGTHAI === '2' ? 'true' : '' }}" src="<?php echo base_url() ?>/FileUpload/unpaid.jpg" class="img-fluid" style="width: 25%" alt="Responsive image">
                             <script src="<?php echo base_url(); ?>/milestone/scripts/ui/alert.js"></script>
                             </div>
                           </div>

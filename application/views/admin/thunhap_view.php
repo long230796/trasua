@@ -37,7 +37,7 @@
     <link rel="stylesheet" href="<?php echo base_url(); ?>1.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="myApp">
+  <body ng-app="myApp" ng-controller="thunhap">
 
     <div class="app">
       <!--sidebar panel-->
@@ -45,28 +45,56 @@
       <?php require('C:\xampp\htdocs\trasua\application\views\pages\sidebar_view.php') ?>
       <!-- content panel -->
       <div class="main-panel">
-        <?php require('C:\xampp\htdocs\trasua\application\views\pages\header_view.php') ?>
+        <nav class="header navbar">
+          <div class="header-inner">
+            <div class="navbar-item navbar-spacer-right brand hidden-lg-up">
+              <!-- toggle offscreen menu -->
+              <a href="javascript:;" data-toggle="sidebar" class="toggle-offscreen">
+                <i class="material-icons">menu</i>
+              </a>
+              <!-- /toggle offscreen menu -->
+              <!-- logo -->
+              <a class="brand-logo hidden-xs-down">
+                <img src="<?php echo base_url() ?>/milestone/images/logo_white.png" alt="logo"/>
+              </a>
+              <!-- /logo -->
+            </div>
+            <div class="navbar-item navbar-spacer-right navbar-heading hidden-md-down" href="#">
+              <button type="button" class="btn btn-success btn-icon btn-sm" onclick='window.print()'>
+                In hóa đơn
+                <i class="material-icons">print</i>
+              </button> 
+            </div>
+            <div class="navbar-search navbar-item" >
+            </div>
+
+
+
+          </div>
+        </nav>
 
         <!-- main area -->
         <div class="main-content">
           <div class="content-view">
-            <div ng-controller="thunhap" layout="column" ng-cloak ng-init='loaitrasua=<?php echo json_encode($mangdulieu['loaitrasua'])?>'>
+            <div  layout="column" ng-cloak ng-init='loaitrasua=<?php echo json_encode($mangdulieu['loaitrasua'])?>'>
             
-            
-              
+
                 <div class="m-b-3" style="background: #ffff">
-                  <h6 class="m-b-1">Line series</h6>
+                  <div flex-gt-xs  class="m-b-3">
+                    <md-input-container flex="50" class="m-b-0">
+                    <label>dd/mm/yy</label>
+                    <input type="text" min="1" max="10" ng-model="datepicked_custom">
+                  </md-input-container>
+                    
+                    <md-button ng-click="getDatePicker_custom(datepicked_custom)" class="md-primary md-raised">Lọc</md-button>
+                  </div>
+                  <h6 class="m-b-1">{{message}}<b class="text-success">{{doanhthutheothang}}</b></h6>
                   <div class="c3chart">
                     <div class="c3chart1" id="chart"></div>
                   </div>
                 </div>
 
-                <div style="background: #ffff">
-                  <h6 class="m-b-1">Bar series</h6>
-                  <div class="c3chart">
-                    <div class="c3chart2" id="chart2"></div>
-                  </div>
-                </div>
+
          
             </div>
 

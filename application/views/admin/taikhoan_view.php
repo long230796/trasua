@@ -157,6 +157,12 @@
                               <script src="<?php echo base_url(); ?>/milestone/scripts/ui/alert.js"></script>
                               
                             </a>
+                            <!-- xóa -->
+                            <a href="#">
+                              <i class="material-icons text-success deleteTaikhoan" ng-click="getMatk(acc.MATAIKHOAN)">delete</i>
+                              <script src="<?php echo base_url(); ?>/milestone/scripts/ui/alert.js"></script>
+                              
+                            </a>
 
                             <!-- done -->
                             <a ng-show="acc.DONE" href="#"  >

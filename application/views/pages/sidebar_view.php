@@ -7,7 +7,7 @@
     <!-- /toggle offscreen menu -->
     <!-- logo -->
     <a class="brand-logo">
-      <img class="expanding-hidden" src="http://localhost:8080/trasua//milestone/images/logo.png" alt="">
+      <img class="expanding-hidden" src="http://localhost:8080/trasua/milestone/images/logo.png" alt="">
     </a>
     <!-- /logo -->
   </div>
@@ -85,16 +85,28 @@
         <ul class="sub-menu">
           <li>
             <a href="<?php echo base_url() ?>admin/danhsachnguyenlieu">
-              <i class="material-icons text-dark">list</i>
-              <span>Danh sách nguyên liệu</span>
+              <i class="material-icons text-dark">restaurant_menu</i>
+              <span>nguyên liệu</span>
             </a>
           </li>
           <li>
+            <a href="<?php echo base_url() ?>admin/dondathang">
+              <i class="material-icons text-dark">add_shopping_cart</i>
+              <span>đặt nguyên liệu</span>
+            </a>
+          </li>
+          <li>
+            <a href="<?php echo base_url() ?>admin/danhsachdondathang">
+              <i class="material-icons text-dark">description</i>
+              <span>đơn đặt nguyên liệu</span>
+            </a>
+          </li>
+         <!--  <li>
             <a href="<?php echo base_url() ?>admin/donnhaphang">
               <i class="material-icons text-dark">add_shopping_cart</i>
               <span>Thêm nguyên liệu</span>
             </a>
-          </li>
+          </li> -->
           
         </ul>
       </li>
@@ -151,12 +163,19 @@
           <li>
             <a href="<?php echo base_url() ?>admin/danhsachhoadon">
               <i class="material-icons text-danger">list</i>
-              <span>Danh sách hóa đơn</span>
+              <span>Hóa đơn</span>
             </a>
           </li>
           <li>
+            <a href="<?php echo base_url() ?>admin/danhsachdonhang">
+              <i class="material-icons text-danger">list</i>
+              <span>Đơn hàng</span>
+            </a>
+          </li>
+          
+          <li>
             <a href="<?php echo base_url() ?>admin/laphoadon">
-              <i class="material-icons text-danger">payment</i>
+              <i class="material-icons text-danger">description</i>
               <span>Lập hóa đơn</span>
             </a>
           </li>

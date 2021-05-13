@@ -76,7 +76,7 @@
                             {{ts.TENLOAI}}
                         </h5>
                         <a ng-click="displayForm(displayCol12)" href="#">
-                          <i class="material-icons text-danger">mode_edit</i>
+                          <i class="material-icons text-primary">mode_edit</i>
                         </a>
                         <a href="#" ng-if="ts.TRANGTHAI">
                           <i class="material-icons text-danger LockProduct" ng-click="getMaloai(ts.MALOAITRASUA)" >lock_outline</i>
@@ -84,6 +84,10 @@
                         </a>
                         <a href="#" ng-if="!ts.TRANGTHAI">
                           <i class="material-icons text-success UnlockProduct" ng-click="getMaloai(ts.MALOAITRASUA)">lock_open</i>
+                          <script src="<?php echo base_url(); ?>milestone/scripts/ui/alert.js"></script>
+                        </a>
+                        <a href="#">
+                          <i class="material-icons text-danger DeleteProduct" ng-click="getMaloai(ts.MALOAITRASUA)">delete</i>
                           <script src="<?php echo base_url(); ?>milestone/scripts/ui/alert.js"></script>
                         </a>
                       </div>
@@ -120,12 +124,13 @@
 
                   <div ng-show="!displayCol12" class="col-sm-12 col-md-12 mb-4">
                     <md-content layout-padding style="background-color: #ffff">
-                      <form ng-repeat="ts in loaitrasua" id="formTaoTrasua" name="projectForm" action="" method="POST" enctype="multipart/form-data">
+                      <form name="projectForm" ng-repeat="ts in loaitrasua" id="formTaoTrasua"  action="" method="POST" enctype="multipart/form-data">
                           <div layout="row">
                             <md-input-container flex="100">
                               <label>Nhập tên sản phẩm</label>
-                              <input type="hidden"  name="tenloaicu" value="{{ts.TENLOAI}}">
-                              <input  name="tenloai" value="{{ts.TENLOAI}}">
+                              <input type="hidden" name="tenloaicu" value="{{ts.TENLOAI}}">
+                              <input type="hidden" ng-init="tenloai=ts.TENLOAI">
+                              <input  name="tenloai" required ng-model="tenloai" >
                               <input  type="hidden" name="maloaitrasua" value="{{ts.MALOAITRASUA}}">
                               <div ng-messages="projectForm.tenloai.$error">
                                 <div ng-message="required">Bắt buộc</div>
@@ -138,7 +143,7 @@
                             <md-input-container flex="100">
                               <label>Mô tả sản phẩm</label>
                               <input name="motacu" type="hidden" value="{{ts.MOTA}}">
-                              <textarea name="mota">{{ts.MOTA}}</textarea>
+                              <textarea name="mota" required>{{ts.MOTA}}</textarea>
                               <div ng-messages="projectForm.mota.$error">
                                 <div ng-message="required">Bắt buộc</div>
                                 <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
@@ -149,27 +154,28 @@
                           <div layout="row">
                             <md-input-container flex="100">
                               <label>Giá sản phẩm</label>
-                              <input type="number" name="gia" min="0" step="any" value="{{ts.GIA}}">
-                              <input type="hidden" name="giacu" value="{{ts.GIA}}">
+                              <input type="hidden" ng-init="gia=parseInt(ts.GIA)">
+                              <input type="number" required name="gia" min="10000" step="any" ng-model="gia">
+                              <input type="hidden" name="giacu" ng-model="giacu" ng-value="ts.GIA">
                               <div ng-messages="projectForm.gia.$error">
                                 <div ng-message="required">Bắt buộc</div>
                                 <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
                               </div>
                             </md-input-container>
                           </div>
-                          <div layout="row" >
+                          <!-- <div layout="row" >
                             <md-input-container flex="100">
                               <label>Trạng thái</label>
                               <input type="hidden" name="trangthaicu" value="{{ts.TRANGTHAI}}">
-                              <md-select ng-model="ts.TRANGTHAI" required name="trangthai">
-                                <md-option  value="1">Công khai</md-option>
-                                <md-option  value="0">Riêng tư</md-option>
+                              <md-select ng-model="ts.TRANGTHAI" name="trangthai">
+                                <md-option ng-selected="{{ts.TRANGTHAI === 1 ? 'true' : 'false'}}" value="1">Công khai</md-option>
+                                <md-option ng-selected="{{ts.TRANGTHAI === 0 ? 'true' : 'false'}}" value="0">Riêng tư</md-option>
                               </md-select>
-                              <div ng-messages="projectForm.status.$error">
+                              <div ng-messages="projectForm.trangthai.$error">
                                 <div ng-message="required">Bắt buộc.</div>
                               </div>
                             </md-input-container>
-                          </div>
+                          </div> -->
 
                           
 
@@ -215,8 +221,8 @@
                           <div layout="row" class="m-t-2">
                             <md-input-container flex="50">
                               <label>Số lượng nguyên liệu </label>
-                              <input type="number" min="0" step="any" ng-model="soluongnl" required >
-                              <div ng-messages="projectForm.soluong.$error">
+                              <input type="number" min="0" step="any" ng-model="soluongnl" >
+                              <div ng-messages="projectForm.soluongnl.$error">
                                 <div ng-message="required">Bắt buộc</div>
                               </div>
                             </md-input-container>
@@ -247,7 +253,8 @@
 
                                   <md-input-container flex="33">
                                     <label>Số lượng</label>
-                                    <input type="number" min="0.1" max="0.5" step="any" required ng-value="ctloai.LIEULUONG" name="soluong[]" >
+                                    <input type="hidden" ng-init="soluong=parseInt(ctloai.LIEULUONG)">
+                                    <input type="number" min="0.1" max="1" step="any" required ng-model="soluong"  name="soluong[]" >
                                     <div ng-messages="projectForm.soluong.$error">
                                       <div ng-message="required">Bắt buộc</div>
                                     </div>
@@ -264,11 +271,7 @@
                                   </md-input-container>
                                   <md-input-container flex="33">
                                     <label>Ghi chú</label>
-                                    <input md-maxlength="50"  name="note[]" ng-model="ctloai.GHICHU" >
-                                    <div ng-messages="projectForm.note.$error">
-                                      <div ng-message="required">Bắt buộc</div>
-                                      <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 50 kí tự</div>
-                                    </div>
+                                    <input md-maxlength="50" name="note[]" ng-model="ctloai.GHICHU">
                                   </md-input-container>
 
                                 </div>
@@ -295,7 +298,7 @@
                             <input class="size" type="hidden" name="sizes[]">
                             <div class="row">
                               <div class="col-sm-12 col-md-6">
-                                <button  onclick="getSize()" class="md-raised md-primary md-button md-ink-ripple form-control" type="button" ng-transclude="" aria-label="Primary"><span class="ng-scope">Sửa</span><div class="md-ripple-container" style=""></div></button>
+                                <button ng-disabled="projectForm.$invalid" onclick="getSize()" class="md-raised md-primary md-button md-ink-ripple form-control" type="button" ng-transclude="" aria-label="Primary"><span class="ng-scope">Sửa</span><div class="md-ripple-container" style=""></div></button>
                               </div>
                               <div class="col-sm-12 col-md-6">
                                 <button class="md-raised md-primary md-button md-ink-ripple form-control" type="button" ng-transclude="" ng-click="displayForm(displayCol12)" aria-label="Primary"><span class="ng-scope">Hủy</span><div class="md-ripple-container" style=""></div></button>

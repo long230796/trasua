@@ -42,6 +42,18 @@ class admin_model extends CI_Model {
 	}
 
 
+	public function checktrangthai($username)
+	{
+		$this->db->select('TRANGTHAI');
+        $this->db->where('TAIKHOAN', $username);
+		$trangthai = $this->db->get('taikhoan')->result_array();
+		return $trangthai;
+	}
+
+
+
+
+
 	public function deleteNguyenlieu($manl)
 	{
 		// tim trong ctloaitrasua
@@ -100,6 +112,15 @@ class admin_model extends CI_Model {
 		return $dl;
 	}
 
+	public function getCtDondathangByMadondh($madondh)
+	{
+		$this->db->select('*');
+		$this->db->where('MADONDATHANG', $madondh);
+		$dl = $this->db->get('ctdondathang')->result_array();
+
+		return $dl;
+	}
+
 
 	public function getCtPhieunhapByManl($manl)
 	{
@@ -110,6 +131,15 @@ class admin_model extends CI_Model {
 		return $dl;
 	}
 
+
+	public function getTennlByManl($manl)
+	{
+		$this->db->select('TENNL');
+		$this->db->where('MANGUYENLIEU', $manl);
+		$dl = $this->db->get('nguyenlieu')->result_array();
+
+		return $dl;
+	}
 
 
 	public function getDaytest($day, $month)
@@ -169,9 +199,28 @@ class admin_model extends CI_Model {
 		return $dl;
 	}
 
+
+	public function getNhacungcapByMa($manhacungcap)
+	{
+		$this->db->select('*');
+		$this->db->where('MANHACUNGCAP', $manhacungcap);
+		$dl = $this->db->get('nhacungcap');
+		$dl = $dl->result_array();
+		return $dl;
+	}
+
 	public function getNhanvien()
 	{
 		$this->db->select('*');
+		$dl = $this->db->get('nhanvien');
+		return $dl->result_array();
+
+	}
+
+	public function getNhanvienByMa($manhanvien)
+	{
+		$this->db->select('*');
+		$this->db->where('MANV', $manhanvien);
 		$dl = $this->db->get('nhanvien');
 		return $dl->result_array();
 
@@ -182,6 +231,17 @@ class admin_model extends CI_Model {
 		$this->db->select('*');
 		$dl = $this->db->get('nguyenlieu');
 		$dl = $dl->result_array();
+		return $dl;	
+	}
+
+
+	public function getTrangthaiDondathangByMa($matrangthai)
+	{
+		$this->db->select('*');
+		$this->db->where('MATRANGTHAI', $matrangthai);
+		$dl = $this->db->get('trangthaidondathang');
+		$dl = $dl->result_array();
+
 		return $dl;	
 	}
 
@@ -330,6 +390,18 @@ class admin_model extends CI_Model {
 	}
 
 
+	public function getMataikhoanByUsername($username)
+	{
+		$this->db->select('MATAIKHOAN');
+		$this->db->where('TAIKHOAN', $username);
+
+		$dl = $this->db->get('taikhoan')->result_array();
+
+		return $dl;
+
+	}
+
+
 	public function getMasizeByTensize($tensize)
 	{
 		$this->db->select('*');
@@ -365,6 +437,27 @@ class admin_model extends CI_Model {
 	public function getDondathang()
 	{
 		$this->db->select('MADONDH, MANHACUNGCAP');
+		$dl = $this->db->get('dondh');
+
+		return $dl->result_array();
+
+	}
+
+	public function getDondathangByMa($madondh)
+	{
+		$this->db->select('*');
+		$this->db->where('MADONDH', $madondh);
+		$dl = $this->db->get('dondh');
+
+		return $dl->result_array();
+
+	}
+
+
+	public function getAllDondathang()
+	{
+		$this->db->select('*');
+		$this->db->order_by('NGAYLAP', 'desc');
 		$dl = $this->db->get('dondh');
 
 		return $dl->result_array();
@@ -636,7 +729,7 @@ class admin_model extends CI_Model {
 		return $dl;
 	}
 
-
+	// array parameter
 	public function getkhoiluongsizeByMasize($masize)
 	{
 		$dl = array();
@@ -647,6 +740,17 @@ class admin_model extends CI_Model {
 
 			array_push($dl, $temp[0]["KHOILUONGRIENG"]);
 		}
+
+		return $dl;
+	}
+
+
+	// string parameter
+	public function getkhoiluongriengByMasize($masize)
+	{
+		$this->db->select('KHOILUONGRIENG');
+		$this->db->where('MASIZE', $masize);
+		$dl = $this->db->get('khoiluongsize')->result_array();
 
 		return $dl;
 	}
@@ -669,6 +773,18 @@ class admin_model extends CI_Model {
 		return $this->db->affected_rows();
 	}
 
+
+	public function insertLichsuhoatdong($malshd, $mataikhoan, $thoigianhoatdong)
+	{
+		$data = array(
+			'MALICHSUHOATDONG' => $malshd, 
+			'MATAIKHOAN' => $mataikhoan, 
+			'THOIGIANHOATDONG' => $thoigianhoatdong 
+		);
+
+		$this->db->insert('lichsuhoatdong', $data);
+		return $this->db->affected_rows();
+	}
 
 	public function insertKhachhang($makh, $ho, $ten, $sdt)
 	{
@@ -749,6 +865,19 @@ class admin_model extends CI_Model {
 	}
 
 
+	public function insertDonhang($madonhang, $mahoadon, $trangthaidonhang)
+	{
+		$data = array(
+			'MADONHANG' => $madonhang, 
+			'MAHOADON' => $mahoadon, 
+			'TRANGTHAIDONHANG' => $trangthaidonhang 
+		);
+
+		$this->db->insert('donhang', $data);
+		return $this->db->affected_rows();
+	}
+
+
 
 	public function insertLoaitrasua($maloaitrasua, $tenloai, $mota, $gia, $hinhanh, $trangthai)
 	{
@@ -797,7 +926,7 @@ class admin_model extends CI_Model {
 		return $this->db->affected_rows();
 	}
 
-	public function insertCthoadon($mahoadon, $tensize, $matenloai, $soluongmua, $nguyenlieubosung, $finalPrices)
+	public function insertCthoadon($mahoadon, $tensize, $matenloai, $soluongmua, $nguyenlieubosung, $finalPrices, $size)
 	{
 
 		for ($i=0; $i < count($matenloai); $i++) { 
@@ -807,7 +936,8 @@ class admin_model extends CI_Model {
 				'MALOAITRASUA' => $matenloai[$i], 
 				'SOLUONG' => $soluongmua[$i], 
 				'NGUYENLIEUBOSUNG' => json_encode($nguyenlieubosung[$i]),
-				'GIA' => $finalPrices[$i]
+				'GIA' => $finalPrices[$i],
+				'MASIZE' => $size[$i]
 			);
 			
 			$this->db->insert('cthoadon', $data);
@@ -880,14 +1010,162 @@ class admin_model extends CI_Model {
 	}
 
 
+	public function GetNLL($day,$month,$year){
+		$this->db->select('*');
+		$dl= $this->db->get('hoadon')->result_array();
+		for ($i=0; $i < count($dl); $i++) { 
+			$dl[$i]["NGAYLAP"] = date("d/m/Y", $dl[$i]["NGAYLAP"]);
+		}
+		
+		$dayArray = array();
+		foreach ($dl as $key => $value) {
+			$temp = explode("/", $value["NGAYLAP"]);
+			
+			if ($day == $temp[0] && $month == $temp[1] && $year == $temp[2]) {
+				array_push($dayArray, $value["MAHOADON"]);
+			}			
+		}
+		// Lấy được mã hóa đơn theo ngày
+		$arraymlts=array();
+		$this->db->select('*');
+		$result= $this->db->get('cthoadon')->result_array();
+		for ($i=0; $i <count($result) ; $i++) 
+		{ 
+			$ss=array_shift($dayArray);
+			foreach ($result as $key => $value) 
+			{
+				if ($ss == $value["MAHOADON"] ) 
+				{
+					array_push($arraymlts, $value["MALOAITRASUA"]);
+				}
+			}
+		}
+		//lấy được mã loại trà sữa theo mã hóa đơn
+		$arraytensize=array();
+		$this->db->select('*');
+		$tens= $this->db->get('cthoadon')->result_array();
+		for ($i=0; $i <count($tens) ; $i++) 
+		{ 
+			$ssss=array_shift($arraymlts);
+			foreach ($tens as $key => $value) 
+			{
+				if ($ssss == $value["MAHOADON"] ) 
+				{
+					array_push($arraytensize, $value["TENSIZE"]);
+				}
+			}
+		}
+		//lấy được tên size
+		$arrayms=array();
+		$this->db->select('*');
+		$mas= $this->db->get('cthoadon')->result_array();
+		for ($i=0; $i <count($mas) ; $i++) 
+		{ 
+			$sss=array_shift($arraytensize);
+			foreach ($mas as $key => $value) 
+			{
+				if ($sss == $value["MAHOADON"] ) 
+				{
+					array_push($arrayms, $value["MASIZE"]);
+				}
+			}
+		}
+			//lấy được mã size,
+        
+		echo '<pre>';
+		echo var_dump($mas);
+		echo '</pre>';
+		//test ô kê
+		$arraynl=array();
+		$this->db->select('*');
+		$nguyenlieu= $this->db->get('ctloaitrasua')->result_array();
+		for ($i=0; $i <count($nguyenlieu) ; $i++) 
+		{ 
+			$sosanhnl=array_shift($arraymlts);
+			foreach ($nguyenlieu as $key => $value) 
+			{
+				if ($sosanhnl == $value["MALOAITRASUA"] ) 
+				{
+					array_push($arraymlts, $value["MANGUYENLIEU"]);
+				}
+			}
+		}
+		$lieuluong=0;
+	    // $arrayll=array();
+	    $this->db->select('*');
+		$c= $this->db->get('ctloaitrasua')->result_array();
+		for ($i=0; $i <count($c) ; $i++) 
+		{ 
+			$sosanhlieuluong=array_shift($arraynl);
+			foreach ($c as $key => $value) 
+			{
+				if ($sosanhlieuluong == $value["MALOAITRASUA"]) 
+				{
+					$lieuluong=$lieuluong + $value["LIEULUONG"];
+				}
+			
+		}
+		echo '<pre>';
+		echo var_dump($c);
+		echo '</pre>';
+	    }
 
-	public function insertDondathang($madondh, $manhacungcap, $nguoilap)
+		$khoiluongrieng=0;
+		$this->db->select('*');
+		$b= $this->db->get('ctsize')->result_array();
+		for ($i=0; $i <count($b) ; $i++) 
+		{ 
+			$sosanh=array_shift($arrayms);
+			foreach ($b as $key => $value) 
+			{
+				if ($sosanh == $value["MASIZE"]) 
+				{
+					$khoiluongrieng=$khoiluongrieng + $value["KHOILUONGRIENG"];
+				}
+			
+		}
+		echo '<pre>';
+		echo var_dump($b);
+		echo '</pre>';
+	    }
+	    
+
+	    
+
+
+
+	}
+
+
+
+	public function getDonhang()
+	{
+		$this->db->select('*');
+		$this->db->order_by('NGAYTAO', 'desc');
+		$dl = $this->db->get('donhang')->result_array();
+
+		return $dl;
+	}
+
+
+	public function getTrangthaidonhangByMa($matrangthai)
+	{
+		$this->db->select('*');
+		$this->db->where('MATRANGTHAI', $matrangthai);
+		$dl = $this->db->get('trangthaidonhang')->result_array();
+
+		return $dl;
+
+	}
+
+
+	public function insertDondathang($madondh, $manhacungcap, $nguoilap, $matrangthai)
 	{
 		$data = array(
 			'MADONDH' => $madondh, 
 			'MANHACUNGCAP' => $manhacungcap, 
 			'NGUOILAP' => $nguoilap,
-			'NGAYLAP' => date("d/m/Y h:i:sa")
+			'TRANGTHAI' => $matrangthai
 		);
 
 		$this->db->insert('dondh', $data);
@@ -960,7 +1238,7 @@ class admin_model extends CI_Model {
 	
 
 
-	public function updateNguyenlieuTonkho($manl, $soluong, $donvi)
+	public function updateNguyenlieuTonkho($manl, $soluong, $donvi, $dongia)
 	{
 		for ($i=0; $i < count($manl); $i++) { 
 			
@@ -968,7 +1246,8 @@ class admin_model extends CI_Model {
 			$dl = $this->db->get('nguyenlieu')->result_array();
 			$data = array(
 				'TONKHO' => $soluong[$i]+=$dl[0]["TONKHO"],
-				'DONVI' => $donvi[$i]
+				'DONVI' => $donvi[$i],
+				'DONGIA' => $dongia[$i]
 			);
 			$this->db->where('MANGUYENLIEU', $manl[$i]);
 			$this->db->update('nguyenlieu', $data);
@@ -986,6 +1265,30 @@ class admin_model extends CI_Model {
 
 		$this->db->where('MAHOADON', $mahoadon);
 		$this->db->update('hoadon', $data);
+
+		return $this->db->affected_rows();
+	}
+
+
+	public function updateTrangthaiDondh($madondh, $matrangthai)
+	{
+		$data = array(
+			'TRANGTHAI' => $matrangthai 
+		);
+		$this->db->where('MADONDH', $madondh);
+		$this->db->update('dondh', $data);
+
+		return $this->db->affected_rows();
+	}
+
+
+	public function updateTrangthaiDonhang($madonhang, $matrangthai)
+	{
+		$data = array(
+			'TRANGTHAIDONHANG' => $matrangthai 
+		);
+		$this->db->where('MADONHANG', $madonhang);
+		$this->db->update('donhang', $data);
 
 		return $this->db->affected_rows();
 	}

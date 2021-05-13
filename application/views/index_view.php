@@ -209,7 +209,7 @@
                       Yearly Sales
                     </small>
                   </div>
-                </div>
+                <!-- </div> -->
               </div>
             </div>
             <div class="row">

@@ -18,7 +18,6 @@
     
     <title>Milestone - Bootstrap 4 Dashboard Template</title>
 
-
     <link rel="stylesheet" href="<?php echo base_url(); ?>milestone/vendor/bower-jvectormap/jquery-jvectormap-1.2.2.css"/>
     <!-- end page stylesheets -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>milestone/vendor/sweetalert/dist/sweetalert.css">
@@ -47,74 +46,51 @@
         <!-- main area -->
         <div class="main-content">
           <div class="content-view">
-            <div ng-controller="biendonggia" layout="column" ng-cloak ng-init='loaitrasua=<?php echo json_encode($mangdulieu['loaitrasua'])?>'>
-              
-              <div class="card">
-                <div class="card-block">
-                  <div class="m-b-1">
-                    <div class="dropdown pull-right">
-                      <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-                        <span>
-                          Period
-                        </span>
-                      </a>
-                      <div class="dropdown-menu dropdown-menu-right" role="menu">
-                        <a class="dropdown-item" href="#">
-                          Today
-                        </a>
-                        <a class="dropdown-item" href="#">
-                          This week
-                        </a>
-                        <a class="dropdown-item" href="#">
-                          This month
-                        </a>
-                        <a class="dropdown-item" href="#">
-                          This year
-                        </a>
-                      </div>
+            <div ng-controller="tonkho" layout="column" ng-cloak >
+            
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="card">
+                    <div class="card-header no-bg b-a-0">
+                      Line series
                     </div>
-                    <h6>
-                      Activity
-                    </h6>
-                  </div>
-                  <div class="dashboard-line chart" style="height:300px"></div>
-                  <div class="row text-xs-center m-t-1">
-                    <div class="col-sm-3 col-xs-6 p-t-1 p-b-1">
-                      <h6 class="m-t-0 m-b-0">
-                        $ 89.34
-                      </h6>
-                      <small class="text-muted bold block">
-                        Daily Sales
-                      </small>
-                    </div>
-                    <div class="col-sm-3 col-xs-6 p-t-1 p-b-1">
-                      <h6 class="m-t-0 m-b-0">
-                        $ 498.00
-                      </h6>
-                      <small class="text-muted bold block">
-                        Weekly Sales
-                      </small>
-                    </div>
-                    <div class="col-sm-3 col-xs-6 p-t-1 p-b-1">
-                      <h6 class="m-t-0 m-b-0">
-                        $ 34,903
-                      </h6>
-                      <small class="text-muted bold block">
-                        Monthly Sales
-                      </small>
-                    </div>
-                    <div class="col-sm-3 col-xs-6 p-t-1 p-b-1">
-                      <h6 class="m-t-0 m-b-0">
-                        $ 98,343.49
-                      </h6>
-                      <small class="text-muted bold block">
-                        Yearly Sales
-                      </small>
+                    <div class="card-block">
+                      <div class="chart line" style="height:250px"></div>
                     </div>
                   </div>
                 </div>
+                <div class="col-lg-6">
+                  <div class="card">
+                    <div class="card-header no-bg b-a-0">
+                      Grouped bar series
+                    </div>
+                    <div class="card-block">
+                      <div class="chart bar" style="height:250px"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="card">
+                    <div class="card-header no-bg b-a-0">
+                      Pie series
+                    </div>
+                    <div class="card-block">
+                      <div class="chart pie" style="height:250px"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="card">
+                    <div class="card-header no-bg b-a-0">
+                      Realtime series
+                    </div>
+                    <div class="card-block">
+                      <div class="chart realtime" style="height:250px"></div>
+                    </div>
+                  </div>
+                </div>
+                
               </div>
-            
          
             </div>
 
@@ -142,22 +118,27 @@
     </script>
 
     
-    <?php include('C:\xampp\htdocs\trasua\application\views\pages\scripts_view.php') ?>
-
+    <?php include('C:\xampp\htdocs\trasua\application\views\pages\scripts_view.php') ?> 
+    <script src="<?php echo base_url() ?>milestone/vendor/jquery/dist/jquery.js"></script>
+    <script src="<?php echo base_url() ?>milestone/vendor/pace/pace.js"></script>
+    <script src="<?php echo base_url() ?>milestone/vendor/tether/dist/js/tether.js"></script>
+    <script src="<?php echo base_url() ?>milestone/vendor/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="<?php echo base_url() ?>milestone/vendor/fastclick/lib/fastclick.js"></script>
+    <script src="<?php echo base_url() ?>milestone/scripts/constants.js"></script>
+    <script src="<?php echo base_url() ?>milestone/scripts/main.js"></script>
     <!-- page scripts -->
     <script src="<?php echo base_url() ?>milestone/vendor/flot/jquery.flot.js"></script>
     <script src="<?php echo base_url() ?>milestone/vendor/flot/jquery.flot.resize.js"></script>
+    <script src="<?php echo base_url() ?>milestone/vendor/flot/jquery.flot.categories.js"></script>
     <script src="<?php echo base_url() ?>milestone/vendor/flot/jquery.flot.stack.js"></script>
+    <script src="<?php echo base_url() ?>milestone/vendor/flot/jquery.flot.time.js"></script>
+    <script src="<?php echo base_url() ?>milestone/vendor/flot/jquery.flot.pie.js"></script>
     <script src="<?php echo base_url() ?>milestone/vendor/flot-spline/js/jquery.flot.spline.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/bower-jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script src="<?php echo base_url() ?>milestone/data/maps/jquery-jvectormap-us-aea.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/jquery.easy-pie-chart/dist/jquery.easypiechart.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-    <script src="<?php echo base_url() ?>milestone/scripts/helpers/noty-defaults.js"></script>
+    <script src="<?php echo base_url() ?>milestone/vendor/flot.orderbars/js/jquery.flot.orderBars.js"></script>
     <!-- end page scripts -->
 
     <!-- initialize page scripts -->
-    <script src="<?php echo base_url() ?>milestone/scripts/dashboard/dashboard.js"></script>
+    <script src="<?php echo base_url() ?>milestone/scripts/charts/flot.js"></script>
     <!-- end initialize page scripts -->
     
   </body>

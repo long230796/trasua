@@ -52,9 +52,12 @@
                     <div layout="row" >
                       <md-input-container flex="100">
                         <label>Tài khoản</label>
-                        <input placeholder="Email (required)" md-maxlength="25" type="email" required name="taikhoan" ng-model="taikhoan">
+                        <input minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" placeholder="Email (required)" md-maxlength="25" type="email" required name="taikhoan" ng-model="taikhoan">
                         <div ng-messages="projectForm.taikhoan.$error">
                           <div ng-message="required">Bắt buộc</div>
+                          <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
+                            Độ dài email từ 10 đến 100 kí tự và phải trông như một địa chỉ e-mail.
+                          </div>
                           <div ng-message="md-maxlength">Tài khoản phải nhỏ hơn 25 kí tự</div>
                         </div>
                       </md-input-container>
@@ -63,10 +66,11 @@
                     <div layout="row" >
                       <md-input-container flex="100" class="m-t-0">
                         <label>Mật khẩu</label>
-                        <input type="password" md-maxlength="20" name="matkhau" ng-model="matkhau">
+                        <input required type="password" minlength="5" md-maxlength="20" name="matkhau" ng-model="matkhau">
                         <div ng-messages="projectForm.matkhau.$error">
                           <div ng-message="required">Bắt buộc</div>
                           <div ng-message="md-maxlength">Mật khẩu phải nhỏ hơn 20 kí tự</div>
+                          <div ng-message="minlength">Mật khẩu phải lớn hơn 5 kí tự</div>
                         </div>
                       </md-input-container>
                     </div>
@@ -99,18 +103,22 @@
                     <div layout="row">
                       <md-input-container flex="50">
                         <label>Họ</label>
-                        <input type="text" md-maxlength="15" name="ho" ng-model="ho" required >
+                        <input ng-pattern ="/^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s\W|_]+$/"  type="text" md-maxlength="20" name="ho" ng-model="ho" required >
                         <div ng-messages="projectForm.ho.$error">
                           <div ng-message="required">Bắt buộc</div>
                           <div ng-message="md-maxlength">Họ phải nhỏ hơn 15 kí tự</div>
+                          <div ng-message="pattern" class="my-message">Sai định dạng
+                          </div>
                         </div>
                       </md-input-container>
                       <md-input-container flex="50">
                         <label>Tên</label>
-                        <input type="text" md-maxlength="7" name="ten" ng-model="ten" required >
+                        <input ng-pattern="/^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s\W|_]+$/" type="text" md-maxlength="7" name="ten" ng-model="ten" required >
                         <div ng-messages="projectForm.ten.$error">
                           <div ng-message="required">Bắt buộc</div>
                           <div ng-message="md-maxlength">Tên phải nhỏ hơn 7 kí tự</div>
+                          <div ng-message="pattern" class="my-message">Sai định dạng
+                          </div>
                         </div>
                       </md-input-container>
                     </div>  
@@ -119,10 +127,12 @@
                     <div layout="row">
                       <md-input-container flex="50">
                         <label>Số điện thoại</label>
-                        <input type="number" md-maxlength="10" name="sdt" ng-model="sdt" required >
+                        <input required ng-pattern="/^[0-9]{10}$/" md-maxlength="10"  name="sdt" ng-model="sdt" >
                         <div ng-messages="projectForm.sdt.$error">
                           <div ng-message="required">Bắt buộc</div>
                           <div ng-message="md-maxlength">Số điện thoại tối đa 10 số</div>
+                          <div ng-message="pattern" class="my-message">Số điện thoại không khả dụng
+                          </div>
                         </div>
                       </md-input-container>
                       <md-input-container  flex="50">
@@ -151,7 +161,7 @@
                         </span> 
                       </fieldset>
 
-                      <button type="submit" class="btn btn-info m-r-xs m-b-xs form-control">
+                      <button ng-disabled="projectForm.$invalid" type="submit" class="btn btn-info m-r-xs m-b-xs form-control">
                         Thêm nhân viên
                       </button>
                     </div>

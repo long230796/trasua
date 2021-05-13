@@ -195,7 +195,7 @@
 
                           <md-input-container  flex="33">
                             <label>Số lượng</label>
-                            <input ng-disabled="!nguyenlieucu" type="number" step="any" min="0.1" max="0.5" required ng-model="soluong" name="soluong[]" >
+                            <input ng-disabled="!nguyenlieucu" type="number" step="any" min="0.1" max="1" required ng-model="soluong" name="soluong[]" >
                             <div ng-messages="projectForm.soluong.$error">
                               <div ng-message="required">Bắt buộc</div>
                             </div>

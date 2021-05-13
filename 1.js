@@ -1,6 +1,6 @@
 ﻿// mặc định muốn dùng angular sẽ có những dòng này 
 var app = angular.module('myApp',['ngMaterial', 'ngMessages', 'ngRoute', 'ngCookies']);
-app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdConstant, $cookies, $http, $location){
+app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdConstant, $cookies, $http, $location, $interval){
 	$scope.project = {
     description: 'Nuclear Missile Defense System',
     rate: 500,
@@ -8,6 +8,9 @@ app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdC
 
     
   };
+
+  
+
 
   $scope.themnguyenlieu = function (soluong) {
   	datas = [];
@@ -123,6 +126,8 @@ app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdC
 
    }
 
+
+
    $scope.readmoreHoadon = function (soluonghoadon) {
     soluonghoadon = parseInt(soluonghoadon) + 10;
     $scope.soluonghoadon = soluonghoadon
@@ -200,6 +205,29 @@ app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdC
         } else if (res.data == "Cập nhật kho thất bại") {
           reject("Cập nhật kho thất bại");
           
+        }
+      }, function (res, err) {
+        console.log(err)
+      })
+
+
+    })
+  }
+
+
+  $scope.confirmCancelDondh = function () {
+    //  trả về promise để khi jquery gọi thì nó sẽ đợi kết quả trả về từ angular (alert.js )
+    return new Promise((resolve, reject) => {
+    
+      var urlApi = 'http://localhost:8080/trasua/admin/huydondathang/' + mahoadon
+    
+      $http.get(urlApi)
+      .then(function(res) {
+        if (res.data == "1") {
+          resolve(res.data)
+        } else if (res.data == "0"){
+          reject("Không thể cập nhật trạng thái cho đơn đặt");
+
         }
       }, function (res, err) {
         console.log(err)
@@ -338,6 +366,197 @@ app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdC
 }) 
 
 
+app.controller('donhang',  function($scope, $rootScope, $q, $timeout, $log, $mdConstant, $cookies, $http, $location, $interval){
+
+
+  function phatrasua(madonhang, matrangthai, mahoadon) {
+
+    var self = $scope, j= 0, counter = 0;
+
+      self.mode = 'query';
+      self.activated = true;
+      self.determinateValue = 30;
+      self.determinateValue2 = 30;
+
+      self.showList = [];
+
+      self.toggleActivation = function() {
+          if (!self.activated) self.showList = [];
+          if (self.activated) {
+            j = counter = 0;
+            self.determinateValue = 30;
+            self.determinateValue2 = 30;
+          }
+      };
+
+      $interval(function() {
+        self.determinateValue += 1;
+        self.determinateValue2 += 1.5;
+
+        if (self.determinateValue == 100) {
+          function test() {
+           return new Promise((resolve, reject) => {
+            
+             var data = $.param({ 
+               madonhang: madonhang,
+               mahoadon: mahoadon,
+               matrangthai: matrangthai
+             }) 
+             
+             var urlApi = 'http://localhost:8080/trasua/admin/updatetrangthaidonhang'
+
+             var config = {
+               headers: {
+                 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+               }
+             }
+             
+             $http.post(urlApi, data, config)
+             .then(function(res) {
+               resolve(res.data);
+               
+
+             }, function (res, err) {
+               console.log(err)
+             })
+
+           })
+          }
+
+
+          test().then(function (data) {
+            $scope.donhang = data
+          })
+
+        } 
+        // if (self.determinateValue2 > 100) self.determinateValue2 = 30;
+
+          // Incrementally start animation the five (5) Indeterminate,
+          // themed progress circular bars
+
+          if ((j < 2) && !self.showList[j] && self.activated) {
+            self.showList[j] = true;
+          }
+          if (counter++ % 4 === 0) j++;
+
+          // Show the indicator in the "Used within Containers" after 200ms delay
+          if (j == 2) self.contained = "indeterminate";
+
+      }, 100, 0, true);
+
+      $interval(function() {
+        self.mode = (self.mode == 'query' ? 'determinate' : 'query');
+      }, 7200, 0, true);
+  }
+
+
+
+
+
+  $scope.xacnhan = function (madonhang, matrangthai, mahoadon) {
+    var data = $.param({ 
+      madonhang: madonhang,
+      mahoadon: mahoadon,
+      matrangthai: matrangthai
+    }) 
+    
+    var urlApi = 'http://localhost:8080/trasua/admin/updatetrangthaidonhang'
+
+    var config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      }
+    }
+    
+    $http.post(urlApi, data, config)
+    .then(function(res) {
+      temps = res.data
+
+      $scope.donhang = temps;
+
+
+      phatrasua(madonhang, 3, mahoadon)
+
+    }, function (res, err) {
+      console.log(err)
+    })
+  }
+
+
+
+  $scope.giaohang = function (madonhang, matrangthai, mahoadon) {
+    var data = $.param({ 
+      mahoadon: mahoadon,
+      madonhang: madonhang,
+      matrangthai: matrangthai
+    }) 
+    
+    var urlApi = 'http://localhost:8080/trasua/admin/updatetrangthaidonhang'
+
+    var config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      }
+    }
+    
+    $http.post(urlApi, data, config)
+    .then(function(res) {
+      $scope.donhang = res.data;
+
+    }, function (res, err) {
+      console.log(err)
+    })
+  }
+
+
+
+   // confirm delete 
+  $scope.confirmCancelHoadon = function () {
+    //  trả về promise để khi jquery gọi thì nó sẽ đợi kết quả trả về từ angular (alert.js )
+    return new Promise((resolve, reject) => {
+    
+      var urlApi = 'http://localhost:8080/trasua/admin/huyhoadon/' + mahoadon
+    
+      $http.get(urlApi)
+      .then(function(res) {
+        if (res.data == "1") {
+          resolve(res.data)
+        } else if (res.data == "Cập nhật trạng thái hóa đơn thất bại"){
+          reject("Không thể cập nhật trạng thái cho hóa đơn");
+
+        } else if (res.data == "Cập nhật kho thất bại") {
+          reject("Cập nhật kho thất bại");
+          
+        }
+      }, function (res, err) {
+        console.log(err)
+      })
+
+
+    })
+  }
+
+  
+
+  $scope.displayHoadon = function (hoadon) {
+    hoadon.display = !hoadon.display
+
+  }
+
+  mahoadon = ''
+  $scope.getMahoadon = function (mahd) {
+    mahoadon = mahd;
+  }
+
+
+  $scope.readmoreHoadon = function (soluonghoadon) {
+    soluonghoadon = parseInt(soluonghoadon) + 10;
+    $scope.soluonghoadon = soluonghoadon
+    console.log(soluonghoadon)
+   }
+})
+
+
 
 
 
@@ -363,6 +582,10 @@ app.controller('chitietsanpham',  function($scope, $rootScope, $q, $timeout, $lo
     console.log($scope.displayCol12)
   }
 
+  $scope.parseInt = function(string) {
+    console.log(string)
+    return parseFloat(string)
+  }
 
   $scope.themnguyenlieu = function (soluong) {
     datas = [];
@@ -437,6 +660,39 @@ app.controller('chitietsanpham',  function($scope, $rootScope, $q, $timeout, $lo
         } 
       }, function (res, err) {
         console.log(err)
+      })
+
+
+    })
+  }
+
+
+  $scope.confirmDelete = function () {
+    //  trả về promise để khi jquery gọi thì nó sẽ đợi kết quả trả về từ angular (alert.js )
+    return new Promise((resolve, reject) => {
+      var data = $.param({ 
+        maloaitrasua: maloaitrasua
+      }) 
+    
+      var urlApi = 'http://localhost:8080/trasua/admin/deletesanpham'
+
+      var config = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        }
+      }
+    
+      $http.post(urlApi, data, config)
+      .then(function(res) {
+        if (res.data == "1") {
+          resolve(maloaitrasua)
+        } else {
+          reject(res.data)
+
+        } 
+      }, function (res, err) {
+        console.log(res.data)
+        reject('Có lỗi xảy ra vui lòng kiểm tra lại')
       })
 
 
@@ -569,7 +825,194 @@ app.controller('chitietsanpham',  function($scope, $rootScope, $q, $timeout, $lo
 
 app.controller('thunhap',  function($scope, $rootScope, $q, $timeout, $log, $mdConstant, $cookies, $http, $location) {
   
+  // $scope.callJqueryFun = function () {
+  //   $().JqueryFunction();
+  // }
 
+  //Khởi tạo giá trị mỗi khi f5 cho biểu đồ
+  // this.myDate = new Date();
+  // this.isOpen = false;
+
+  // $scope.getDatePicker = function (datepicked) {
+  //   console.log("hsdfsdf")
+  //    alert(((datepicked.getMonth() > 8) ? (datepicked.getMonth() + 1) : ('0' + (datepicked.getMonth() + 1))) + '/' + ((datepicked.getDate() > 9) ? datepicked.getDate() : ('0' + datepicked.getDate())) + '/' + datepicked.getFullYear());
+  //   // console.log(datepicked)
+  // }
+
+
+  $scope.getDatePicker_custom = function (datepicked) {
+    var dem = 0;
+    for (var i = 0; i < datepicked.length; i++) {
+      if (datepicked.charAt(i) === "/") {
+        dem++
+      }
+    }
+
+    if (dem !== 2) {
+      alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+      return;
+    } else {
+      var arrayString = datepicked.split("/")
+      for (var i = 0; i < arrayString.length; i++) {
+        arrayString[i] = parseInt(arrayString[i])
+        if (!arrayString[i] && arrayString[i] !== 0) {
+          alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+          return;
+        }
+      }
+
+      switch (arrayString[1]) {
+        case 0:
+          if (arrayString[0]) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 1:
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          }  else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 2:
+          if (arrayString[0] > 29 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 3:
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 4:
+          if (arrayString[0] > 30 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 5:
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 6:
+          if (arrayString[0] > 30 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 7:
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 8:
+          if (arrayString[0] > 31 || arrayString[0] <= 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 9:
+          if (arrayString[0] > 30 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 10:
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 11:
+          if (arrayString[0] > 30 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 12:
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        default:
+          alert("sai định dạng tháng")
+          return;
+      }
+
+      // pass filter success
+      arrayString = arrayString.join("/")
+
+      var urlApi = 'http://localhost:8080/trasua/admin/filterthunhapchart/' + arrayString
+      
+      $http.get(urlApi)
+      .then(function(res) {
+          console.log(res.data)
+         $().thuNhapChart(res.data);
+         $scope.message = "Tổng doanh thu là: " 
+         $scope.doanhthutheothang = Math.ceil(res.data.thunhapthang) + " VND"
+      }, function (res, err) {
+        console.log(err)
+      })
+
+
+    }
+  }
+
+  var urlApi = 'http://localhost:8080/trasua/admin/initthunhapchart'
+  
+  $http.get(urlApi)
+  .then(function(res) {
+     $().thuNhapChart(res.data);
+     $scope.message = "Tổng doanh thu trong tháng là: " 
+     $scope.doanhthutheothang = Math.ceil(res.data.thunhapthang) + " VND"
+  }, function (res, err) {
+    console.log(err)
+  })
 
   
 })
@@ -585,6 +1028,175 @@ app.controller('biendonggia',  function($scope, $rootScope, $q, $timeout, $log, 
 
 app.controller('tonkho',  function($scope, $rootScope, $q, $timeout, $log, $mdConstant, $cookies, $http, $location) {
   
+  $scope.getDatePicker_custom = function (datepicked) {
+    var dem = 0;
+    for (var i = 0; i < datepicked.length; i++) {
+      if (datepicked.charAt(i) === "/") {
+        dem++
+      }
+    }
+
+    if (dem !== 2) {
+      alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+      return;
+    } else {
+      var arrayString = datepicked.split("/")
+      for (var i = 0; i < arrayString.length; i++) {
+        arrayString[i] = parseInt(arrayString[i])
+        if (!arrayString[i] && arrayString[i] !== 0) {
+          alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+          return;
+        }
+      }
+
+      switch (arrayString[1]) {
+        case 0:
+          if (arrayString[0]) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 1:
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          }  else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 2:
+          if (arrayString[0] > 29 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 3:
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 4:
+          if (arrayString[0] > 30 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 5:
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 6:
+          if (arrayString[0] > 30 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 7:
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 8:
+          if (arrayString[0] > 31 || arrayString[0] <= 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 9:
+          if (arrayString[0] > 30 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 10:
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 11:
+          if (arrayString[0] > 30 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        case 12:
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
+            alert("Sai định dạng ngày");
+            return;
+          } else if (arrayString[2] < 2018) {
+            alert("Năm phải lớn hơn 2018")
+            return;
+          }
+          break;
+        default:
+          alert("sai định dạng tháng")
+          return;
+      }
+
+      // pass filter success
+      arrayString = arrayString.join("/")
+
+      var urlApi = 'http://localhost:8080/trasua/admin/filtertonkhochart/' + arrayString
+      
+      $http.get(urlApi)
+      .then(function(res) {
+          console.log(res.data)
+         $().tonKhoChart(res.data);
+      }, function (res, err) {
+        console.log(err)
+      })
+
+
+    }
+  }
+
+  var urlApi = 'http://localhost:8080/trasua/admin/inittonkhochart'
+  
+  $http.get(urlApi)
+  .then(function(res) {
+     $().tonKhoChart(res.data);
+  }, function (res, err) {
+    console.log(err)
+  })
 
 
   
@@ -865,6 +1477,28 @@ app.controller('managedAccount',  function($scope, $rootScope, $http) {
         } else {
           reject(res.data)
 
+        } 
+      }, function (res, err) {
+        console.log(err)
+      })
+
+
+    })
+  }
+
+
+  $scope.confirmDeleteTaikhoan = function () {
+    //  trả về promise để khi jquery gọi thì nó sẽ đợi kết quả trả về từ angular (alert.js )
+    return new Promise((resolve, reject) => {
+    
+      var urlApi = 'http://localhost:8080/trasua/admin/deleteTaikhoan/' + mataikhoan
+    
+      $http.get(urlApi)
+      .then(function(res) {
+        if (res.data == "1") {
+          resolve(res.data)
+        } else {
+          reject(res.data);
         } 
       }, function (res, err) {
         console.log(err)

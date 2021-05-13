@@ -33,5 +33,8 @@
     <script type="text/javascript" src="<?php echo base_url() ?>vendor/angular-material.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url() ?>vendor/md5.js"></script> 
     <script type="text/javascript" src="<?php echo base_url(); ?>vendor/angular-1.5-cookies.min.js"></script> 
+    <!-- initialize page scripts -->
+    <script src="<?php echo base_url(); ?>/milestone/scripts/ui/notifications.js"></script>
+    <!-- end initialize page scripts -->
     <script type="text/javascript" src="<?php echo base_url() ?>1.js"></script>
     

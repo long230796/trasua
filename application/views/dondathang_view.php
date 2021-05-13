@@ -63,7 +63,7 @@
               <md-content layout-padding style="background-color: #ffff">
                 <div layout="row" >
                   <md-input-container flex="50" class="m-b-0">
-                    <label>Số lượng trà sữa</label>
+                    <label>Số lượng nguyên liệu đặt</label>
                     <input type="text" ng-model="soluong">
                   </md-input-container>
                   <md-input-container flex="50" class="m-b-0">
@@ -158,7 +158,10 @@
                           </md-input-container>
                           <md-input-container flex="33">
                             <label>Đơn vị</label>
-                            <input type="text" md-maxlength="10" required name="donvi[]" ng-model="donvi">
+                            <md-select name="donvi[]" ng-model="donvi" required  >
+                              <md-option value="kg">Kilogram</md-option>
+                              <md-option value="lít">lit</md-option>
+                            </md-select>
                             <div ng-messages="projectForm.donvi.$error">
                               <div ng-message="required">Bắt buộc</div>
                               <div ng-message="md-maxlength">Đơn vị phải nhỏ hơn 10 kí tự</div>
@@ -177,7 +180,7 @@
                         
                       </div>  
                       
-                      <button type="submit" class="btn btn-outline-info m-r-xs m-b-xs form-control">
+                      <button ng-disabled="projectForm.$invalid" type="submit" class="btn btn-outline-info m-r-xs m-b-xs form-control">
                         Nhập đơn đặt
                       </button>
                     </div>

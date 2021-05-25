@@ -148,12 +148,12 @@
                                                    </tr>
                                                    <tr>
                                                       <td class="content-block">
-                                                         <strong>1 trong 4 bước hoàn thành</strong>
+                                                         Xác nhận đơn hàng để đi đến bước pha chế
                                                       </td>
                                                    </tr>
                                                    <tr>
                                                       <td class="content-block">
-                                                         Xác nhận đơn hàng để đi đến bước pha chế
+                                                         <strong>1 trong 4 bước hoàn thành</strong>
                                                       </td>
                                                    </tr>
                                                    <tr>
@@ -193,12 +193,12 @@
                                                    </tr>
                                                    <tr>
                                                       <td class="content-block">
-                                                         <strong>3 trong 4 bước hoàn thành</strong>
+                                                         Đơn hàng đã sẵn sàng để giao
                                                       </td>
                                                    </tr>
                                                    <tr>
                                                       <td class="content-block">
-                                                         Đơn hàng đã sẵn sàng để giao
+                                                         <strong>3 trong 4 bước hoàn thành</strong>
                                                       </td>
                                                    </tr>
                                                    <tr>
@@ -239,7 +239,7 @@
                               </div>
                               <img ng-show="{{dh.TRANGTHAIDONHANG === '5' ? 'true' : ''}}" src="<?php echo base_url() ?>/FileUpload/Cancelled.jpg" class="img-fluid m-x-auto" style="width: 35%" alt="Responsive image">
                               <a href="<?php echo base_url() ?>admin/chitiethoadon/{{dh.MAHOADON}}" type="button" class="btn btn-success btn-icon btn-sm" >
-                                Chi tiết
+                                Xem Đơn hàng
                                 <i class="material-icons">remove_red_eye</i>
                               </a>
                               <!-- <a ng-show="{{ dh.MATRANGTHAI === '2' ? 'true' : '' }}" href="<?php echo base_url() ?>admin/chitiethoadon/{{dh.MAHOADON}}" type="button" class="btn btn-success btn-icon btn-sm pull-xs-right" >
@@ -247,7 +247,7 @@
                                 <i class="material-icons">remove_red_eye</i>
                               </a> --> 
                               <button ng-show="{{ dh.TRANGTHAIDONHANG === '1' ? 'true' : '' }}" ng-click="getMahoadon(dh.MAHOADON)" type="button" class="btn btn-danger btn-icon btn-sm cancelHoadon">
-                                Hủy hóa đơn
+                                Hủy đơn hàng
                                 <i class="material-icons">cancel</i>
                               </button>
                               ​

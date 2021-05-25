@@ -1,16 +1,5 @@
 <div ng-controller="sidebar" class="sidebar-panel">
-  <div class="brand">
-    <!-- toggle offscreen menu -->
-    <a href="javascript:;" data-toggle="sidebar" class="toggle-offscreen hidden-lg-up">
-      <i class="material-icons">menu</i>
-    </a>
-    <!-- /toggle offscreen menu -->
-    <!-- logo -->
-    <a class="brand-logo">
-      <img class="expanding-hidden" src="http://localhost:8080/trasua/milestone/images/logo.png" alt="">
-    </a>
-    <!-- /logo -->
-  </div>
+ 
   <div  class="nav-profile dropdown">
     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
       <div class="user-image">
@@ -22,15 +11,15 @@
       </div>
     </a>  
     <div class="dropdown-menu">
-      <a class="dropdown-item" href="javascript:;">Settings</a>
-      <a class="dropdown-item" href="javascript:;">Upgrade</a>
+      <a class="dropdown-item" href="<?php echo base_url() ?>admin/taikhoan">Tài khoản</a>
+     <!--  <a class="dropdown-item" href="javascript:;">Upgrade</a>
       <a class="dropdown-item" href="javascript:;">
         <span>Notifications</span>
         <span class="tag bg-primary">34</span>
-      </a>
+      </a> -->
       <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="javascript:;">Help</a>
-      <a class="dropdown-item" href="<?php echo base_url() ?>admin/logout">Logout</a>
+      <a class="dropdown-item" href="javascript:;">Trợ giúp</a>
+      <a class="dropdown-item" href="<?php echo base_url() ?>admin/logout">Đăng xuất</a>
     </div>
   </div>
 
@@ -39,12 +28,12 @@
     <p class="nav-title">NAVIGATION</p>
     <ul class="nav d-flex">
       <!-- dashboard -->
-      <li class="flex-grow-1">
+      <!-- <li class="flex-grow-1">
         <a href="<?php echo base_url() ?>admin/index">
           <i class="material-icons text-primary">home</i>
           <span>Home</span>
         </a>
-      </li>
+      </li> -->
       <!-- /dashboard -->
       <!-- apps -->
       <li class="flex-grow-1">
@@ -59,8 +48,8 @@
         <ul class="sub-menu">
           <li>
             <a href="<?php echo base_url() ?>admin/danhsachsanpham">
-              <i class="material-icons text-info">list</i>
-              <span>Danh sách sản phẩm</span>
+              <i class="material-icons text-info">local_drink</i>
+              <span>Sản phẩm</span>
             </a>
           </li>
           <li>
@@ -69,6 +58,13 @@
               <span>Thêm sản phẩm mới</span>
             </a>
           </li>
+          <li>
+            <a href="<?php echo base_url() ?>admin/chitietsize">
+              <i class="material-icons text-info">launch</i>
+              <span>Quản lí size</span>
+            </a>
+          </li>
+
           
         </ul>
       </li>
@@ -206,7 +202,7 @@
           <li>
             <a href="<?php echo base_url() ?>admin/tonkho">
               <i class="material-icons text-warning">store</i>
-              <span>tồn kho</span>
+              <span>Tiêu thụ</span>
             </a>
           </li>
           <li>

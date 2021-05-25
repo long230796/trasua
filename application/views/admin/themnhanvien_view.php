@@ -52,11 +52,11 @@
                     <div layout="row" >
                       <md-input-container flex="100">
                         <label>Tài khoản</label>
-                        <input minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" placeholder="Email (required)" md-maxlength="25" type="email" required name="taikhoan" ng-model="taikhoan">
+                        <input  ng-pattern="/^.+@.+\..+$/" placeholder="Email (required)" md-maxlength="25" type="email" required name="taikhoan" ng-model="taikhoan">
                         <div ng-messages="projectForm.taikhoan.$error">
                           <div ng-message="required">Bắt buộc</div>
-                          <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
-                            Độ dài email từ 10 đến 100 kí tự và phải trông như một địa chỉ e-mail.
+                          <div ng-message-exp="['required', 'pattern']">
+                           Sai định dạng email.
                           </div>
                           <div ng-message="md-maxlength">Tài khoản phải nhỏ hơn 25 kí tự</div>
                         </div>

@@ -18,6 +18,10 @@
     
     <title>Milestone - Bootstrap 4 Dashboard Template</title>
 
+    <!-- page stylesheets -->
+    <link rel="stylesheet" href="<?php echo base_url(); ?>milestone/vendor/c3/c3.min.css">
+    <!-- end page stylesheets -->
+
     <link rel="stylesheet" href="<?php echo base_url(); ?>milestone/vendor/bower-jvectormap/jquery-jvectormap-1.2.2.css"/>
     <!-- end page stylesheets -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>milestone/vendor/sweetalert/dist/sweetalert.css">
@@ -33,7 +37,7 @@
     <link rel="stylesheet" href="<?php echo base_url(); ?>1.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="myApp">
+  <body ng-app="myApp" ng-controller="biendonggia">
 
     <div class="app">
       <!--sidebar panel-->
@@ -41,56 +45,80 @@
       <?php require('C:\xampp\htdocs\trasua\application\views\pages\sidebar_view.php') ?>
       <!-- content panel -->
       <div class="main-panel">
-        <?php require('C:\xampp\htdocs\trasua\application\views\pages\header_view.php') ?>
+        <nav class="header navbar">
+          <div class="header-inner">
+            <div class="navbar-item navbar-spacer-right brand hidden-lg-up">
+              <!-- toggle offscreen menu -->
+              <a href="javascript:;" data-toggle="sidebar" class="toggle-offscreen">
+                <i class="material-icons">menu</i>
+              </a>
+              <!-- /toggle offscreen menu -->
+              <!-- logo -->
+              <a class="brand-logo hidden-xs-down">
+                <img src="<?php echo base_url() ?>/milestone/images/logo_white.png" alt="logo"/>
+              </a>
+              <!-- /logo -->
+            </div>
+            <div class="navbar-item navbar-spacer-right navbar-heading hidden-md-down" href="#">
+              <button type="button" class="btn btn-success btn-icon btn-sm" onclick='window.print()'>
+                In hóa đơn
+                <i class="material-icons">print</i>
+              </button> 
+            </div>
+            <div class="navbar-search navbar-item" >
+            </div>
+
+
+
+          </div>
+        </nav>
 
         <!-- main area -->
         <div class="main-content">
           <div class="content-view">
-            <div ng-controller="tonkho" layout="column" ng-cloak >
-            
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="card">
-                    <div class="card-header no-bg b-a-0">
-                      Line series
-                    </div>
-                    <div class="card-block">
-                      <div class="chart line" style="height:250px"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="card">
-                    <div class="card-header no-bg b-a-0">
-                      Grouped bar series
-                    </div>
-                    <div class="card-block">
-                      <div class="chart bar" style="height:250px"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="card">
-                    <div class="card-header no-bg b-a-0">
-                      Pie series
-                    </div>
-                    <div class="card-block">
-                      <div class="chart pie" style="height:250px"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-12">
-                  <div class="card">
-                    <div class="card-header no-bg b-a-0">
-                      Realtime series
-                    </div>
-                    <div class="card-block">
-                      <div class="chart realtime" style="height:250px"></div>
-                    </div>
-                  </div>
-                </div>
+            <div style="background: #ffff">
+              <div flex-gt-xs  class="m-b-3">
+                <md-input-container flex="50" class="m-b-0">
+                  <label>Từ ngày dd/mm/yy</label>
+                  <input type="text" min="1" max="10" ng-model="from">
+                </md-input-container>
+                <md-input-container flex="50" class="m-b-0">
+                  <label>Đến ngày dd/mm/yy</label>
+                  <input type="text" min="1" max="10" ng-model="to">
+                </md-input-container>
+
+                <md-input-container flex="50" class="m-b-0">
+                  <label>Mã trà sữa</label>
+                  <input type="text"  ng-model="maloaitrasua">
+                </md-input-container>
                 
+                <md-button ng-click="getDatePicker_custom(from, to, maloaitrasua)" class="md-primary md-raised">Lọc</md-button>
               </div>
+              <h6 class="m-b-2">Biểu đồ biến động giá</h6>
+              <div class="c3chart">
+                <div class="c3chart2" id="chart2"></div>
+              </div>
+            </div>
+            <div  layout="column" ng-cloak>
+            
+
+                <!-- <div class="m-b-3" style="background: #ffff">
+                  <div flex-gt-xs  class="m-b-3">
+                    <md-input-container flex="50" class="m-b-0">
+                    <label>dd/mm/yy</label>
+                    <input type="text" min="1" max="10" ng-model="datepicked_custom">
+                  </md-input-container>
+                    
+                    <md-button ng-click="getDatePicker_custom(datepicked_custom)" class="md-primary md-raised">Lọc</md-button>
+                  </div>
+                  <h6 class="m-b-1">{{message}}<b class="text-success">{{doanhthutheothang}}</b></h6>
+                  <div class="c3chart">
+                    <div class="c3chart1" id="chart"></div>
+                  </div>
+                </div> -->
+
+
+                
          
             </div>
 
@@ -118,27 +146,14 @@
     </script>
 
     
-    <?php include('C:\xampp\htdocs\trasua\application\views\pages\scripts_view.php') ?> 
-    <script src="<?php echo base_url() ?>milestone/vendor/jquery/dist/jquery.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/pace/pace.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/tether/dist/js/tether.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/fastclick/lib/fastclick.js"></script>
-    <script src="<?php echo base_url() ?>milestone/scripts/constants.js"></script>
-    <script src="<?php echo base_url() ?>milestone/scripts/main.js"></script>
+    <?php include('C:\xampp\htdocs\trasua\application\views\pages\scripts_view.php') ?>
     <!-- page scripts -->
-    <script src="<?php echo base_url() ?>milestone/vendor/flot/jquery.flot.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/flot/jquery.flot.resize.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/flot/jquery.flot.categories.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/flot/jquery.flot.stack.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/flot/jquery.flot.time.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/flot/jquery.flot.pie.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/flot-spline/js/jquery.flot.spline.js"></script>
-    <script src="<?php echo base_url() ?>milestone/vendor/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+    <script src="<?php echo base_url() ?>milestone/vendor/d3/d3.min.js" charset="utf-8"></script>
+    <script src="<?php echo base_url() ?>milestone/vendor/c3/c3.min.js"></script>
     <!-- end page scripts -->
 
     <!-- initialize page scripts -->
-    <script src="<?php echo base_url() ?>milestone/scripts/charts/flot.js"></script>
+    <script src="<?php echo base_url() ?>milestone/scripts/charts/c3.js"></script>
     <!-- end initialize page scripts -->
     
   </body>

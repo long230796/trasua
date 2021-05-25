@@ -466,6 +466,12 @@
                               Chi tiết
                               <i class="material-icons">remove_red_eye</i>
                             </a> 
+
+                            <a href="<?php echo base_url() ?>admin/chitietdonhang/{{hoadon.MADONHANG}}" type="button" class="btn btn-success btn-icon btn-sm">
+                              Xem đơn hàng
+                              <i class="material-icons">local_shipping</i>
+                            </a> 
+
                             <script src="<?php echo base_url(); ?>/milestone/scripts/ui/alert.js"></script>
                             </div>
                           </div>

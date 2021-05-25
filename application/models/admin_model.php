@@ -707,6 +707,18 @@ class admin_model extends CI_Model {
 	}
 
 
+	public function getTaikhoanByMa($mataikhoan)
+	{
+		$this->db->select('*');
+
+		$this->db->where('MATAIKHOAN', $mataikhoan);;
+
+		$dl = $this->db->get('taikhoan');
+
+		return $dl->result_array();
+	}
+
+
 	public function getSize()
 	{
 		$this->db->select('*');
@@ -928,22 +940,38 @@ class admin_model extends CI_Model {
 
 	public function insertCthoadon($mahoadon, $tensize, $matenloai, $soluongmua, $nguyenlieubosung, $finalPrices, $size)
 	{
+		if (!empty($nguyenlieubosung)) {
+			for ($i=0; $i < count($matenloai); $i++) { 
+				$data = array(
+					'MAHOADON' => $mahoadon, 
+					'TENSIZE' => $tensize[$i], 
+					'MALOAITRASUA' => $matenloai[$i], 
+					'SOLUONG' => $soluongmua[$i], 
+					'NGUYENLIEUBOSUNG' => json_encode($nguyenlieubosung[$i]),
+					'GIA' => $finalPrices[$i],
+					'MASIZE' => $size[$i]
+				);
+				
+				$this->db->insert('cthoadon', $data);
+			}
 
-		for ($i=0; $i < count($matenloai); $i++) { 
-			$data = array(
-				'MAHOADON' => $mahoadon, 
-				'TENSIZE' => $tensize[$i], 
-				'MALOAITRASUA' => $matenloai[$i], 
-				'SOLUONG' => $soluongmua[$i], 
-				'NGUYENLIEUBOSUNG' => json_encode($nguyenlieubosung[$i]),
-				'GIA' => $finalPrices[$i],
-				'MASIZE' => $size[$i]
-			);
-			
-			$this->db->insert('cthoadon', $data);
+			return $this->db->affected_rows();
+		} else {
+			for ($i=0; $i < count($matenloai); $i++) { 
+				$data = array(
+					'MAHOADON' => $mahoadon, 
+					'TENSIZE' => $tensize[$i], 
+					'MALOAITRASUA' => $matenloai[$i], 
+					'SOLUONG' => $soluongmua[$i], 
+					'NGUYENLIEUBOSUNG' => 'null',
+					'GIA' => $finalPrices[$i],
+					'MASIZE' => $size[$i]
+				);
+				
+				$this->db->insert('cthoadon', $data);
+			}
 		}
 
-		return $this->db->affected_rows();
 
 	}
 
@@ -1148,6 +1176,27 @@ class admin_model extends CI_Model {
 	}
 
 
+	public function getDonhangByMadh($madonhang)
+	{
+		$this->db->select('*');
+		$this->db->where('MADONHANG', $madonhang);
+		$dl = $this->db->get('donhang')->result_array();
+
+		return $dl;
+	}
+
+
+	public function getDonhangByMahoadon($mahoadon)
+	{
+		$this->db->select('*');
+		$this->db->where('MAHOADON', $mahoadon);
+		$dl = $this->db->get('donhang')->result_array();
+
+		return $dl;
+	}
+
+
+
 	public function getTrangthaidonhangByMa($matrangthai)
 	{
 		$this->db->select('*');
@@ -1268,6 +1317,32 @@ class admin_model extends CI_Model {
 
 		return $this->db->affected_rows();
 	}
+
+
+	public function updateKhoiluongsizeByMa($masize, $Khoiluong)
+	{
+		$data = array(
+			'KHOILUONGRIENG' => $Khoiluong 
+		);
+
+		$this->db->where('MASIZE', $masize);
+		$this->db->update('khoiluongsize', $data);
+
+		return $this->db->affected_rows();
+	}
+
+
+	public function updatePasswordTaikhoan($mataikhoan, $matkhaumoi)
+	{
+		$dl = array(
+			'MATKHAU' => $matkhaumoi 
+		);
+
+		$this->db->update('taikhoan', $dl);
+		return $this->db->affected_rows();
+
+	}
+
 
 
 	public function updateTrangthaiDondh($madondh, $matrangthai)
@@ -1474,6 +1549,21 @@ class admin_model extends CI_Model {
 		}
 	}
 
+	public function checkMatkhaucu($mataikhoan, $matkhaucu)
+	{
+		$this->db->select('*');
+		$this->db->where('MATAIKHOAN', $mataikhoan);
+		$dl = $this->db->get('taikhoan')->result_array();
+
+		if ($dl[0]["MATKHAU"] == $matkhaucu) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
+
 	public function KiemtraMaloaiTrongLichsuchinhsua($maloaitrasua)
 	{
 		$this->db->select('MALOAITRASUA');
@@ -1494,6 +1584,16 @@ class admin_model extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('MANV', $manhanvien);
+		$dl = $this->db->get('nhanvien')->result_array();
+
+		return $dl;
+	}
+
+
+	public function findNhanvienByMaTaikhoan($mataikhoan)
+	{
+		$this->db->select('*');
+		$this->db->where('MATAIKHOAN', $mataikhoan);
 		$dl = $this->db->get('nhanvien')->result_array();
 
 		return $dl;

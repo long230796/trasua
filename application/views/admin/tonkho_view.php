@@ -61,7 +61,7 @@
             </div>
             <div class="navbar-item navbar-spacer-right navbar-heading hidden-md-down" href="#">
               <button type="button" class="btn btn-success btn-icon btn-sm" onclick='window.print()'>
-                In hóa đơn
+                In Biểu đồ
                 <i class="material-icons">print</i>
               </button> 
             </div>
@@ -85,6 +85,22 @@
                 
                 <md-button ng-click="getDatePicker_custom(datepicked_custom)" class="md-primary md-raised">Lọc</md-button>
               </div>
+
+              <div flex-gt-xs  class="m-b-3">
+                <md-input-container flex="50" class="m-b-0">
+                  <label>Từ ngày dd/mm/yy</label>
+                  <input type="text" min="1" max="10" ng-model="from">
+                </md-input-container>
+                <md-input-container flex="50" class="m-b-0">
+                  <label>Đến ngày dd/mm/yy</label>
+                  <input type="text" min="1" max="10" ng-model="to">
+                </md-input-container>
+
+                
+                
+                <md-button ng-click="getDatePicker_custom2(from, to)" class="md-primary md-raised">Lọc</md-button>
+              </div>
+
               <h6 class="m-b-2">Biểu đồ tiêu thụ nguyên liệu</h6>
               <div class="c3chart">
                 <div class="c3chart2" id="chart2"></div>

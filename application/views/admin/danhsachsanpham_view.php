@@ -50,25 +50,12 @@
             
             <div class="m-l-3 m-r-3">
               <md-content layout-padding style="background-color: #ffff">
-                <!-- so luong tra sua -->
-                <div layout="row" >
-                  <md-input-container flex="50" class="m-b-0">
-                    <label>Số lượng trà sữa</label>
-                    <input type="text" ng-model="soluong">
-                  </md-input-container>
-                  <md-input-container flex="50" class="m-b-0">
-                    <button type="button" class="btn btn-default m-r-xs m-b-xs form-control" ng-click="themtrasua(soluong)">
-                      Chọn
-                    </button>
-                  </md-input-container>
-                </div>
-
                  
                 <div class="row ">
                   <div class="col-sm-4 col-md-3 mb-4" ng-repeat="ts in loaitrasua | filter:search" >
                     <div class="card h-100 ">
                       <div class="img-container">
-                        <img style="height:170px" class="card-img-top img-fluid" src="{{ts.HINHANH}}" alt="Card image cap">
+                        <img style="height:230px" class="card-img-top img-fluid" src="{{ts.HINHANH}}" alt="Card image cap">
                         <div ng-if="!ts.TRANGTHAI" class="overlay">
                           <span style="color: #ff3300"><b>NGỪNG KINH DOANH</b></span>
                         </div>

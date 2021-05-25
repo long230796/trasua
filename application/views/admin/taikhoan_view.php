@@ -84,6 +84,9 @@
                             Tài khoản
                           </th>
                           <th>
+                            Mã nhân viên
+                          </th> 
+                          <th>
                             Vai trò
                           </th>
                           <th>
@@ -107,6 +110,9 @@
                           </th>
                           <td>
                             {{acc.TAIKHOAN}}
+                          </td>
+                          <td>
+                            {{acc.NHANVIEN.MANV}}
                           </td>
                           <td ng-show="acc.hienthi">
                             {{acc.VAITRO}}

@@ -72,7 +72,7 @@
                   <div ng-show="displayCol12" class="col-sm-12 col-md-6 mb-4" ng-repeat="ts in loaitrasua | filter:search" >
                     <div class="nameProduct">
                       <div class="d-flex">
-                        <h5 class="card-title flex-grow-1">
+                        <h5 class="card-title flex-grow-1 m-b-0">
                             {{ts.TENLOAI}}
                         </h5>
                         <a ng-click="displayForm(displayCol12)" href="#">
@@ -97,6 +97,8 @@
                       <p class="card-text mb-1">
                         {{ts.MOTA}}
                       </p>
+                      <span class="plan-price-symbol text-dark"><b>Mã sản phẩm: {{ts.MALOAITRASUA}}</b></span>
+                      <br>
                       <span class="plan-price-symbol text-danger"><b>Trạng thái: {{ts.TRANGTHAITEXT}}</b></span>
                       <div class="d-flex  mt-3">
                         <span class="card-text mr-2" ng-repeat="size in ts.CTSIZE">
@@ -130,9 +132,10 @@
                               <label>Nhập tên sản phẩm</label>
                               <input type="hidden" name="tenloaicu" value="{{ts.TENLOAI}}">
                               <input type="hidden" ng-init="tenloai=ts.TENLOAI">
-                              <input  name="tenloai" required ng-model="tenloai" >
+                              <input  name="tenloai" md-maxlength="50" required ng-model="tenloai" >
                               <input  type="hidden" name="maloaitrasua" value="{{ts.MALOAITRASUA}}">
                               <div ng-messages="projectForm.tenloai.$error">
+                                <div ng-message="md-maxlength">Tên sản phẩm phải nhỏ hơn 50 kí tự</div>
                                 <div ng-message="required">Bắt buộc</div>
                                 <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
                               </div>
@@ -143,8 +146,9 @@
                             <md-input-container flex="100">
                               <label>Mô tả sản phẩm</label>
                               <input name="motacu" type="hidden" value="{{ts.MOTA}}">
-                              <textarea name="mota" required>{{ts.MOTA}}</textarea>
+                              <textarea style="height: 100px;" maxlength="500" name="mota" required>{{ts.MOTA}}</textarea>
                               <div ng-messages="projectForm.mota.$error">
+                                <div ng-message="maxlength">Mô tả phải nhỏ hơn 100 kí tự</div>
                                 <div ng-message="required">Bắt buộc</div>
                                 <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
                               </div>

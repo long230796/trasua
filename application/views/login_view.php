@@ -51,7 +51,7 @@
                   <label for="username">
                     Nhập tên
                   </label>
-                  <input type="text" class="form-control form-control-lg" id="username" placeholder="tài khoản" required name="username" />
+                  <input type="email" class="form-control form-control-lg" id="username" placeholder="tài khoản" required name="username" />
                 </fieldset>
                 <fieldset class="form-group">
                   <label for="password">
@@ -59,11 +59,11 @@
                   </label>
                   <input type="password" class="form-control form-control-lg" id="password" placeholder="********" required name="password" />
                 </fieldset>
-                <label class="custom-control custom-checkbox m-b-1">
+               <!--  <label class="custom-control custom-checkbox m-b-1">
                   <input type="checkbox" class="custom-control-input">
                   <span class="custom-control-indicator"></span>
                   <span class="custom-control-description">Duy trì đăng nhập</span>
-                </label>
+                </label> -->
                 <button class="btn btn-primary btn-block btn-lg" type="submit">
                   Đăng nhập
                 </button>

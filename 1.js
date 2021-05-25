@@ -510,6 +510,151 @@ app.controller('donhang',  function($scope, $rootScope, $q, $timeout, $log, $mdC
 
 
 
+  // version2
+  function phatrasua2(madonhang, matrangthai, mahoadon) {
+
+    var self = $scope, j= 0, counter = 0;
+
+      self.mode = 'query';
+      self.activated = true;
+      self.determinateValue = 30;
+      self.determinateValue2 = 30;
+
+      self.showList = [];
+
+      self.toggleActivation = function() {
+          if (!self.activated) self.showList = [];
+          if (self.activated) {
+            j = counter = 0;
+            self.determinateValue = 30;
+            self.determinateValue2 = 30;
+          }
+      };
+
+      $interval(function() {
+        self.determinateValue += 1;
+        self.determinateValue2 += 1.5;
+
+        if (self.determinateValue == 100) {
+          function test() {
+           return new Promise((resolve, reject) => {
+            
+             var data = $.param({ 
+               madonhang: madonhang,
+               mahoadon: mahoadon,
+               matrangthai: matrangthai
+             }) 
+             
+             var urlApi = 'http://localhost:8080/trasua/admin/updatetrangthaidonhang2'
+
+             var config = {
+               headers: {
+                 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+               }
+             }
+             
+             $http.post(urlApi, data, config)
+             .then(function(res) {
+               resolve(res.data);
+               
+
+             }, function (res, err) {
+               console.log(err)
+             })
+
+           })
+          }
+
+
+          test().then(function (data) {
+            $scope.donhang = data
+          })
+
+        } 
+        // if (self.determinateValue2 > 100) self.determinateValue2 = 30;
+
+          // Incrementally start animation the five (5) Indeterminate,
+          // themed progress circular bars
+
+          if ((j < 2) && !self.showList[j] && self.activated) {
+            self.showList[j] = true;
+          }
+          if (counter++ % 4 === 0) j++;
+
+          // Show the indicator in the "Used within Containers" after 200ms delay
+          if (j == 2) self.contained = "indeterminate";
+
+      }, 100, 0, true);
+
+      $interval(function() {
+        self.mode = (self.mode == 'query' ? 'determinate' : 'query');
+      }, 7200, 0, true);
+  }
+
+
+
+
+
+  $scope.xacnhan2 = function (madonhang, matrangthai, mahoadon) {
+    var data = $.param({ 
+      madonhang: madonhang,
+      mahoadon: mahoadon,
+      matrangthai: matrangthai
+    }) 
+    
+    var urlApi = 'http://localhost:8080/trasua/admin/updatetrangthaidonhang2'
+
+    var config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      }
+    }
+    
+    $http.post(urlApi, data, config)
+    .then(function(res) {
+      temps = res.data
+
+      $scope.donhang = temps;
+
+
+      phatrasua2(madonhang, 3, mahoadon)
+
+    }, function (res, err) {
+      console.log(err)
+    })
+  }
+
+
+
+  $scope.giaohang2 = function (madonhang, matrangthai, mahoadon) {
+    var data = $.param({ 
+      mahoadon: mahoadon,
+      madonhang: madonhang,
+      matrangthai: matrangthai
+    }) 
+    
+    var urlApi = 'http://localhost:8080/trasua/admin/updatetrangthaidonhang2'
+
+    var config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      }
+    }
+    
+    $http.post(urlApi, data, config)
+    .then(function(res) {
+      $scope.donhang = res.data;
+
+    }, function (res, err) {
+      console.log(err)
+    })
+  }
+
+
+
+
+
+
    // confirm delete 
   $scope.confirmCancelHoadon = function () {
     //  trả về promise để khi jquery gọi thì nó sẽ đợi kết quả trả về từ angular (alert.js )
@@ -987,14 +1132,14 @@ app.controller('thunhap',  function($scope, $rootScope, $q, $timeout, $log, $mdC
       // pass filter success
       arrayString = arrayString.join("/")
 
-      var urlApi = 'http://localhost:8080/trasua/admin/filterthunhapchart/' + arrayString
+      var urlApi = 'http://localhost:8080/trasua/admin/filterthunhapByMonthYear/' + arrayString
       
       $http.get(urlApi)
       .then(function(res) {
           console.log(res.data)
          $().thuNhapChart(res.data);
          $scope.message = "Tổng doanh thu là: " 
-         $scope.doanhthutheothang = Math.ceil(res.data.thunhapthang) + " VND"
+         $scope.doanhthutheothang = Math.ceil(res.data.mota) + " VND"
       }, function (res, err) {
         console.log(err)
       })
@@ -1003,13 +1148,222 @@ app.controller('thunhap',  function($scope, $rootScope, $q, $timeout, $log, $mdC
     }
   }
 
+  $scope.getDatePicker_custom2 = function (datepickedfrom, datepickedto) {
+
+    function filterInput(picked) {
+      // body...
+      var arrayString = picked.split("/")
+      for (var i = 0; i < arrayString.length; i++) {
+        arrayString[i] = parseInt(arrayString[i])
+        if (!arrayString[i] && arrayString[i] !== 0) {
+          alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+          return;
+        }
+      }
+
+      switch (arrayString[1]) {
+        case 1:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        }  else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 2:
+        if (arrayString[0] > 29 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 3:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 4:
+        if (arrayString[0] > 30 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 5:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 6:
+        if (arrayString[0] > 30 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 7:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 8:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 9:
+        if (arrayString[0] > 30 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 10:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 11:
+        if (arrayString[0] > 30 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 12:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        default:
+        alert("sai định dạng tháng")
+        return;
+      }
+
+      return arrayString;
+    }
+
+    // lần 1
+    var dem = 0;
+    for (var i = 0; i < datepickedfrom.length; i++) {
+      if (datepickedfrom.charAt(i) === "/") {
+        dem++
+      }
+    }
+
+    if (dem !== 2) {
+      alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+      return;
+    } else {
+
+      fromDate = filterInput(datepickedfrom);
+
+      // lần 2
+      var dem = 0;
+      for (var i = 0; i < datepickedto.length; i++) {
+        if (datepickedto.charAt(i) === "/") {
+          dem++
+        }
+      }
+
+      if (dem !== 2) {
+        alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+        return;
+      } else {
+
+        toDate = filterInput(datepickedto);
+
+        // turn input to y-m-d format
+        var dFrom = Date.parse(fromDate[2] + "-" + fromDate[1] + "-" + fromDate[0]);
+        var dTo = Date.parse(toDate[2] + "-" + toDate[1] + "-" + toDate[0]);
+        
+        console.log(dFrom)
+        console.log(dTo)
+
+        if (dTo < dFrom) {
+          alert("thời gian kết thúc phải nhỏ hơn thời gian bắt đầu")
+          return
+        }
+
+        // pass filter success
+        fromDate = fromDate[2] + "/" + fromDate[1] + "/" + fromDate[0]
+        toDate = toDate[2] + "/" + toDate[1] + "/" + toDate[0];
+        console.log(fromDate)
+        console.log(toDate)
+
+        var data = $.param({ 
+          fromDate: fromDate,
+          toDate: toDate
+        }) 
+        
+        var urlApi = 'http://localhost:8080/trasua/admin/filterthunhap'
+
+        var config = {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+          }
+        }
+
+
+        
+        $http.post(urlApi, data, config)
+        .then(function(res) {
+          console.log(res.data)
+         $().thuNhapChart(res.data);
+         $scope.message = "Tổng doanh thu là: " 
+         $scope.doanhthutheothang = Math.ceil(res.data.mota) + " VND"
+        }, function (res, err) {
+          console.log(err)
+        })
+
+
+      }
+    }
+  }
+
+
   var urlApi = 'http://localhost:8080/trasua/admin/initthunhapchart'
   
   $http.get(urlApi)
   .then(function(res) {
      $().thuNhapChart(res.data);
      $scope.message = "Tổng doanh thu trong tháng là: " 
-     $scope.doanhthutheothang = Math.ceil(res.data.thunhapthang) + " VND"
+     $scope.doanhthutheothang = Math.ceil(res.data.mota) + " VND"
   }, function (res, err) {
     console.log(err)
   })
@@ -1018,9 +1372,225 @@ app.controller('thunhap',  function($scope, $rootScope, $q, $timeout, $log, $mdC
 })
 
 
+
+
 app.controller('biendonggia',  function($scope, $rootScope, $q, $timeout, $log, $mdConstant, $cookies, $http, $location) {
   
+  $scope.getDatePicker_custom = function (datepickedfrom, datepickedto,  maloaitrasua) {
 
+    function filterInput(picked) {
+      // body...
+      var arrayString = picked.split("/")
+      for (var i = 0; i < arrayString.length; i++) {
+        arrayString[i] = parseInt(arrayString[i])
+        if (!arrayString[i] && arrayString[i] !== 0) {
+          alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+          return;
+        }
+      }
+
+      switch (arrayString[1]) {
+        case 1:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        }  else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 2:
+        if (arrayString[0] > 29 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 3:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 4:
+        if (arrayString[0] > 30 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 5:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 6:
+        if (arrayString[0] > 30 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 7:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 8:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 9:
+        if (arrayString[0] > 30 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 10:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 11:
+        if (arrayString[0] > 30 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 12:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        default:
+        alert("sai định dạng tháng")
+        return;
+      }
+
+      return arrayString;
+    }
+
+    // lần 1
+    var dem = 0;
+    for (var i = 0; i < datepickedfrom.length; i++) {
+      if (datepickedfrom.charAt(i) === "/") {
+        dem++
+      }
+    }
+
+    if (dem !== 2) {
+      alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+      return;
+    } else {
+
+      fromDate = filterInput(datepickedfrom);
+
+      // lần 2
+      var dem = 0;
+      for (var i = 0; i < datepickedto.length; i++) {
+        if (datepickedto.charAt(i) === "/") {
+          dem++
+        }
+      }
+
+      if (dem !== 2) {
+        alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+        return;
+      } else {
+
+        toDate = filterInput(datepickedto);
+
+        // turn input to y-m-d format
+        var dFrom = Date.parse(fromDate[2] + "-" + fromDate[1] + "-" + fromDate[0]);
+        var dTo = Date.parse(toDate[2] + "-" + toDate[1] + "-" + toDate[0]);
+        
+        console.log(dFrom)
+        console.log(dTo)
+
+        if (dTo < dFrom) {
+          alert("thời gian kết thúc phải nhỏ hơn thời gian bắt đầu")
+          return
+        }
+
+        // pass filter success
+        fromDate = fromDate[2] + "/" + fromDate[1] + "/" + fromDate[0]
+        toDate = toDate[2] + "/" + toDate[1] + "/" + toDate[0];
+        console.log(fromDate)
+        console.log(toDate)
+
+        var data = $.param({ 
+          fromDate: fromDate,
+          toDate: toDate,
+          maloaitrasua: maloaitrasua
+        }) 
+        
+        var urlApi = 'http://localhost:8080/trasua/admin/filterbiendonggia'
+
+        var config = {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+          }
+        }
+
+
+        
+        $http.post(urlApi, data, config)
+        .then(function(res) {
+          console.log(res.data)
+          $().biendonggiaChart(res.data);
+        }, function (res, err) {
+          console.log(err)
+        })
+
+
+      }
+    }
+  } 
+
+  // var urlApi = 'http://localhost:8080/trasua/admin/inittonkhochart'
+  
+  // $http.get(urlApi)
+  // .then(function(res) {
+  //    $().biendonggiaChart(res.data);
+  // }, function (res, err) {
+  //   console.log(err)
+  // })
 
   
 })
@@ -1175,7 +1745,7 @@ app.controller('tonkho',  function($scope, $rootScope, $q, $timeout, $log, $mdCo
       // pass filter success
       arrayString = arrayString.join("/")
 
-      var urlApi = 'http://localhost:8080/trasua/admin/filtertonkhochart/' + arrayString
+      var urlApi = 'http://localhost:8080/trasua/admin/filterTonkhoByMonthYear/' + arrayString
       
       $http.get(urlApi)
       .then(function(res) {
@@ -1188,6 +1758,213 @@ app.controller('tonkho',  function($scope, $rootScope, $q, $timeout, $log, $mdCo
 
     }
   }
+
+  $scope.getDatePicker_custom2 = function (datepickedfrom, datepickedto) {
+
+    function filterInput(picked) {
+      // body...
+      var arrayString = picked.split("/")
+      for (var i = 0; i < arrayString.length; i++) {
+        arrayString[i] = parseInt(arrayString[i])
+        if (!arrayString[i] && arrayString[i] !== 0) {
+          alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+          return;
+        }
+      }
+
+      switch (arrayString[1]) {
+        case 1:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        }  else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 2:
+        if (arrayString[0] > 29 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 3:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 4:
+        if (arrayString[0] > 30 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 5:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 6:
+        if (arrayString[0] > 30 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 7:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 8:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 9:
+        if (arrayString[0] > 30 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 10:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 11:
+        if (arrayString[0] > 30 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        case 12:
+        if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          alert("Sai định dạng ngày");
+          return;
+        } else if (arrayString[2] < 2018) {
+          alert("Năm phải lớn hơn 2018")
+          return;
+        }
+        break;
+        default:
+        alert("sai định dạng tháng")
+        return;
+      }
+
+      return arrayString;
+    }
+
+    // lần 1
+    var dem = 0;
+    for (var i = 0; i < datepickedfrom.length; i++) {
+      if (datepickedfrom.charAt(i) === "/") {
+        dem++
+      }
+    }
+
+    if (dem !== 2) {
+      alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+      return;
+    } else {
+
+      fromDate = filterInput(datepickedfrom);
+
+      // lần 2
+      var dem = 0;
+      for (var i = 0; i < datepickedto.length; i++) {
+        if (datepickedto.charAt(i) === "/") {
+          dem++
+        }
+      }
+
+      if (dem !== 2) {
+        alert("Sai định dạng, vui lòng nhập định dạng dd/mm/yy")
+        return;
+      } else {
+
+        toDate = filterInput(datepickedto);
+
+        // turn input to y-m-d format
+        var dFrom = Date.parse(fromDate[2] + "-" + fromDate[1] + "-" + fromDate[0]);
+        var dTo = Date.parse(toDate[2] + "-" + toDate[1] + "-" + toDate[0]);
+        
+        console.log(dFrom)
+        console.log(dTo)
+
+        if (dTo < dFrom) {
+          alert("thời gian kết thúc phải nhỏ hơn thời gian bắt đầu")
+          return
+        }
+
+        // pass filter success
+        fromDate = fromDate[2] + "/" + fromDate[1] + "/" + fromDate[0]
+        toDate = toDate[2] + "/" + toDate[1] + "/" + toDate[0];
+        console.log(fromDate)
+        console.log(toDate)
+
+        var data = $.param({ 
+          fromDate: fromDate,
+          toDate: toDate
+        }) 
+        
+        var urlApi = 'http://localhost:8080/trasua/admin/filtertonkho'
+
+        var config = {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+          }
+        }
+
+
+        
+        $http.post(urlApi, data, config)
+        .then(function(res) {
+          console.log(res.data)
+          $().tonKhoChart(res.data);
+        }, function (res, err) {
+          console.log(err)
+        })
+
+
+      }
+    }
+  }
+  
 
   var urlApi = 'http://localhost:8080/trasua/admin/inittonkhochart'
   
@@ -1237,6 +2014,13 @@ app.controller('managedStock',  function($scope, $rootScope, $http) {
     acc.TENNLMOI = tennl
     acc.hienthi = !acc.hienthi
     acc.DONE = false
+
+  }
+
+  $scope.displaysize = function (size, khoiluong) {
+    size.KHOILUONGRIENGMOI = khoiluong
+    size.hienthi = !size.hienthi
+    size.DONE = false
 
   }
 
@@ -1311,13 +2095,18 @@ app.controller('managedStock',  function($scope, $rootScope, $http) {
   }
 
 
-  $scope.displayDone = function (acc) {
-    acc.DONE = true
+  $scope.displayDone = function (size) {
+    size.DONE = true
   }
 
   nl = ''
   $scope.getNguyenlieu = function (acc) {
     nl = acc;
+  }
+
+  size = ''
+  $scope.getSize = function (sizes) {
+    size = sizes;
   }
 
   $scope.confirmDone = function () {
@@ -1374,8 +2163,114 @@ app.controller('managedStock',  function($scope, $rootScope, $http) {
     })
   }
 
+  $scope.confirmDoneSize = function () {
+    //  trả về promise để khi jquery gọi thì nó sẽ đợi kết quả trả về từ angular (alert.js )
+    return new Promise((resolve, reject) => {
+     
+      if (size.KHOILUONGRIENGMOI == null) {
+        reject("Vui lòng điền vào chỗ trống")
+        return
+      } 
+
+      if (size.KHOILUONGRIENGMOI < 0.1 || size.KHOILUONGRIENGMOI > 2) {
+        reject("Đơn giá nhập trong khoảng 0.1 và 2")
+        return
+      } 
+
+      if (size.KHOILUONGRIENG == size.KHOILUONGRIENGMOI.toString()) {
+        reject("Không có thay đổi nào")
+        return
+      }
+
+
+      var data = $.param({ 
+        masize: size.MASIZE,
+        khoiluongmoi: size.KHOILUONGRIENGMOI
+      }) 
+    
+      var urlApi = 'http://localhost:8080/trasua/admin/chitietsize'
+
+      var config = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        }
+      }
+    
+      $http.post(urlApi, data, config)
+      .then(function(res) {
+        if (res.data == "1") {
+          resolve(res.data)
+        } else {
+          reject(res.data)
+
+        } 
+      }, function (res, err) {
+        console.log(err)
+      })
+
+
+    })
+  }
+
+
+
 })
 
+
+
+app.controller('nguoidung',  function($scope, $rootScope, $q, $timeout, $log, $mdConstant, $cookies, $http, $location) {
+  
+    $scope.dispayEditPass = function (nv) {
+      nv.displayPass = !nv.displayPass
+    }
+    
+
+    nv = ''
+    $scope.getNhanvien = function (nhanvien) {
+      nv = nhanvien;
+    }
+
+    $scope.confirmChangePass = function () {
+    //  trả về promise để khi jquery gọi thì nó sẽ đợi kết quả trả về từ angular (alert.js )
+    return new Promise((resolve, reject) => {
+      if (nv.MATKHAUMOI !== nv.CONFIRMMATKHAUMOI) {
+        reject("Nhập lại mật khẩu không chính xác")
+        return
+      } 
+
+      var data = $.param({ 
+        manv: nv.MANV,
+        mataikhoan: nv.MATAIKHOAN,
+        matkhaucu: nv.MATKHAUCU,
+        matkhaumoi: nv.MATKHAUMOI
+      }) 
+    
+      var urlApi = 'http://localhost:8080/trasua/admin/changePassword'
+
+      var config = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        }
+      }
+    
+      $http.post(urlApi, data, config)
+      .then(function(res) {
+        if (res.data == "1") {
+          resolve(res.data)
+        } else {
+          reject(res.data)
+
+        } 
+      }, function (res, err) {
+        console.log(err)
+      })
+
+
+    })
+  }
+
+  
+})
 
 
 

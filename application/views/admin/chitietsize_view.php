@@ -104,10 +104,11 @@
                           </td>
                           <td class="p-t-0" ng-show="!size.hienthi">
                             <md-input-container class="m-b-0 m-t-0" >
-                              <input ng-change='displayDone(size)' min="0.1" max="2" step="any" type="number" ng-value="size.KHOILUONGRIENG" required ng-model="size.KHOILUONGRIENGMOI">
+                              <input ng-change='displayDone(size)' name="size" min="0.5" max="2" step="any" type="number" ng-value="size.KHOILUONGRIENG" required ng-model="size.KHOILUONGRIENGMOI">
                               <div ng-messages="projectForm.size.$error">
                                 <div ng-message="required">Bắt buộc</div>
-                                <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
+                                <div ng-message="min">size phải lớn hơn 0.5</div>
+                                <div ng-message="max">size phải nhỏ hơn 2</div>
                               </div>
                             
                             </md-input-container>

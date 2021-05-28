@@ -80,12 +80,13 @@
                     <div layout="row" ng-init="dataset='false'">
                       <md-input-container class="flex-100" >
                         <label>Số điện thoại khách hàng</label>
-                        <input  type="number" name="sodienthoai" ng-model="sodienthoai" ng-click="showListkhachhang()">
+                        <input  type="number" ng-pattern="/^[0-9]{10}$/" name="sodienthoai" ng-model="sodienthoai" ng-click="showListkhachhang()">
                         <div ng-messages="projectForm.sodienthoai.$error">
                           <div ng-message="required">Bắt buộc</div>
+                          <div ng-message="pattern" class="my-message">Số điện thoại không khả dụng
+                          </div>
                         </div>
                       </md-input-container>
-                      
                     </div>
 
                     <div layout="row" ng-init="dataset='false'" ng-show="hienthikhachhang">
@@ -250,7 +251,7 @@
                         </md-input-container>
                         <md-input-container flex="33">
                           <label>Số lượng</label>
-                          <input type="number" name="soluongmua[]" ng-model="soluongmua">
+                          <input type="number" required min="1" max="100" name="soluongmua[]" ng-model="soluongmua">
                           <div ng-messages="projectForm.soluongmua.$error">
                             <div ng-message="required">Bắt buộc</div>
                             <div ng-message="md-maxlength">Đơn giá phải nhỏ hơn 10 kí tự</div>
@@ -271,7 +272,7 @@
                           <i type="button" ng-click="themtrasua($index+2)" class="material-icons text-info">add</i>
                         </md-input-container>
                         <md-input-container ng-show="$index" >
-                          <i type="button" ng-click="xoatrasua(soluongtrasua, data)" class="material-icons text-info">close</i>
+                          <i type="button" ng-click="xoatrasua(soluongtrasua, data)" class="material-icons text-danger">close</i>
                         </md-input-container>
                       </div>
                     </div>
@@ -293,7 +294,7 @@
 
 
                     <div ng-show="{{hienthinlbosung}}"  ng-repeat="data in hienthinlbosung">
-                      <p class="p-b-0 m-t-2"><b>Nguyên liệu {{data}}</b></p>
+                      <p class="p-b-0 m-t-2"><b>Nguyên liệu {{$index+1}}</b></p>
                       <div layout="row">
                           <md-input-container flex="25">
                             <label>Loại trà sữa thêm</label>
@@ -337,6 +338,12 @@
                               <div ng-message="required">Bắt buộc</div>
                               <div ng-message="md-maxlength">Đơn vị phải nhỏ hơn 10 kí tự</div>
                             </div> -->
+                          </md-input-container>
+                          <md-input-container >
+                            <i type="button" ng-click="themnguyenlieubosung($index+2)" class="material-icons text-info">add</i>
+                          </md-input-container>
+                          <md-input-container ng-show="$index" >
+                            <i type="button" ng-click="xoanguyenlieubosung(hienthinlbosung, data)" class="material-icons text-danger">close</i>
                           </md-input-container>
                           
 

@@ -1611,7 +1611,13 @@ class Admin extends CI_Controller {
 		if ($infoSession) {
 
 			$sizecosan = $this->admin_model->getSize();
+			// change piorty
+			$first = $sizecosan[0];
+			$second = $sizecosan[1];
 
+			$sizecosan[0] = $second;
+			$sizecosan[1] = $first;
+			
 			echo json_encode($sizecosan);
 
 		} else {
@@ -1883,7 +1889,9 @@ class Admin extends CI_Controller {
 				$errorMsg = array();
 
 				if ($infoSession["mabophan"] == "BPBANHANG" || $infoSession["role"] == "Boss") { 
-				
+					
+
+					// lấy dữ liệu trên front end
 					$sodienthoai = $this->input->post('sodienthoai');
 					$makh = $this->input->post('makh');
 					$hokh = $this->input->post('hokh');

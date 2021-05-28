@@ -60,23 +60,23 @@
               </div>
             </div> -->
             <div class="m-l-3 m-r-3">
-              <md-content layout-padding style="background-color: #ffff">
+              <md-content layout-padding style="background-color: #ffff" ng-init="themnguyenlieu(1)">
                 <div layout="row" >
                   <md-input-container flex="50" class="m-b-0">
                     <label>Số lượng nguyên liệu đặt</label>
-                    <input type="text" ng-model="soluong">
+                    <input type="text" ng-model="soluongnl">
                   </md-input-container>
                   <md-input-container flex="50" class="m-b-0">
-                    <button type="button" class="btn btn-default m-r-xs m-b-xs form-control" ng-click="themnguyenlieu(soluong)">
+                    <button type="button" class="btn btn-default m-r-xs m-b-xs form-control" ng-click="themnguyenlieu(soluongnl)">
                       Chọn
                     </button>
                   </md-input-container>
                 </div>
-                <form name="projectForm" action="" method="POST">
-                    <div layout="row" ng-init="dataset='false'">
+                <form name="projectForm" action="" method="POST" >
+                    <div layout="row">
                       <md-input-container flex="50">
                         <label>Chọn nhà cung cấp</label>
-                        <md-select name="nhacungcapcu" ng-model="nhacungcapcu" ng-disabled="nhacungcapmoi" required>
+                        <md-select name="nhacungcapcu" ng-model="nhacungcapcu" ng-disabled="nhacungcapmoi">
                           <?php foreach ($mangdulieu["nhacungcap"] as $key ): ?>
                             <md-option value="<?php echo $key["TEN"] . "_" .  $key["MANHACUNGCAP"]?>"><?php echo $key["TEN"] ?></md-option>
                           <?php endforeach ?>
@@ -102,27 +102,31 @@
                           <div class="row">
                             <md-input-container class="md-block">
                               <label>Số điện thoại</label>
-                              <input required name="sodienthoainhacungcap" ng-model="sodienthoainhacungcap">
+                              <input required ng-pattern="/^[0-9]{10}$/" md-maxlength="10" name="sodienthoainhacungcap" ng-model="sodienthoainhacungcap">
                               <div ng-messages="projectForm.sodienthoainhacungcap.$error">
                                 <div ng-message="required">Bắt buộc</div>
+                                <div ng-message="md-maxlength">Số điện thoại tối đa 10 số</div>
+                                <div ng-message="pattern" class="my-message">Số điện thoại không khả dụng
+                                </div>
                               </div>
                             </md-input-container>
                           </div>
                           <div class="row">
                             <md-input-container class="md-block">
                               <label>Địa chỉ</label>
-                              <input required name="diachinhacungcap" ng-model="diachinhacungcap">
+                              <input required md-maxlength="50" name="diachinhacungcap" ng-model="diachinhacungcap">
                               <div ng-messages="projectForm.diachinhacungcap.$error">
                                 <div ng-message="required">Bắt buộc</div>
+                                <div ng-message="md-maxlength">Địa chỉ nhập phải nhỏ hơn 50 kí tự</div>
                               </div>
                             </md-input-container>
                           </div>
-                        </div>
+                      </div>
                     </div>
 
 
                     <div ng-show="{{dataset}}" ng-repeat="data in dataset">
-                      <p class="p-b-0"><b>Nguyên liệu {{data}}</b></p>
+                      <p class="p-b-0"><b>Nguyên liệu {{$index+1}}</b></p>
                       <div layout="row">
                         <md-input-container flex="50" >
                           <label>Tên nguyên liệu</label>
@@ -138,22 +142,23 @@
                         </md-input-container>
                         <md-input-container flex="50">
                           <label>Thêm nguyên liệu mới</label>
-                          <input name="nguyenlieumoi[]" ng-model="nguyenlieumoi" ng-disabled="nguyenlieucu">
+                          <input name="nguyenlieumoi[]" md-maxlength="30" ng-model="nguyenlieumoi" ng-disabled="nguyenlieucu">
                           <div ng-messages="projectForm.nguyenlieumoi.$error">
                             <div ng-message="required">Bắt buộc</div>
+                            <div ng-message="md-maxlength">Tên nguyên liệu phải nhỏ hơn 30 kí tự</div>
                           </div>
                         </md-input-container>
-                        
-
                       </div>
 
 
                       <div layout="row">
                           <md-input-container flex="33">
                             <label>Số lượng</label>
-                            <input type="number" min="0" step="any" required name="soluong[]" ng-model="soluong">
+                            <input required type="number" min="1" max="50" step="any"  name="soluong[]" ng-model="soluong">
                             <div ng-messages="projectForm.soluong.$error">
                               <div ng-message="required">Bắt buộc</div>
+                              <div ng-message="min">Số lượng đặt tối thiểu phải lớn hơn hoặc bằng 1 kg</div>
+                              <div ng-message="max">Số lượng đặt tối đa phải nhỏ hơn hoặc bằng 50 kg</div>
                             </div>
                           </md-input-container>
                           <md-input-container flex="33">
@@ -172,8 +177,14 @@
                             <input md-maxlength="50"  name="note[]" ng-model="note">
                             <div ng-messages="projectForm.note.$error">
                               <div ng-message="required">Bắt buộc</div>
-                              <div ng-message="md-maxlength">Mô tả phải nhỏ hơn 10 kí tự</div>
+                              <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 50 kí tự</div>
                             </div>
+                          </md-input-container>
+                          <md-input-container >
+                            <i type="button" ng-click="themnguyenlieu($index+2)" class="material-icons text-info">add</i>
+                          </md-input-container>
+                          <md-input-container ng-show="$index" >
+                            <i type="button" ng-click="xoanguyenlieu(dataset, data)" class="material-icons text-danger">close</i>
                           </md-input-container>
 
                         </div>

@@ -124,8 +124,8 @@
                             <md-input-container class="m-b-0 m-t-0">
                             
                               <md-select style="color: rgba(0, 0, 0, 1)!important;" ng-model="acc.VAITROMOI" >
-                                <md-option ng-click="displayDone(acc)" value="Quản lí">quản lí</md-option>
-                                <md-option ng-click="displayDone(acc)" value="Nhân viên">Nhân viên</md-option>
+                                <md-option ng-click="displayDone(acc)" ng-selected="{{ acc.VAITRO === 'Quản lí' ? 'true' : 'false' }}" value="Quản lí">quản lí</md-option>
+                                <md-option ng-click="displayDone(acc)" ng-selected="{{ acc.VAITRO === 'Nhân viên  ' ? 'true' : 'false' }}" value="Nhân viên">Nhân viên</md-option>
                               </md-select>
                             </md-input-container>
                           </td>

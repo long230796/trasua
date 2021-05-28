@@ -47,7 +47,7 @@
         <div class="content-view">
           <div ng-controller="AppCtrl" layout="column" ng-cloak>
             <div class="m-l-3 m-r-3">
-              <md-content layout-padding style="background-color: #ffff">
+              <md-content layout-padding style="background-color: #ffff" ng-init="themnguyenlieu(1)">
                 <form id="formTaoTrasua" name="projectForm" action="" method="POST" enctype="multipart/form-data">
                     <div layout="row" >
                       <md-input-container flex="100">
@@ -63,10 +63,10 @@
                     <div layout="row" >
                       <md-input-container flex="100">
                         <label>Mô tả sản phẩm</label>
-                        <textarea required name="mota" ng-model="mota"></textarea>
+                        <textarea required md-maxlength="500" name="mota" ng-model="mota"></textarea>
                         <div ng-messages="projectForm.mota.$error">
                           <div ng-message="required">Bắt buộc</div>
-                          <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
+                          <div ng-message="md-maxlength">Mô tả phải nhỏ hơn 500 kí tự</div>
                         </div>
                       </md-input-container>
                     </div>
@@ -74,10 +74,11 @@
                     <div layout="row" >
                       <md-input-container flex="100">
                         <label>Giá sản phẩm</label>
-                        <input type="number" required name="gia" min="0" step="any" ng-model="gia">
+                        <input type="number" required name="gia" min="10000" step="any" ng-model="gia">
                         <div ng-messages="projectForm.gia.$error">
                           <div ng-message="required">Bắt buộc</div>
                           <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
+                          <div ng-message="min">Giá sản phẩm phải lớn hơn hoặc bằng 10000</div>
                         </div>
                       </md-input-container>
                     </div>
@@ -88,7 +89,7 @@
                           <md-option  value="1">Công khai</md-option>
                           <md-option  value="0">Riêng tư</md-option>
                         </md-select>
-                        <div ng-messages="projectForm.status.$error">
+                        <div ng-messages="projectForm.trangthai.$error">
                           <div ng-message="required">Bắt buộc.</div>
                         </div>
                       </md-input-container>
@@ -148,8 +149,8 @@
                     <div layout="row" class="m-t-2">
                       <md-input-container flex="50">
                         <label>Số lượng nguyên liệu </label>
-                        <input type="number"  min="1" max="10" ng-model="soluongnl" required >
-                        <div ng-messages="projectForm.soluong.$error">
+                        <input type="number"  min="1" max="10" ng-model="soluongnl"  >
+                        <div ng-messages="projectForm.soluongnl.$error">
                           <div ng-message="required">Bắt buộc</div>
                         </div>
                       </md-input-container>
@@ -161,7 +162,7 @@
                     </div>                
 
                     <div ng-show="{{dataset}}"  ng-repeat="data in dataset">
-                      <p class="p-b-0 m-t-2"><b>Nguyên liệu {{data}}</b></p>
+                      <p class="p-b-0 m-t-2"><b>Nguyên liệu {{$index+1}}</b></p>
                       
                       <div layout="row">
                           <md-input-container flex="20" >
@@ -198,6 +199,8 @@
                             <input ng-disabled="!nguyenlieucu" type="number" step="any" min="0.1" max="1" required ng-model="soluong" name="soluong[]" >
                             <div ng-messages="projectForm.soluong.$error">
                               <div ng-message="required">Bắt buộc</div>
+                              <div ng-message="min">Tối thiểu 0.1 kg</div>
+                              <div ng-message="max">Tối đa 1 kg</div>
                             </div>
                           </md-input-container>
                           <md-input-container flex="33">
@@ -207,6 +210,12 @@
                               <div ng-message="required">Bắt buộc</div>
                               <div ng-message="md-maxlength">Ghi chú phải nhỏ hơn 10 kí tự</div>
                             </div>
+                          </md-input-container>
+                          <md-input-container >
+                            <i type="button" ng-click="themnguyenlieu($index+2)" class="material-icons text-info">add</i>
+                          </md-input-container>
+                          <md-input-container ng-show="$index" >
+                            <i type="button" ng-click="xoanguyenlieu(dataset, data)" class="material-icons text-danger">close</i>
                           </md-input-container>
 
                         </div>
@@ -222,7 +231,7 @@
                           <span class="text-xs-right">Select files...</span>
                           <!-- The file input field used as target for the file upload widget -->
                           <!-- <input id="fileupload" type='file' multiple ng-file='uploadfiles'> -->
-                          <input type="file" id="avatar" aria-describedby="emailHelp" placeholder="Enter email" name="avatar">
+                          <input required type="file" id="avatar" aria-describedby="emailHelp" placeholder="Enter email" name="avatar">
                         </span> 
                       </fieldset>
                       <input class="size" type="hidden" name="sizes[]">

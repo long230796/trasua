@@ -43,6 +43,33 @@ app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdC
    
   }
 
+  $scope.xoanguyenlieu = function (dataset, data) {
+
+    var index = dataset.indexOf(data);
+    if (index > -1) {
+      dataset.splice(index, 1);
+    }
+    $scope.dataset = dataset
+    console.log(dataset)
+
+   
+  }
+
+  $scope.xoanguyenlieubosung = function (hienthinlbosung, data) {
+
+    var index = hienthinlbosung.indexOf(data);
+    if (index > -1) {
+      hienthinlbosung.splice(index, 1);
+    }
+    $scope.hienthinlbosung = hienthinlbosung
+    console.log(hienthinlbosung)
+
+   
+  }
+
+
+  
+
   $scope.themnguyenlieubosung = function (soluong) {
     datas = [];
     for(i = 0; i < soluong; i++) {
@@ -2114,11 +2141,10 @@ app.controller('managedStock',  function($scope, $rootScope, $http) {
     return new Promise((resolve, reject) => {
       if (nl.TENNLMOI == null) {
         reject("Vui lòng nhập tên nguyên liệu")
-        console.log("nlmoi rong")
         return
       } 
       if (nl.DONGIAMOI == null) {
-        reject("Vui lòng nhập đơn giá")
+        reject("Đơn giá nhập trong khoảng 5000 và 50000")
         return
       } 
 
@@ -2168,12 +2194,12 @@ app.controller('managedStock',  function($scope, $rootScope, $http) {
     return new Promise((resolve, reject) => {
      
       if (size.KHOILUONGRIENGMOI == null) {
-        reject("Vui lòng điền vào chỗ trống")
+        reject("Khối lượng riêng trong khoảng 0.5 và 2")
         return
       } 
 
-      if (size.KHOILUONGRIENGMOI < 0.1 || size.KHOILUONGRIENGMOI > 2) {
-        reject("Đơn giá nhập trong khoảng 0.1 và 2")
+      if (size.KHOILUONGRIENGMOI < 0.5 || size.KHOILUONGRIENGMOI > 2) {
+        reject("Khối lượng riêng trong khoảng 0.5 và 2")
         return
       } 
 

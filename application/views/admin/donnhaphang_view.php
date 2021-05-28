@@ -125,10 +125,11 @@
                           </md-input-container>
                           <md-input-container flex="20">
                             <label>Đơn giá</label>
-                            <input type="number" required name="dongia[]" ng-model="dongia">
+                            <input type="number" min="5000" max="50000" required name="dongia[]" ng-model="dongia">
                             <div ng-messages="projectForm.dongia.$error">
                               <div ng-message="required">Bắt buộc</div>
-                              <div ng-message="md-maxlength">Đơn giá phải nhỏ hơn 10 kí tự</div>
+                              <div ng-message="min">Bắt buộc</div>
+                              <div ng-message="max">Bắt buộc</div>
                             </div>
                           </md-input-container>
                           <md-input-container flex="20">

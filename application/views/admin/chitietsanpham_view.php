@@ -199,7 +199,7 @@
                                   secondary-placeholder="Thêm size mới"
                                   input-aria-label="Intended Recipients">
                               </md-contact-chips>
-
+                              
                               <md-list class="fixedRows" ng-show="false">
                                 <md-subheader class="md-no-sticky">Size gợi ý</md-subheader>
                                 <md-list-item class="md-2-line contact-item" ng-repeat="(index, contact) in allContacts"

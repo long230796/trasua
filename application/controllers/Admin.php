@@ -267,7 +267,95 @@ class Admin extends CI_Controller {
 	} 
 
 
-	
+	public function nhanvien()
+	{
+		// GET method
+		if ($this->input->server('REQUEST_METHOD') === 'GET') {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+				if ($infoSession["role"] == "Boss") {
+
+					$nhanvien = $this->admin_model->getNhanvien();
+					$self = $this->admin_model->getNhanvienByMa($infoSession["manv"]);
+
+					for ($i=0; $i < count($nhanvien); $i++) { 
+						$nhanvien[$i]["EMAIL"] = $this->admin_model->getTaikhoanByMa($nhanvien[$i]["MATAIKHOAN"])[0]["TAIKHOAN"];
+						$nhanvien[$i]["NGAYTAO"] = date("d/m/Y", $this->admin_model->getTaikhoanByMa($nhanvien[$i]["MATAIKHOAN"])[0]["NGAYTAO"]);
+
+						switch ($this->admin_model->getTaikhoanByMa($nhanvien[$i]["MATAIKHOAN"])[0]["VAITRO"]){
+							case '0':
+								$nhanvien[$i]["VAITRO"] = "Boss";
+								break;
+							case '1':
+								$nhanvien[$i]["VAITRO"] = "Quản lí";
+								break;
+							case '2':
+								$nhanvien[$i]["VAITRO"] = "Nhân viên";
+								break;
+						} 
+					}
+
+					$data["mangdulieu"] = array(
+						'nhanvien' => $nhanvien,
+						'role' => $infoSession["role"],
+						'self' => $self 
+					);
+
+					$this->load->view('admin/nhanvien_view', $data);
+					return;
+				}
+
+				$this->load->view('403_view');
+
+			}
+		} else {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+			}
+		}
+	}
+
+
+	public function khachhang()
+	{
+		// GET method
+		if ($this->input->server('REQUEST_METHOD') === 'GET') {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+				if ($infoSession["role"] == "Boss") {
+
+					$khachhang = $this->admin_model->getKhachhang();
+					
+					for ($i=0; $i < count($khachhang); $i++) { 
+						$khachhang[$i]["NGAYTAO"] = date("d/m/Y", $khachhang[$i]["NGAYTAO"]);
+					}
+
+					$data["mangdulieu"] = array(
+						'khachhang' => $khachhang
+						
+					);
+
+					$this->load->view('admin/khachhang_view', $data);
+					return;
+				}
+
+				$this->load->view('403_view');
+
+			}
+		} else {
+			$cookie = get_cookie("SESSIONID");
+			$infoSession = $this->checkCookie($cookie);
+			if ($infoSession) {
+
+			}
+		}
+	}
 
 
 
@@ -326,69 +414,6 @@ class Admin extends CI_Controller {
 	public function tinhThunhap($day, $month, $year)
 	{
 		
-		// $arrayFilter = $day . "/" . $month . "/" . $year;
-		
-		// $arrayFilter = explode("/", $arrayFilter);
-
-		// if ((int)$arrayFilter[0]) {
-		// 	$thunhaptheofilter = $this->Thongke_gia($arrayFilter[0], $arrayFilter[1], $arrayFilter[2]);
-		// 	// lấy tất cả ngày thu nhập của tháng(khởi tạo)
-		// 	// $thunhapngaytheothang = array('Thu nhập tháng '.$arrayFilter[1], 0);
-		// 	$thunhapngaytheothang = array();
-		// 	$d=cal_days_in_month(CAL_GREGORIAN,$arrayFilter[1],$arrayFilter[2]);
-
-
-		// 	for ($i=1; $i <= $d; $i++) { 
-		// 		$temp = $this->Thongke_gia((string)$i, $arrayFilter[1], $arrayFilter[2]);
-		// 		array_push($thunhapngaytheothang, $temp);
-		// 	}
-
-		// 	$jsonThunhap = array();
-
-		// 	$jsonThunhap["thunhap"] = $thunhapngaytheothang;
-		// 	$jsonThunhap["mota"] = $thunhaptheofilter;
-
-		// 	return $jsonThunhap;
-
-		// } else if ((int)$arrayFilter[1]) {
-		// 	$thunhaptheofilter = $this->Thongke_gia('00', $arrayFilter[1], $arrayFilter[2]);
-		// 	// lấy tất cả ngày thu nhập của tháng(khởi tạo 1 mang)
-		// 	// $thunhapngaytheothang = array('Thu nhập tháng '.$arrayFilter[1], 0);
-		// 	$thunhapngaytheothang = array();
-		// 	$d=cal_days_in_month(CAL_GREGORIAN,$arrayFilter[1],$arrayFilter[2]);
-
-
-		// 	for ($i=1; $i <= $d; $i++) { 
-		// 		$temp = $this->Thongke_gia((string)$i, $arrayFilter[1], $arrayFilter[2]);
-		// 		array_push($thunhapngaytheothang, $temp);
-		// 	}
-
-		// 	$jsonThunhap = array();
-
-		// 	$jsonThunhap["thunhap"] = $thunhapngaytheothang;
-		// 	$jsonThunhap["mota"] = $thunhaptheofilter;
-
-		// 	return $jsonThunhap;
-		// } else {
-		// 	$thunhaptheofilter = $this->Thongke_gia('00', '00', $arrayFilter[2]);
-		// 	// lấy tất cả ngày thu nhập của tháng(khởi tạo 1 mang)
-		// 	// $thunhapngaytheothang = array('Thu nhập năm '.$arrayFilter[2], 0);
-		// 	$thunhapngaytheothang = array();
-
-
-		// 	for ($i=1; $i <= 12; $i++) { 
-		// 		$temp = $this->Thongke_gia('00', (string)$i, $arrayFilter[2]);
-		// 		array_push($thunhapngaytheothang, $temp);
-		// 	}
-
-		// 	$jsonThunhap = array();
-
-		// 	$jsonThunhap["thunhap"] = $thunhapngaytheothang;
-		// 	$jsonThunhap["mota"] = $thunhaptheofilter;
-
-		// 	return $jsonThunhap;
-		// }
-			
 
 
 		$this->db->select('*');
@@ -474,6 +499,8 @@ class Admin extends CI_Controller {
 		$from = $this->input->post('fromDate');
 		$to = $this->input->post('toDate');
 
+		$dateTimesFrom = strtotime($from);
+		$dateTimesTo = strtotime($to);
 
 		$dayFrom = (int)explode("/", $from)[2];
 		$monthFrom = (int)explode("/", $from)[1];
@@ -488,7 +515,7 @@ class Admin extends CI_Controller {
 		$thunhap = array(0);
 		$mota = array();
 
-		while ($from <= $to) {
+		while ($dateTimesFrom <= $dateTimesTo) {
 			$dayOfMonth = cal_days_in_month(CAL_GREGORIAN, $monthFrom, $yearFrom);
 			if ($dayFrom < $dayOfMonth) {
 
@@ -521,6 +548,8 @@ class Admin extends CI_Controller {
 				$dayFrom ++;
 				$from = (string)$yearFrom . "/" .  (string)$monthFrom . "/" . (string)$dayFrom;
 
+				$dateTimesFrom = strtotime($from);
+
 			} else if ($monthFrom < $monthTo) {
 				// do
 				$result = $this->tinhThunhap((string)$dayFrom, (string)$monthFrom, (string)$yearFrom);
@@ -534,6 +563,8 @@ class Admin extends CI_Controller {
 				$dayFrom = 1;
 				$monthFrom ++;
 				$from = (string)$yearFrom . "/" .  (string)$monthFrom . "/" . (string)$dayFrom;
+
+				$dateTimesFrom = strtotime($from);
 			} else {
 				// do
 				$result = $this->tinhThunhap((string)$dayFrom, (string)$monthFrom, (string)$yearFrom);
@@ -548,6 +579,8 @@ class Admin extends CI_Controller {
 				$monthFrom = 1;
 				$yearFrom ++;
 				$from = (string)$yearFrom . "/" .  (string)$monthFrom . "/" . (string)$dayFrom;
+
+				$dateTimesFrom = strtotime($from);
 			}
 		}
 
@@ -795,6 +828,8 @@ class Admin extends CI_Controller {
 		$from = $this->input->post('fromDate');
 		$to = $this->input->post('toDate');
 
+		$dateTimesFrom = strtotime($from);
+		$dateTimesTo = strtotime($to);
 
 		$dayFrom = (int)explode("/", $from)[2];
 		$monthFrom = (int)explode("/", $from)[1];
@@ -809,7 +844,7 @@ class Admin extends CI_Controller {
 		$tennguyenlieu = array();
 		$soluongtieuthu = array();
 
-		while ($from <= $to) {
+		while ($dateTimesFrom <= $dateTimesTo) {
 			$dayOfMonth = cal_days_in_month(CAL_GREGORIAN, $monthFrom, $yearFrom);
 			if ($dayFrom < $dayOfMonth) {
 
@@ -830,6 +865,8 @@ class Admin extends CI_Controller {
 				$dayFrom ++;
 				$from = (string)$yearFrom . "/" .  (string)$monthFrom . "/" . (string)$dayFrom;
 
+				$dateTimesFrom = strtotime($from);
+
 			} else if ($monthFrom < $monthTo) {
 				// do
 				$result = $this->tinhTonkho((string)$dayFrom, (string)$monthFrom, (string)$yearFrom);
@@ -848,6 +885,8 @@ class Admin extends CI_Controller {
 				$dayFrom = 1;
 				$monthFrom ++;
 				$from = (string)$yearFrom . "/" .  (string)$monthFrom . "/" . (string)$dayFrom;
+
+				$dateTimesFrom = strtotime($from);
 			} else {
 				// do
 				$result = $this->tinhTonkho((string)$dayFrom, (string)$monthFrom, (string)$yearFrom);
@@ -867,6 +906,8 @@ class Admin extends CI_Controller {
 				$monthFrom = 1;
 				$yearFrom ++;
 				$from = (string)$yearFrom . "/" .  (string)$monthFrom . "/" . (string)$dayFrom;
+
+				$dateTimesFrom = strtotime($from);
 			}
 		}
 
@@ -1751,7 +1792,7 @@ class Admin extends CI_Controller {
 											// lấy khối lượng riêng
 											$khoiluongrieng = (float)$this->admin_model->getkhoiluongriengByMasize($masize[$i])[0]["KHOILUONGRIENG"];
 
-											if (!$this->admin_model->insertCtSize($maloaitrasua, $masize[$i], $khoiluongrieng, $gia, json_encode($thanhphantheosize)))
+											if (!$this->admin_model->insertCtSize($maloaitrasua, $masize[$i], $khoiluongrieng, $gia, json_encode($thanhphan)))
 												{
 													array_push($errorMsg, 'Có lỗi khi tạo size M');
 
@@ -2062,10 +2103,11 @@ class Admin extends CI_Controller {
 							if ($this->admin_model->insertDonhang($madonhang, $mahoadon, 1)) {
 								if ($this->admin_model->insertCthoadon($mahoadon, $tensize, $matenloai, $soluongmua, $nguyenlieubosung, $finalPrices, $size)) {
 									array_push($successMsg, "Tạo hóa đơn thành công");
-
 									if ($this->admin_model->updateNguyenlieu($kho)) {
 										// echo "cap nhat nguyen lieu thanh cong";
 									}
+								} else {
+									array_push($errorMsg, "Tạo hóa đơn thất bại");
 								}
 
 							}
@@ -3025,32 +3067,20 @@ class Admin extends CI_Controller {
 					// cập nhật kho
 					if ($this->admin_model->updateNguyenlieu($tonkho)) {
 						// cập nhật trạng thái đơn hàng
-						if ($this->admin_model->updateTrangthaiHoadon($mahoadon, 2)) {
-
-							array_push($successMsg, 'Hủy đơn hàng thành công');
-							$message["message"]["success"] = $successMsg;
-							$message["message"]["error"] = $errorMsg;
-							$this->load->view('thongbao_view', $message);
+						$madonhang = $this->admin_model->getDonhangByMahoadon($mahoadon)[0]["MADONHANG"];
+						if ($this->admin_model->updateTrangthaiDonhang($madonhang, 5)) {
+							echo 1;
 
 							return;
 
 						} else {
-
-							array_push($errorMsg, "Cập nhật trạng thái hóa đơn thất bại");
-							$message["message"]["success"] = $successMsg;
-							$message["message"]["error"] = $errorMsg;
-							$this->load->view('thongbao_view', $message);
+							echo "Cập nhật trạng thái hóa đơn thất bại";
 
 							return;
 						}
 					} else {
-						array_push($errorMsg, "Cập nhật kho thất bại");
+						echo "Cập nhật kho thất bại";
 					}
-
-
-					$message["message"]["success"] = $successMsg;
-					$message["message"]["error"] = $errorMsg;
-					$this->load->view('thongbao_view', $message);
 
 					return;
 				}
@@ -4096,6 +4126,8 @@ class Admin extends CI_Controller {
 		$to = $this->input->post('toDate');
 		$s = $this->input->post('maloaitrasua');
 
+		$dateTimesFrom = strtotime($from);
+		$dateTimesTo = strtotime($to);
 
 		$dayFrom = (int)explode("/", $from)[2];
 		$monthFrom = (int)explode("/", $from)[1];
@@ -4111,10 +4143,9 @@ class Admin extends CI_Controller {
 		$ngaybiendong = array('x');
 		$biendonggia = array();
 
-		while ($from <= $to) {
+		while ($dateTimesFrom <= $dateTimesTo) {
 			$dayOfMonth = cal_days_in_month(CAL_GREGORIAN, $monthFrom, $yearFrom);
 			if ($dayFrom < $dayOfMonth) {
-
 				// do
 				$result = $this->tinhBiendonggia((string)$dayFrom, (string)$monthFrom, (string)$yearFrom, $s);
 					
@@ -4133,6 +4164,7 @@ class Admin extends CI_Controller {
 
 				$dayFrom ++;
 				$from = (string)$yearFrom . "/" .  (string)$monthFrom . "/" . (string)$dayFrom;
+				$dateTimesFrom = strtotime($from);
 
 			} else if ($monthFrom < $monthTo) {
 				// do
@@ -4153,6 +4185,7 @@ class Admin extends CI_Controller {
 				$dayFrom = 1;
 				$monthFrom ++;
 				$from = (string)$yearFrom . "/" .  (string)$monthFrom . "/" . (string)$dayFrom;
+				$dateTimesFrom = strtotime($from);
 			} else {
 				// do
 				$result = $this->tinhBiendonggia((string)$dayFrom, (string)$monthFrom, (string)$yearFrom, $s);
@@ -4173,6 +4206,7 @@ class Admin extends CI_Controller {
 				$monthFrom = 1;
 				$yearFrom ++;
 				$from = (string)$yearFrom . "/" .  (string)$monthFrom . "/" . (string)$dayFrom;
+				$dateTimesFrom = strtotime($from);
 			}
 		}
 

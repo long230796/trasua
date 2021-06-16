@@ -222,20 +222,7 @@
                             </md-content>
                           
 
-                          <div layout="row" class="m-t-2">
-                            <md-input-container flex="50">
-                              <label>Số lượng nguyên liệu </label>
-                              <input type="number" min="0" step="any" ng-model="soluongnl" >
-                              <div ng-messages="projectForm.soluongnl.$error">
-                                <div ng-message="required">Bắt buộc</div>
-                              </div>
-                            </md-input-container>
-                            <md-input-container flex="50">
-                              <button type="button" class="btn btn-default m-r-xs m-b-xs form-control" ng-click="themnguyenlieu(soluongnl)">
-                                      Chọn
-                                    </button>
-                            </md-input-container>
-                          </div>                
+                                         
 
                           <div ng-repeat="ts in loaitrasua">
                             <div ng-repeat="ctloai in ts.CTLOAITRASUA">
@@ -247,7 +234,7 @@
                                     <label>Tên nguyên liệu</label>
                                     <md-select  name="nguyenlieucu[]" ng-model="nguyenlieucu" required ng-disabled="nguyenlieumoi" >
                                       <?php foreach ($mangdulieu["nguyenlieu"] as $key ): ?>
-                                        <md-option value="<?php echo $key["MANGUYENLIEU"] ?>" ng-selected="{{ ctloai.TENNL === '<?php echo $key["TENNL"] ?>' ? 'true' : 'false' }}"><?php echo $key["TENNL"] ?></md-option>
+                                        <md-option value="<?php echo $key["MANGUYENLIEU"] ?>" ng-selected="{{ ctloai.TENNL === '<?php echo $key["TENNL"] ?>' ? 'true' : 'false' }}" ng-click='changeDonvi(ctloai, <?php  echo json_encode($key) ?>)'><?php echo $key["TENNL"] ?></md-option>
                                       <?php endforeach ?>
                                     </md-select>
                                     <div ng-messages="projectForm.nguyenlieucu.$error">
@@ -265,9 +252,10 @@
                                   </md-input-container>
                                   <md-input-container flex="33">
                                     <label>Đơn vị</label>
-                                    <md-select name="donvi[]" ng-model="donvi" required >
+                                   <!--  <md-select name="donvi[]" ng-model="donvi" required >
                                       <md-option ng-selected="true" value="{{ctloai.DONVI}}">{{ctloai.DONVI}}</md-option>
-                                    </md-select>
+                                    </md-select> -->
+                                    <input readonly name="donvi[]" ng-model="ctloai.DONVI">
                                     <div ng-messages="projectForm.donvi.$error">
                                       <div ng-message="required">Bắt buộc</div>
                                       <div ng-message="md-maxlength">Đơn vị phải nhỏ hơn 10 kí tự</div>
@@ -277,7 +265,12 @@
                                     <label>Ghi chú</label>
                                     <input md-maxlength="50" name="note[]" ng-model="ctloai.GHICHU">
                                   </md-input-container>
-
+                                  <md-input-container >
+                                    <i type="button" ng-click="addNl(ts.CTLOAITRASUA, $index)" class="material-icons text-info">add</i>
+                                  </md-input-container>
+                                  <md-input-container ng-show="$index" >
+                                    <i type="button" ng-click="delNl(ts.CTLOAITRASUA, $index)" class="material-icons text-danger">close</i>
+                                  </md-input-container>
                                 </div>
                             </div>
                             

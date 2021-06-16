@@ -61,7 +61,7 @@
             </div>
             <div class="navbar-item navbar-spacer-right navbar-heading hidden-md-down" href="#">
               <button type="button" class="btn btn-success btn-icon btn-sm" onclick='window.print()'>
-                In hóa đơn
+                In biểu đồ
                 <i class="material-icons">print</i>
               </button> 
             </div>

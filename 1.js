@@ -12,6 +12,7 @@ app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdC
   
 
 
+
   $scope.themnguyenlieu = function (soluong) {
   	datas = [];
   	for(i = 0; i < soluong; i++) {
@@ -131,7 +132,7 @@ app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdC
    $scope.setkhachhang = function (thongtin) {
     array = [thongtin]
     $scope.thongtinKH = array
-    $scope.sodienthoai = parseInt(thongtin.SDT)
+    $scope.sodienthoai = thongtin.SDT
     $scope.hienthiFormKH = false
     $scope.buttonNhapthongtin = false
     $scope.hienthikhachhang = false;
@@ -758,6 +759,21 @@ app.controller('chitietsanpham',  function($scope, $rootScope, $q, $timeout, $lo
     console.log(string)
     return parseFloat(string)
   }
+
+  $scope.changeDonvi = function (ctloai, nguyenlieu) {
+    ctloai.DONVI = nguyenlieu.DONVI
+
+  }
+
+  $scope.addNl = function (nguyenlieu, index) {
+    nguyenlieu.splice(index+1, 0, {})
+  }
+
+
+  $scope.delNl = function (nguyenlieu, index) {
+    nguyenlieu.splice(index, 1)
+  }
+
 
   $scope.themnguyenlieu = function (soluong) {
     datas = [];
@@ -2312,6 +2328,13 @@ app.controller('managedAccount',  function($scope, $rootScope, $http) {
     }
     $scope.allBophan = emptyNvql;
   }
+
+
+  $scope.setNhanvien = function (nhanvien) {
+    console.log(nhanvien)
+    $scope.single = nhanvien
+  }
+
 
 
   $scope.getBophan = function (bophan) {

@@ -80,7 +80,7 @@
                     <div layout="row" ng-init="dataset='false'">
                       <md-input-container class="flex-100" >
                         <label>Số điện thoại khách hàng</label>
-                        <input  type="number" ng-pattern="/^[0-9]{10}$/" name="sodienthoai" ng-model="sodienthoai" ng-click="showListkhachhang()">
+                        <input  type="text" ng-pattern="/^[0-9]{10}$/" name="sodienthoai" ng-model="sodienthoai" ng-click="showListkhachhang()">
                         <div ng-messages="projectForm.sodienthoai.$error">
                           <div ng-message="required">Bắt buộc</div>
                           <div ng-message="pattern" class="my-message">Số điện thoại không khả dụng
@@ -113,7 +113,7 @@
                                     </th>
                                   </tr>
                                 </thead>
-                                <tbody ng-repeat="item in khachhang | filter:sodienthoai | limitTo : 3 " ng-click="setkhachhang(item)">
+                                <tbody ng-repeat="item in khachhang | filter:sodienthoai " ng-click="setkhachhang(item)">
                                   <tr >
                                     <th scope="row">
                                       {{$index}}

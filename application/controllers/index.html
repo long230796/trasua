@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>403 Forbidden</title>
-</head>
-<body>
-
-<p>Directory access is forbidden.</p>
-
-</body>
-</html>
+<div class="d-flex flex-column">
+			<a th:if="${bills.trangthai == 0}" href="#" th:href="@{/book/{madonhang}/xacnhandonhang(madonhang=${bills.madonhang})}" class="btn btn-success btn-rounded" >Xác nhận đơn hàng</a>
+			<a th:if="${bills.trangthai == 1}" href="#" th:href="@{/book/{madonhang}/xacnhanthanhtoan(madonhang=${bills.madonhang})}" class="btn btn-success btn-rounded" >Xác nhận thanh toán</a>
+			<a th:if="${bills.trangthai == 1 || bills.trangthai == 0}" href="#" th:href="@{/book/{madonhang}/huydonhang(madonhang=${bills.madonhang})}" class="btn btn-danger btn-rounded" >Hủy Đơn hàng</a>
+			<p th:if="${bills.trangthai == 2}" class="card-text text-danger">Đã Hủy</p>
+			<p th:if="${bills.trangthai == 3}" class="card-text text-success">Đã thanh toán</p>
+		</div>
+		<div class="alert alert-danger" role="alert">
+		  A simple alert—check it out!
+		</div>

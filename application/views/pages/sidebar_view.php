@@ -119,7 +119,19 @@
           <li>
             <a href="<?php echo base_url() ?>admin/danhsachtaikhoan">
               <i class="material-icons text-success">list</i>
-              <span>Danh sách tài khoản</span>
+              <span>Tài khoản</span>
+            </a>
+          </li>
+          <li>
+            <a href="<?php echo base_url() ?>admin/khachhang">
+              <i class="material-icons text-success">list</i>
+              <span>Khách hàng</span>
+            </a>
+          </li>
+          <li>
+            <a href="<?php echo base_url() ?>admin/nhanvien">
+              <i class="material-icons text-success">list</i>
+              <span>Nhân viên</span>
             </a>
           </li>
           <li>

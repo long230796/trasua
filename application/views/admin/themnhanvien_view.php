@@ -103,10 +103,11 @@
                     <div layout="row">
                       <md-input-container flex="50">
                         <label>Họ</label>
-                        <input ng-pattern ="/^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s\W|_]+$/"  type="text" md-maxlength="20" name="ho" ng-model="ho" required >
+                        <input ng-pattern ="/^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s\W|_]+$/"  type="text" md-maxlength="20" minlength="5" name="ho" ng-model="ho" required >
                         <div ng-messages="projectForm.ho.$error">
                           <div ng-message="required">Bắt buộc</div>
                           <div ng-message="md-maxlength">Họ phải nhỏ hơn 15 kí tự</div>
+                          <div ng-message="minlength">Tối thiểu 5 kí tự</div>
                           <div ng-message="pattern" class="my-message">Sai định dạng
                           </div>
                         </div>

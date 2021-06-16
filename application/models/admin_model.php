@@ -468,6 +468,7 @@ class admin_model extends CI_Model {
 	public function getLimitLoaitrasua()
 	{
 		$this->db->select('MALOAITRASUA, TENLOAI, HINHANH');
+		$this->db->where('TRANGTHAI', 1);
 		$dl = $this->db->get('loaitrasua');
 
 		return $dl->result_array();;
@@ -970,6 +971,8 @@ class admin_model extends CI_Model {
 				
 				$this->db->insert('cthoadon', $data);
 			}
+
+			return $this->db->affected_rows();
 		}
 
 

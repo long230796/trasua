@@ -533,6 +533,15 @@ class admin_model extends CI_Model {
 	}
 
 
+	public function getCtsizeByMasize($masize)
+	{
+		$this->db->select('*');
+		$this->db->where('MASIZE', $masize);
+
+		$dl = $this->db->get('ctsize');
+
+		return $dl->result_array();
+	}
 
 
 	public function getBophan()
@@ -555,6 +564,17 @@ class admin_model extends CI_Model {
 		}
 
 		return $dl;
+	}
+
+
+	public function getGialoaitrasuaByMaloai($maloaitrasua)
+	{
+		$this->db->select('GIA');
+		$this->db->where('MALOAITRASUA', $maloaitrasua);
+		$dl = $this->db->get('loaitrasua');
+
+		return $dl->result_array();
+
 	}
 
 
@@ -1335,6 +1355,19 @@ class admin_model extends CI_Model {
 	}
 
 
+	public function updateKhoiluongriengByMasize($masize, $Khoiluong)
+	{
+		$data = array(
+			'KHOILUONGRIENG' => $Khoiluong 
+		);
+
+		$this->db->where('MASIZE', $masize);
+		$this->db->update('ctsize', $data);
+
+		return $this->db->affected_rows();
+	}
+
+
 	public function updatePasswordTaikhoan($mataikhoan, $matkhaumoi)
 	{
 		$dl = array(
@@ -1489,6 +1522,25 @@ class admin_model extends CI_Model {
 		$this->db->insert('ctsize', $data);
 		return $this->db->affected_rows();
 
+	}
+
+
+	public function updateCtSizeByMaloaiMasize($maloai, $masize, $khoiluongmoi, $giamoi)
+	{
+		$data = array(
+			'KHOILUONGRIENG' => $khoiluongmoi, 
+			'GIA' => $giamoi
+		);
+
+		$condition = array(
+			'MALOAITRASUA' => $maloai, 
+			'MASIZE' => $masize
+		);
+
+		$this->db->where($condition);
+		$this->db->update('ctsize', $data);
+
+		return $this->db->affected_rows();
 	}
 
 

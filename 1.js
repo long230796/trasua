@@ -2240,6 +2240,7 @@ app.controller('managedStock',  function($scope, $rootScope, $http) {
     
       $http.post(urlApi, data, config)
       .then(function(res) {
+        console.log(res.data)
         if (res.data == "1") {
           resolve(res.data)
         } else {

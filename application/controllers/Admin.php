@@ -1328,7 +1328,21 @@ class Admin extends CI_Controller {
 
 
 					if ($this->admin_model->updateKhoiluongsizeByMa($masize, $khoiluongmoi)) {
-						echo "1";
+						// Cập nhật khoiluongrieng của từng loại trà sữa
+						$ctsizeByMasize = $this->admin_model->getCtsizeByMasize($masize);
+
+						for ($i=0; $i < count($ctsizeByMasize); $i++) { 
+							$giaGoc = $this->admin_model->getGialoaitrasuaByMaloai($ctsizeByMasize[$i]["MALOAITRASUA"])[0];			
+
+							$giaMoi = (float)$giaGoc["GIA"] * (float)$khoiluongmoi;
+
+							if (!$this->admin_model->updateCtSizeByMaloaiMasize($ctsizeByMasize[$i]["MALOAITRASUA"], $masize, $khoiluongmoi, $giaMoi)) {
+								echo 0;
+								return;
+							}
+						}
+
+						echo 1;
 					}		
 
 					return;

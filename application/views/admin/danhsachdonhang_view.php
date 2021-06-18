@@ -158,7 +158,7 @@
                                                    </tr>
                                                    <tr>
                                                       <td class="content-block" itemprop="handler" itemscope="" itemtype="http://schema.org/HttpActionHandler">
-                                                         <a ng-click="xacnhan(dh.MADONHANG, 2, dh.MAHOADON)" class="btn-primary" itemprop="url">Xác nhận</a>
+                                                         <button ng-disabled={{disableXacnhanButton}} type="button" ng-click="xacnhan(dh.MADONHANG, 2, dh.MAHOADON)" class="btn-primary" itemprop="url">Xác nhận</button>
                                                       </td>
                                                    </tr>
                                                 </tbody>

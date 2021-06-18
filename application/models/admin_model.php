@@ -1374,6 +1374,8 @@ class admin_model extends CI_Model {
 			'MATKHAU' => $matkhaumoi 
 		);
 
+		$this->db->where('MATAIKHOAN', $mataikhoan);
+
 		$this->db->update('taikhoan', $dl);
 		return $this->db->affected_rows();
 

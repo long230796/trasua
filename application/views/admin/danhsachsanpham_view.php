@@ -52,10 +52,12 @@
               <md-content layout-padding style="background-color: #ffff">
                  
                 <div class="row ">
-                  <div class="col-sm-4 col-md-3 mb-4" ng-repeat="ts in loaitrasua | filter:search" >
+                  <div class="col-sm-4 col-md-3 mb-4 col-xl-2" ng-repeat="ts in loaitrasua | filter:search" >
                     <div class="card h-100 ">
                       <div class="img-container">
-                        <img style="height:230px" class="card-img-top img-fluid" src="{{ts.HINHANH}}" alt="Card image cap">
+                        <a href="<?php echo base_url() ?>admin/chitietsanpham/{{ts.MALOAITRASUA}}">
+                          <img style="height:230px" class="card-img-top img-fluid" src="{{ts.HINHANH}}" alt="Card image cap">
+                        </a>
                         <div ng-if="!ts.TRANGTHAI" class="overlay">
                           <span style="color: #ff3300"><b>NGỪNG KINH DOANH</b></span>
                         </div>

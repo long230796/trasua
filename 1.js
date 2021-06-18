@@ -441,6 +441,7 @@ app.controller('donhang',  function($scope, $rootScope, $q, $timeout, $log, $mdC
              
              $http.post(urlApi, data, config)
              .then(function(res) {
+               $rootScope.disableXacnhanButton = false;
                resolve(res.data);
                
 
@@ -502,7 +503,7 @@ app.controller('donhang',  function($scope, $rootScope, $q, $timeout, $log, $mdC
 
       $scope.donhang = temps;
 
-
+      $rootScope.disableXacnhanButton = true;
       phatrasua(madonhang, 3, mahoadon)
 
     }, function (res, err) {

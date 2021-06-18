@@ -18,7 +18,6 @@
         <span class="tag bg-primary">34</span>
       </a> -->
       <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="javascript:;">Trợ giúp</a>
       <a class="dropdown-item" href="<?php echo base_url() ?>admin/logout">Đăng xuất</a>
     </div>
   </div>

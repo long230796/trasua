@@ -576,8 +576,14 @@ class Admin extends CI_Controller {
 				}
 
 				$dayFrom = 1;
-				$monthFrom = 1;
-				$yearFrom ++;
+				$monthFrom ++;
+
+				if ($monthFrom > 12) {
+					$yearFrom ++;
+					$monthFrom = 1;
+
+				}
+
 				$from = (string)$yearFrom . "/" .  (string)$monthFrom . "/" . (string)$dayFrom;
 
 				$dateTimesFrom = strtotime($from);
@@ -903,8 +909,14 @@ class Admin extends CI_Controller {
 				}
 
 				$dayFrom = 1;
-				$monthFrom = 1;
-				$yearFrom ++;
+				$monthFrom ++;
+
+				if ($monthFrom > 12) {
+					$yearFrom ++;
+					$monthFrom = 1;
+
+				}
+
 				$from = (string)$yearFrom . "/" .  (string)$monthFrom . "/" . (string)$dayFrom;
 
 				$dateTimesFrom = strtotime($from);
@@ -1626,8 +1638,19 @@ class Admin extends CI_Controller {
 					$maphieunhap = 'pn' . uniqid();
 					$manv = $infoSession['manv'];
 
-					// them vao ct cung cap
 
+					// kiểm tra đơn này đã được nhập chưa
+					if (!empty($this->admin_model->getPhieunhapByMadondh($dondathang))) {
+
+						array_push($errorMsg, "Đơn đặt hàng này đã tồn tại");
+						$message["message"]["success"] = $successMsg;
+						$message["message"]["error"] = $errorMsg;
+						$this->load->view('thongbao_view', $message);
+
+						return;
+					}
+
+					// them vao ct cung cap
 					if ($this->admin_model->insertCtcungcap($mactcungcap, $nhacungcapcu, $nguyenlieucu, $soluong, $dongia)) {
 
 						// insert soluong vao nguyenlieu
@@ -1771,6 +1794,18 @@ class Admin extends CI_Controller {
 							return;
 						}
 					}
+
+					// check duplicate tennguyenlieu
+					if (!empty($this->admin_model->getLoaitrasuaByTenloai($tenloai))) {
+
+						array_push($errorMsg, "Tên sản phẩm đã được sử dụng");
+						$message["message"]["success"] = $successMsg;
+						$message["message"]["error"] = $errorMsg;
+						$this->load->view('thongbao_view', $message);
+
+						return;
+					}
+
 
 					$isUploaded = $this->uploadFile($_FILES);
 					if ($isUploaded) {
@@ -1965,6 +2000,8 @@ class Admin extends CI_Controller {
 					$mahoadon = 'hd' . uniqid();
 					$madonhang = 'dh' . uniqid();
 					$manv = $infoSession["manv"];
+
+
 
 					// Lọc ten size
 					for ($i=0; $i < count($size); $i++) { 
@@ -2336,6 +2373,17 @@ class Admin extends CI_Controller {
 					$tensize = array();
 					$masize = array();
 					$tatcasize = array();
+
+
+					if(count(array_unique($nguyenlieucu))<count($nguyenlieucu))
+					{
+						array_push($errorMsg, "Nguyên liệu bị trùng");
+					    $message["message"]["success"] = $successMsg;
+					    $message["message"]["error"] = $errorMsg;
+					    $this->load->view('thongbao_view', $message);
+
+					    return;
+					}
 
 
 					foreach ($size as $key => $value) {
@@ -3012,10 +3060,37 @@ class Admin extends CI_Controller {
 						if ($value["NGUYENLIEUBOSUNG"] !== "null" && $value["NGUYENLIEUBOSUNG"] !== "[]" && $value["NGUYENLIEUBOSUNG"] !== "") {
 							$arraynlbosung = json_decode($value["NGUYENLIEUBOSUNG"], true);
 							foreach ($arraynlbosung as $key1 => $value1) {
-								array_push($arrayNguyenlieu, array(
-									'manl' => $value1["manl"],
-									'soluong' => $value1["soluongthem"]
-								));
+								if (!empty($arrayNguyenlieu)) {
+									for ($i=0; $i < count($arrayNguyenlieu); $i++) { 
+										if ($arrayNguyenlieu[$i]["manl"] == $value1["manl"]) {
+
+											$arrayNguyenlieu[$i]["soluong"] = (float)$arrayNguyenlieu[$i]["soluong"] + (float)$value1["soluongthem"];
+										} else {
+											// 
+										}
+									}
+									// không trùng thì push
+									$dem = 0;
+									for ($i=0; $i < count($arrayNguyenlieu); $i++) {
+										if ($arrayNguyenlieu[$i]["manl"] != $value1["manl"]) {
+											$dem++;
+											if ($dem == count($arrayNguyenlieu)) {
+												array_push($arrayNguyenlieu, array(
+													'manl' => $value1["manl"], 
+													'soluong' => $value1["soluongthem"] 
+												));
+											}
+										}
+										
+									}	
+
+								} else {
+									array_push($arrayNguyenlieu, array(
+										'manl' => $value1["manl"], 
+										'soluong' => $value1["soluongthem"] 
+									));
+								}
+
 							}
 							
 						}
@@ -3030,7 +3105,6 @@ class Admin extends CI_Controller {
 					$thanhphanctsize = $this->admin_model->getCtsizeBymaloaimasize($data, $size);
 
 					// ttách nguyên liệu từ ctsize
-
 					foreach ($thanhphanctsize as $key => $value) {
 						$arrayThanhphan = json_decode($value["THANHPHAN"], true);
 						foreach ($arrayThanhphan as $key1 => $value1) {
@@ -3068,6 +3142,10 @@ class Admin extends CI_Controller {
 					}
 
 					// trả về nguyên liệu và cập nhật lại trạng thái cho hoadon
+					// echo '<pre>';
+					// echo var_dump($arrayNguyenlieu);
+					// echo '</pre>';
+					// return;
 
 					$tonkho = $this->admin_model->getNguyenlieu();
 					foreach ($arrayNguyenlieu as $key => $value) {
@@ -3166,6 +3244,30 @@ class Admin extends CI_Controller {
 					$manv = 'nv' . uniqid();
 
 					
+					//check duplicated taikhoan
+					if (!empty($this->admin_model->getTaikhoanByTaikhoan($taikhoan))) {
+
+						array_push($errorMsg, "Email này đã tồn tại");
+						$message["message"]["success"] = $successMsg;
+						$message["message"]["error"] = $errorMsg;
+						$this->load->view('thongbao_view', $message);
+
+						return;
+					} 
+
+
+					//check duplicated SDT
+					if (!empty($this->admin_model->getNhanvienBySDT($sdt))) {
+
+						array_push($errorMsg, "Số điện thoại này đã tồn tại");
+						$message["message"]["success"] = $successMsg;
+						$message["message"]["error"] = $errorMsg;
+						$this->load->view('thongbao_view', $message);
+
+						return;
+					}
+
+
 					$isUploaded = $this->uploadFile($_FILES);
 					if ($isUploaded) {
 						if ($vaitro == 1) {
@@ -4099,22 +4201,11 @@ class Admin extends CI_Controller {
 				array_push($biendong, $temp);
 			}
 		}
-		// if ($biendong[0]["TENLOAI"]) {
-		// 	// $ngaybiendong = array('x');
-		// 	// $biendonggia = array('Biến động giá của '.$biendong[0]["TENLOAI"]);
-
-
-
-		// } else {
-		// 	// $ngaybiendong = array('x');
-		// 	// $biendonggia = array('Không có số liệu thống kê');
-		// }
 
 		$chitietbiendong["thoigian"] = array();
 		$chitietbiendong["gia"] = array();
 		$chitietbiendong["ten"] = array();
 		
-
 		
 		for ($i=0; $i <count($biendong) ; $i++) { 
 			// array_push($gia, $biendong[$i]["GIA"]);
@@ -4139,6 +4230,7 @@ class Admin extends CI_Controller {
 		$from = $this->input->post('fromDate');
 		$to = $this->input->post('toDate');
 		$s = $this->input->post('maloaitrasua');
+		$errorMsg = array();
 
 		$dateTimesFrom = strtotime($from);
 		$dateTimesTo = strtotime($to);
@@ -4156,6 +4248,15 @@ class Admin extends CI_Controller {
 		$name = '';
 		$ngaybiendong = array('x');
 		$biendonggia = array();
+
+		$ngaytaotrasua = $this->admin_model->getLoaitrasuaByMaloai2($s)[0];
+
+		// kiểm tra ngày lọc lớn hơn ngày tạo
+		if ($dateTimesFrom < strtotime($ngaytaotrasua["NGAYTAO"])) {
+			$message = 'Thời gian bắt đâu không hợp lệ, mã: ' . $s . ', ngày tạo: ' . $ngaytaotrasua["NGAYTAO"];
+			echo $message;
+			return;
+		}
 
 		while ($dateTimesFrom <= $dateTimesTo) {
 			$dayOfMonth = cal_days_in_month(CAL_GREGORIAN, $monthFrom, $yearFrom);
@@ -4217,8 +4318,13 @@ class Admin extends CI_Controller {
 				}
 
 				$dayFrom = 1;
-				$monthFrom = 1;
-				$yearFrom ++;
+				$monthFrom ++;
+
+				if ($monthFrom > 12) {
+					$yearFrom ++;
+					$monthFrom = 1;
+
+				}
 				$from = (string)$yearFrom . "/" .  (string)$monthFrom . "/" . (string)$dayFrom;
 				$dateTimesFrom = strtotime($from);
 			}

@@ -1617,6 +1617,11 @@ app.controller('biendonggia',  function($scope, $rootScope, $q, $timeout, $log, 
         $http.post(urlApi, data, config)
         .then(function(res) {
           console.log(res.data)
+          if (typeof res.data === 'string') {
+            alert(res.data)
+            return;
+          }
+
           $().biendonggiaChart(res.data);
         }, function (res, err) {
           console.log(err)

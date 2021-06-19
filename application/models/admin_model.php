@@ -209,12 +209,30 @@ class admin_model extends CI_Model {
 		return $dl;
 	}
 
+	public function getPhieunhapByMadondh($madondh) 
+	{
+		$this->db->select('*');
+		$this->db->where('MADONDH', $madondh);
+		$dl = $this->db->get('phieunhap');
+
+		return $dl->result_array();
+	}
+
 	public function getNhanvien()
 	{
 		$this->db->select('*');
 		$dl = $this->db->get('nhanvien');
 		return $dl->result_array();
 
+	}
+
+	public function getNhanvienBySDT($sdt)
+	{
+		$this->db->select('*');
+		$this->db->where('SDT', $sdt);
+		$dl = $this->db->get('nhanvien');
+
+		return $dl->result_array();
 	}
 
 	public function getNhanvienByMa($manhanvien)
@@ -491,6 +509,30 @@ class admin_model extends CI_Model {
 	}
 
 
+	public function getLoaitrasuaByMaloai2($maloaitrasua)
+	{
+		$this->db->select('*');
+		$this->db->where('MALOAITRASUA', $maloaitrasua);
+		$dl = $this->db->get('loaitrasua')->result_array();
+
+		for ($i=0; $i < count($dl); $i++) { 
+			$dl[$i]["NGAYTAO"] = date("Y/m/d", $dl[$i]["NGAYTAO"]);
+		}
+
+		return $dl;
+	}
+
+
+	public function getLoaitrasuaByTenloai($tenloai)
+	{
+		$this->db->select('*');
+		$this->db->where('TENLOAI', $tenloai);
+		$dl = $this->db->get('loaitrasua');
+
+		return $dl->result_array();
+	}
+
+
 	public function getLoaitrasuaByMaloai($maloaitrasua)
 	{
 		$this->db->select('*');
@@ -525,7 +567,15 @@ class admin_model extends CI_Model {
 
 			$dl = $this->db->get('ctsize')->result_array();
 
-			array_push($temp, $dl[0]);
+			$thanhphanJson = json_decode($dl[0]["THANHPHAN"], true);
+
+			for ($j=0; $j < count($thanhphanJson); $j++) { 
+				$thanhphanJson[$j]["LIEULUONG"] = (float)$thanhphanJson[$j]["LIEULUONG"] * (int)$maloai[$i]["SOLUONG"];
+			}
+
+			$dl = array("THANHPHAN" => json_encode($thanhphanJson));
+
+			array_push($temp, $dl);
 		}
 
 		return $temp;
@@ -722,6 +772,16 @@ class admin_model extends CI_Model {
 	{
 		$this->db->select('*');
 
+		$dl = $this->db->get('taikhoan');
+
+		return $dl->result_array();
+	}
+
+
+	public function getTaikhoanByTaikhoan($taikhoan)
+	{
+		$this->db->select('*');
+		$this->db->where('TAIKHOAN', $taikhoan);
 		$dl = $this->db->get('taikhoan');
 
 		return $dl->result_array();

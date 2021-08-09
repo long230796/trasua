@@ -16,6 +16,7 @@
     <a class="navbar-item navbar-spacer-right navbar-heading hidden-md-down" href="#">
       <span></span>
     </a>
+   
     <div class="navbar-search navbar-item">
       <form class="search-form">
         <i class="material-icons">search</i>

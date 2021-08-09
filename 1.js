@@ -1,4 +1,4 @@
-﻿// mặc định muốn dùng angular sẽ có những dòng này 
+// mặc định muốn dùng angular sẽ có những dòng này 
 var app = angular.module('myApp',['ngMaterial', 'ngMessages', 'ngRoute', 'ngCookies']);
 app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdConstant, $cookies, $http, $location, $interval){
 	$scope.project = {
@@ -8,8 +8,6 @@ app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdC
 
     
   };
-
-  
 
 
 
@@ -67,9 +65,6 @@ app.controller('AppCtrl',  function($scope, $rootScope, $q, $timeout, $log, $mdC
 
    
   }
-
-
-  
 
   $scope.themnguyenlieubosung = function (soluong) {
     datas = [];
@@ -742,6 +737,7 @@ app.controller('sidebar',  function($scope, $rootScope, $http, $http, $cookies) 
     $scope.anhdaidien = res.data.anhdaidien
     $scope.hovaten = res.data.tennv
     $scope.vaitro = res.data.role
+    $scope.bophan = res.data.bophan
    }, function (err) {
     console.log(err)
    })
@@ -1057,6 +1053,7 @@ app.controller('thunhap',  function($scope, $rootScope, $q, $timeout, $log, $mdC
             return;
           } else if (arrayString[2] < 2018) {
             alert("Năm phải lớn hơn 2018")
+
             return;
           }
           break;
@@ -1124,7 +1121,7 @@ app.controller('thunhap',  function($scope, $rootScope, $q, $timeout, $log, $mdC
           }
           break;
         case 8:
-          if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
             alert("Sai định dạng ngày");
             return;
           } else if (arrayString[2] < 2018) {
@@ -1742,7 +1739,7 @@ app.controller('tonkho',  function($scope, $rootScope, $q, $timeout, $log, $mdCo
           }
           break;
         case 8:
-          if (arrayString[0] > 31 || arrayString[0] <= 0) {
+          if (arrayString[0] > 31 || arrayString[0] < 0) {
             alert("Sai định dạng ngày");
             return;
           } else if (arrayString[2] < 2018) {
@@ -2515,5 +2512,38 @@ app.controller('managedAccount',  function($scope, $rootScope, $http) {
   }
 
 })
+
+
+// frequency = [0.0817, 0.0150, 0.0278, 0.0425, 0.1270, 0.0223, 0.0202, 0.0609, 0.0697, 0.0015, 0.0077, 0.0403, 0.0241, 0.0675, 0.0751, 0.0193, 0.0010, 0.0599, 0.0633, 0.0906, 0.0276, 0.0098, 0.0236, 0.0015, 0.0197, 0.0007]
+
+// letterFrequency = {
+//  A: 0.0817,
+//  B: 0.0150,
+//  C: 0.0278,
+//  D: 0.0425,
+//  E: 0.1270,
+//  F: 0.0223,
+//  G: 0.0202,
+//  H: 0.0609,
+//  I: 0.0697,
+//  J: 0.0015,
+//  K: 0.0077,
+//  L: 0.0403,
+//  M: 0.0241,
+//  N: 0.0675,
+//  O: 0.0751,
+//  P: 0.0193,
+//  Q: 0.0010,
+//  R: 0.0599,
+//  S: 0.0633,
+//  T: 0.0906,
+//  U: 0.0276,
+//  V: 0.0098,
+//  W: 0.0236,
+//  X: 0.0015,
+//  Y: 0.0197,
+//  Z: 0.0007
+
+// }
 
 

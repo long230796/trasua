@@ -276,7 +276,6 @@
                             
                               
                           </div>  
-                            
                             <fieldset class="form-group">
                               <label for="username">
                                 Thêm ảnh

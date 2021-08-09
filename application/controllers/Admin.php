@@ -26,18 +26,7 @@ class Admin extends CI_Controller {
 			$this->requestLogin();
 		}
 
-		// // GET method
-		// if ($this->input->server('REQUEST_METHOD') === 'GET') {
-		// 	$cookie = get_cookie("SESSIONID");
-
-		// 	if ($this->checkCookie($cookie)) {
-		// 		return redirect(base_url()."admin");
-		// 	} else {
-		// 		$this->load->view('login_view');
-		// 	}
-		// } else {
-		// 	$this->requestLogin();
-		// }
+		
 
 
 	}
@@ -303,6 +292,9 @@ class Admin extends CI_Controller {
 						'self' => $self 
 					);
 
+					$data["mangdulieu"]["nhanvien"]
+
+
 					$this->load->view('admin/nhanvien_view', $data);
 					return;
 				}
@@ -519,23 +511,7 @@ class Admin extends CI_Controller {
 			$dayOfMonth = cal_days_in_month(CAL_GREGORIAN, $monthFrom, $yearFrom);
 			if ($dayFrom < $dayOfMonth) {
 
-				// // do
-				// $result = $this->tinhThunhap((string)$dayFrom, (string)$monthFrom, (string)$yearFrom);
-
-				// if ($result) {
-				// 	for ($i=0; $i <= $dayFrom; $i++) { 
-				// 		if ($i+1 > count($thunhap)) {
-				// 			if ($i == $dayFrom) {
-				// 				$thunhap[$i] = $result;
-				// 			} else {
-				// 				$thunhap[$i] = 0;
-				// 			}
-				// 		}
-				// 	}
-				// 	// array_push($thunhap, $result);
-
-				// }
-				// do
+				
 				$result = $this->tinhThunhap((string)$dayFrom, (string)$monthFrom, (string)$yearFrom);
 
 				if ($result) {
@@ -590,23 +566,7 @@ class Admin extends CI_Controller {
 			}
 		}
 
-		// cộng nguyên liệu trùng lặp
-		// for ($i=0; $i < count($tonghop)-1; $i++) { 
-		// 	for ($j=$i+1; $j < count($tonghop);) { 
-		// 		if ($tonghop[$i]["mota"] == $tonghop[$j]["mota"]) {
-		// 			$tonghop[$i]["thunhap"] += $tonghop[$j]["thunhap"];
-		// 			array_splice($tonghop,$j,1);
-
-		// 		} else {
-		// 			$j++;
-		// 		}
-		// 	}
-		// }
-
-		// foreach ($tonghop as $key => $value) {
-		// 	$mota[$key] = $value['mota'];
-		// 	$thunhap[$key] = $value['thunhap'];
-		// }
+		
 
 
 		
@@ -771,39 +731,7 @@ class Admin extends CI_Controller {
 
 	public function tinhTonkho($day, $month, $year)
 	{
-		// GET method
-		// if ($this->input->server('REQUEST_METHOD') === 'GET') {
-		// 	$cookie = get_cookie("SESSIONID");
-		// 	$infoSession = $this->checkCookie($cookie);
-		// 	if ($infoSession) {
-
-		// 		if (($infoSession["role"] == "Quản lí" && $infoSession["mabophan"] == "BPKHO" ) || $infoSession["role"] == "Boss") {
-
-		// 			// if ($day) {
-		// 			// 	$soluongtieuthu = array('Tiêu thụ trong ngày '.$day);
-
-		// 			// } else if ($month) {
-		// 			// 	$soluongtieuthu = array('Tiêu thụ trong tháng '.$month);
-
-		// 			// } else if ($year) {
-		// 			// 	$soluongtieuthu = array('Tiêu thụ trong năm '.$year);
-
-		// 			// }
-
-		// 			// $tennguyenlieu = array('x');
-					
-		// 		}
-
-		// 		$this->load->view('403_view');
-
-		// 	}
-		// } else {
-		// 	$cookie = get_cookie("SESSIONID");
-		// 	$infoSession = $this->checkCookie($cookie);
-		// 	if ($infoSession) {
-
-		// 	}
-		// }
+		
 
 		$tennguyenlieu = array();
 		$soluongtieuthu = array();
@@ -1100,7 +1028,8 @@ class Admin extends CI_Controller {
 						'role' => $infoSession['role'], 
 						'manv' => $infoSession['manv'],
 						'tennv' => $nhanvien[0]["HO"] . " " . $nhanvien[0]["TEN"],
-						'anhdaidien' => $nhanvien[0]["AVATAR"]
+						'anhdaidien' => $nhanvien[0]["AVATAR"],
+						'bophan' => $nhanvien[0]["MABP"]
 
 					);
 					echo json_encode($user);
@@ -3146,7 +3075,6 @@ class Admin extends CI_Controller {
 					// echo var_dump($arrayNguyenlieu);
 					// echo '</pre>';
 					// return;
-
 					$tonkho = $this->admin_model->getNguyenlieu();
 					foreach ($arrayNguyenlieu as $key => $value) {
 						for ($i=0; $i < count($tonkho); $i++) { 
@@ -4343,55 +4271,7 @@ class Admin extends CI_Controller {
 
 
 
-	// public function initTonkhoChart()
-	// {
-	// 	// GET method
-	// 	if ($this->input->server('REQUEST_METHOD') === 'GET') {
-	// 		$cookie = get_cookie("SESSIONID");
-	// 		$infoSession = $this->checkCookie($cookie);
-	// 		if ($infoSession) {
-	// 			if (($infoSession["role"] == "Quản lí" && $infoSession["mabophan"] == "BPKHO" ) || $infoSession["role"] == "Boss") {
-
-	// 				date_default_timezone_set("Asia/Ho_Chi_Minh");
-
-	// 				$dateNow = date("d/m/Y");
-	// 				$dateNow = explode("/", $dateNow);
-
-	// 				// $d=cal_days_in_month(CAL_GREGORIAN,$dateNow[1],$dateNow[2]);
-
-	// 				$soluongtieuthu = array('Tiêu thụ trong tháng '.$dateNow[1]);
-	// 				$tennguyenlieu = array('x');
-	// 				$nguyenlieutieuthu = $this->Thongke_kho('00', $dateNow[1], $dateNow[2]);
-
-	// 				for ($i=0; $i < count($nguyenlieutieuthu); $i++) { 
-	// 					array_push($tennguyenlieu, $nguyenlieutieuthu[$i]["TENNL"]);
-	// 					array_push($soluongtieuthu, $nguyenlieutieuthu[$i]["LIEULUONG"]);
-
-	// 				}
-
-
-	// 				$jsontonkho = array();
-
-	// 				$jsontonkho["soluongtieuthu"] = $soluongtieuthu;
-	// 				$jsontonkho["tennguyenlieu"] = $tennguyenlieu;
-
-
-	// 				echo json_encode($jsontonkho);
-	// 				return;
-	// 			}
-
-	// 			$this->load->view('403_view');
-				
-
-	// 		}
-	// 	} else {
-	// 		$cookie = get_cookie("SESSIONID");
-	// 		$infoSession = $this->checkCookie($cookie);
-	// 		if ($infoSession) {
-
-	// 		}
-	// 	}
-	// }
+	
 
 
 	public function biendonggia()
@@ -4405,13 +4285,6 @@ class Admin extends CI_Controller {
 
 					
 					
-					// $data['mangdulieu'] = array(
-					// 	'dondathang' => $dondathang,
-					// 	'anhdaidien' => $infoSession["anhdaidien"],
-					// 	'tennv' => $infoSession["tennv"],
-					// 	'role' => $infoSession['role']
-					// );
-
 
 					$this->load->view('admin/biendonggia_view');
 					// lapphieunhap, ct phieunhap, ctcungcap

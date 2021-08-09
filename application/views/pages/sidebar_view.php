@@ -51,13 +51,13 @@
               <span>Sản phẩm</span>
             </a>
           </li>
-          <li>
+          <li ng-if='vaitro==="Boss"'>
             <a href="<?php echo base_url() ?>admin/taotrasua">
               <i class="material-icons text-info">add</i>
               <span>Thêm sản phẩm mới</span>
             </a>
           </li>
-          <li>
+          <li ng-if='vaitro==="Boss"'>
             <a href="<?php echo base_url() ?>admin/chitietsize">
               <i class="material-icons text-info">launch</i>
               <span>Quản lí size</span>
@@ -77,7 +77,7 @@
           <span>Quản lí Kho</span>
 
         </a>
-        <ul class="sub-menu">
+        <ul ng-if='bophan==="BPKHO" || vaitro==="Boss"' class="sub-menu">
           <li>
             <a href="<?php echo base_url() ?>admin/danhsachnguyenlieu">
               <i class="material-icons text-dark">restaurant_menu</i>
@@ -114,22 +114,22 @@
           <i class="material-icons text-success">people</i>
           <span>Quản lí tài khoản</span>
         </a>
-        <ul class="sub-menu">
+        <ul ng-if='vaitro==="Boss"' class="sub-menu">
           <li>
             <a href="<?php echo base_url() ?>admin/danhsachtaikhoan">
-              <i class="material-icons text-success">list</i>
+              <i class="material-icons text-success">account_box</i>
               <span>Tài khoản</span>
             </a>
           </li>
           <li>
             <a href="<?php echo base_url() ?>admin/khachhang">
-              <i class="material-icons text-success">list</i>
+              <i class="material-icons text-success">account_box</i>
               <span>Khách hàng</span>
             </a>
           </li>
           <li>
             <a href="<?php echo base_url() ?>admin/nhanvien">
-              <i class="material-icons text-success">list</i>
+              <i class="material-icons text-success">account_box</i>
               <span>Nhân viên</span>
             </a>
           </li>
@@ -166,16 +166,16 @@
           <i class="material-icons text-danger">explore</i>
           <span>Giao dịch</span>
         </a>
-        <ul class="sub-menu">
+        <ul ng-if='bophan==="BPBANHANG" || vaitro==="Boss"' class="sub-menu">
           <li>
             <a href="<?php echo base_url() ?>admin/danhsachhoadon">
-              <i class="material-icons text-danger">list</i>
+              <i class="material-icons text-danger">event_note</i>
               <span>Hóa đơn</span>
             </a>
           </li>
           <li>
             <a href="<?php echo base_url() ?>admin/danhsachdonhang">
-              <i class="material-icons text-danger">list</i>
+              <i class="material-icons text-danger">local_shipping</i>
               <span>Đơn hàng</span>
             </a>
           </li>
@@ -203,7 +203,7 @@
           <i class="material-icons text-warning">assessment</i>
           <span>Thống kê</span>
         </a>
-        <ul class="sub-menu">
+        <ul ng-if='vaitro==="Quản lí" || vaitro==="Boss"' class="sub-menu">
           <li>
             <a href="<?php echo base_url() ?>admin/thunhap">
               <i class="material-icons text-warning">attach_money</i>

@@ -1,0 +1,66 @@
+warning: LF will be replaced by CRLF in application/config/database.php.
+The file will have its original line endings in your working directory
+[1mdiff --git a/application/config/database.php b/application/config/database.php[m
+[1mindex d16db4a..37ad342 100644[m
+[1m--- a/application/config/database.php[m
+[1m+++ b/application/config/database.php[m
+[36m@@ -77,7 +77,7 @@[m [m$db['default'] = array([m
+ 	'dsn'	=> '',[m
+ 	'hostname' => 'localhost',[m
+ 	'username' => 'root',[m
+[31m-	'password' => '',[m
+[32m+[m	[32m'password' => '230796',[m
+ 	'database' => 'trasua_demo',[m
+ 	'dbdriver' => 'mysqli',[m
+ 	'dbprefix' => '',[m
+[1mdiff --git a/application/controllers/Admin.php b/application/controllers/Admin.php[m
+[1mindex 9d1a5dd..5b5e88a 100644[m
+[1m--- a/application/controllers/Admin.php[m
+[1m+++ b/application/controllers/Admin.php[m
+[36m@@ -292,7 +292,6 @@[m [mclass Admin extends CI_Controller {[m
+ 						'self' => $self [m
+ 					);[m
+ [m
+[31m-					$data["mangdulieu"]["nhanvien"][m
+ [m
+ [m
+ 					$this->load->view('admin/nhanvien_view', $data);[m
+[36m@@ -1170,6 +1169,18 @@[m [mclass Admin extends CI_Controller {[m
+ 					}[m
+ [m
+ 					if ($nhacungcapmoi) {[m
+[32m+[m						[32m// check sdt trùng[m
+[32m+[m						[32m$sdtNcc = $this->admin_model->getNhacungcap();[m
+[32m+[m						[32mforeach ($sdtNcc as $key => $value) {[m
+[32m+[m							[32mif ($sodienthoainhacungcap == $value["SDT"]) {[m
+[32m+[m								[32marray_push($errorMsg, "Số điện thoại nhà cung cấp bị trùng");[m
+[32m+[m								[32m$message["message"]["success"] = $successMsg;[m
+[32m+[m								[32m$message["message"]["error"] = $errorMsg;[m
+[32m+[m								[32m$this->load->view('thongbao_view', $message);[m
+[32m+[m								[32mreturn;[m
+[32m+[m							[32m}[m
+[32m+[m						[32m}[m
+[32m+[m
+ 						if ($this->admin_model->insertNhacungcap($manhacungcapmoi, $nhacungcapmoi, $sodienthoainhacungcap, $diachinhacungcap)) {[m
+ [m
+ 							// insert dondathang[m
+[36m@@ -1182,6 +1193,19 @@[m [mclass Admin extends CI_Controller {[m
+ 					}[m
+ [m
+ 					if (!empty($nguyenlieumoi)) {[m
+[32m+[m						[32m// check nguyen lieu trùng[m
+[32m+[m						[32m$nlCu = $this->admin_model->getNguyenlieu();[m
+[32m+[m						[32mfor ($i=0; $i < count($nlCu) ; $i++) {[m[41m [m
+[32m+[m							[32mfor ($j=0; $j < count($nguyenlieumoi); $j++) {[m[41m [m
+[32m+[m								[32mif ($nguyenlieumoi[$j] == $nlCu[$i]["TENNL"]) {[m
+[32m+[m									[32marray_push($errorMsg, "Nguyên liệu mới bị trùng với nguyên liệu cũ");[m
+[32m+[m									[32m$message["message"]["success"] = $successMsg;[m
+[32m+[m									[32m$message["message"]["error"] = $errorMsg;[m
+[32m+[m									[32m$this->load->view('thongbao_view', $message);[m
+[32m+[m									[32mreturn;[m
+[32m+[m								[32m}[m
+[32m+[m							[32m}[m
+[32m+[m						[32m}[m
+ 						$isRowAffect = $this->admin_model->insertNguyenlieumoi($manguyenlieumoi, $nguyenlieumoi);[m
+ [m
+ 						if ($isRowAffect) {[m

@@ -69,6 +69,18 @@ class Admin extends CI_Controller {
 
 	}
 
+	public function searching() {
+		$search = $this->input->post('search');
+
+		if (preg_match('/<(?:\w+)\W+?[\w]/', $search)) {
+		     echo '<script>alert("Phat hien xss")</script>'; 
+		     return;
+		} 
+
+		mysql_query("SELECT * FROM PRODUCT WHERE NAME LIKE %'".$search."'% ");
+
+	}
+
 
 
 	public function requestLogin()
@@ -79,7 +91,6 @@ class Admin extends CI_Controller {
 		$message["message"] = array();
 		$successMsg = array();
 		$errorMsg = array();
-	
 
 		$this->db->select('*');
 		$this->db->where('TAIKHOAN', $username);
@@ -292,7 +303,6 @@ class Admin extends CI_Controller {
 						'self' => $self 
 					);
 
-					$data["mangdulieu"]["nhanvien"]
 
 
 					$this->load->view('admin/nhanvien_view', $data);
@@ -1170,6 +1180,18 @@ class Admin extends CI_Controller {
 					}
 
 					if ($nhacungcapmoi) {
+						// check sdt trùng
+						$sdtNcc = $this->admin_model->getNhacungcap();
+						foreach ($sdtNcc as $key => $value) {
+							if ($sodienthoainhacungcap == $value["SDT"]) {
+								array_push($errorMsg, "Số điện thoại nhà cung cấp bị trùng");
+								$message["message"]["success"] = $successMsg;
+								$message["message"]["error"] = $errorMsg;
+								$this->load->view('thongbao_view', $message);
+								return;
+							}
+						}
+
 						if ($this->admin_model->insertNhacungcap($manhacungcapmoi, $nhacungcapmoi, $sodienthoainhacungcap, $diachinhacungcap)) {
 
 							// insert dondathang
@@ -1182,6 +1204,19 @@ class Admin extends CI_Controller {
 					}
 
 					if (!empty($nguyenlieumoi)) {
+						// check nguyen lieu trùng
+						$nlCu = $this->admin_model->getNguyenlieu();
+						for ($i=0; $i < count($nlCu) ; $i++) { 
+							for ($j=0; $j < count($nguyenlieumoi); $j++) { 
+								if ($nguyenlieumoi[$j] == $nlCu[$i]["TENNL"]) {
+									array_push($errorMsg, "Nguyên liệu mới bị trùng với nguyên liệu cũ");
+									$message["message"]["success"] = $successMsg;
+									$message["message"]["error"] = $errorMsg;
+									$this->load->view('thongbao_view', $message);
+									return;
+								}
+							}
+						}
 						$isRowAffect = $this->admin_model->insertNguyenlieumoi($manguyenlieumoi, $nguyenlieumoi);
 
 						if ($isRowAffect) {
